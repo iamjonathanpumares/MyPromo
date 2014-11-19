@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<title>Crear usuarios</title>
+</head>
+<body>
+	<section>
+		<form method='post' action=''>
+			{% csrf_token %}
+			{{form.as_p}}
+			<p><input type="submit" value="Registrar"></p>
+		</form>
+	</section>
+	
+</body>
+</html>

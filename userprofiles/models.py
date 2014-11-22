@@ -12,6 +12,9 @@ class UsuarioPromotor(AbstractBaseUser):
 	USERNAME_FIELD = 'username'
 	REQUIRED_FIELDS = ['nombre', 'apellidos']
 
+	def __unicode__(self):
+		return self.username
+
 	def get_full_name(self):
 		return self.nombre + " " + self.apellidos
 
@@ -51,6 +54,9 @@ class UsuarioAfiliado(AbstractBaseUser):
 
 	USERNAME_FIELD = 'username'
 	REQUIRED_FIELDS = ['nombreEmpresa', 'representante', 'direccion, telefono', 'email', 'facebook', 'twitter', 'codigoValidacion', 'logo', 'giro', 'cartel']
+
+	def __unicode__(self):
+		self.username
 
 	def get_full_name(self):
 		return self.nombreEmpresa + " " + self.representante

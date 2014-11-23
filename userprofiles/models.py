@@ -3,9 +3,9 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 class UsuarioPromotor(AbstractBaseUser):
 	idUsuarioPromotor = models.IntegerField(primary_key=True)
-	username = models.CharField(verbose_name='username', unique=True, max_length=100)
-	nombre = models.CharField(max_length=200)
-	apellidos = models.CharField(max_length=200)
+	username = models.CharField(verbose_name='Usuario', unique=True, max_length=100)
+	nombre = models.CharField(max_length=200, verbose_name='Nombre')
+	apellidos = models.CharField(max_length=200, verbose_name='Apellidos')
 
 	is_active = True
 
@@ -37,18 +37,18 @@ class UsuarioPromotorManager(BaseUserManager):
 
 class UsuarioAfiliado(AbstractBaseUser):
 	idUsuarioAfiliado = models.IntegerField(primary_key=True)
-	username = models.CharField(verbose_name='username', unique=True, max_length=100)
-	nombreEmpresa = models.CharField(max_length=255)
-	representante = models.CharField(max_length=200)
-	direccion = models.CharField(max_length=255)
-	telefono = models.CharField(max_length=15)
-	email = models.EmailField(max_length=100)
-	facebook = models.CharField(max_length=200)
-	twitter = models.CharField(max_length=100)
-	codigoValidacion = models.CharField(max_length=255)
-	logo = models.ImageField(upload_to='logos')
-	giro = models.CharField(max_length=100)
-	cartel = models.ImageField(upload_to='carteles')
+	username = models.CharField(verbose_name='Usuario', unique=True, max_length=100)
+	nombreEmpresa = models.CharField(max_length=255, verbose_name='Empresa')
+	representante = models.CharField(max_length=200, verbose_name='Representante')
+	direccion = models.CharField(max_length=255, verbose_name='Direccion')
+	telefono = models.CharField(max_length=15, verbose_name='Telefono')
+	email = models.EmailField(max_length=100, verbose_name='Email')
+	facebook = models.CharField(max_length=200, verbose_name='Facebook')
+	twitter = models.CharField(max_length=100, verbose_name='Twitter')
+	codigoValidacion = models.CharField(max_length=255, verbose_name='Codigo validacion')
+	logo = models.ImageField(upload_to='logos', verbose_name='Logo')
+	giro = models.CharField(max_length=100, verbose_name='Giro')
+	cartel = models.ImageField(upload_to='carteles', verbose_name='Cartel')
 
 	is_active = True
 

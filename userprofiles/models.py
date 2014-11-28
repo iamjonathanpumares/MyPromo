@@ -1,6 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
+class UsuarioPromotorManager(BaseUserManager):
+	def create_user(self, username, nombre, apellidos, password):
+		if not username:
+			raise ValueError('Necesita tener un username')
+
+		user = self.model(
+			username=username,
+			nombre=nombre,
+			apellidos=apellidos
+		)
+		user.set_password(password)
+		user.save(using=self._db)
+		return user
+
 class UsuarioPromotor(AbstractBaseUser):
 	idUsuarioPromotor = models.IntegerField(primary_key=True)
 	username = models.CharField(verbose_name='Usuario', unique=True, max_length=100)
@@ -12,6 +26,8 @@ class UsuarioPromotor(AbstractBaseUser):
 	USERNAME_FIELD = 'username'
 	REQUIRED_FIELDS = ['nombre', 'apellidos']
 
+	objects = UsuarioPromotorManager()
+
 	def __unicode__(self):
 		return self.username
 
@@ -21,15 +37,24 @@ class UsuarioPromotor(AbstractBaseUser):
 	def get_short_name(self):
 		return self.nombre
 
-class UsuarioPromotorManager(BaseUserManager):
-	def create_user(self, username, nombre, apellidos, password):
+class UsuarioAfiliadoManager(BaseUserManager):
+	def create_user(self, username, nombreEmpresa, representante, direccion, telefono, email, facebook, twitter, codigoValidacion, logo, giro, cartel, password):
 		if not username:
 			raise ValueError('Necesita tener un username')
 
 		user = self.model(
 			username=username,
-			nombre=nombre,
-			apellidos=apellidos
+			nombreEmpresa=nombreEmpresa,
+			representante=representante,
+			direccion=direccion,
+			telefono=telefono,
+			email=email,
+			facebook=facebook,
+			twitter=twitter,
+			codigoValidacion=codigoValidacion,
+			logo=logo,
+			giro=giro,
+			cartel=cartel 
 		)
 		user.set_password(password)
 		user.save(using=self._db)
@@ -55,6 +80,8 @@ class UsuarioAfiliado(AbstractBaseUser):
 	USERNAME_FIELD = 'username'
 	REQUIRED_FIELDS = ['nombreEmpresa', 'representante', 'direccion, telefono', 'email', 'facebook', 'twitter', 'codigoValidacion', 'logo', 'giro', 'cartel']
 
+	objects = UsuarioAfiliadoManager()
+
 	def __unicode__(self):
 		self.username
 
@@ -63,26 +90,3 @@ class UsuarioAfiliado(AbstractBaseUser):
 
 	def get_short_name(self):
 		return self.nombreEmpresa
-
-class UsuarioAfiliadoManager(BaseUserManager):
-	def create_user(self, username, nombreEmpresa, representante, direccion, telefono, email, facebook, twitter, codigoValidacion, logo, giro, cartel, password):
-		if not username:
-			raise ValueError('Necesita tener un username')
-
-		user = self.model(
-			username=username,
-			nombreEmpresa=nombreEmpresa,
-			representante=representante,
-			direccion=direccion,
-			telefono=telefono,
-			email=email,
-			facebook=facebook,
-			twitter=twitter,
-			codigoValidacion=codigoValidacion,
-			logo=logo,
-			giro=giro,
-			cartel=cartel 
-		)
-		user.set_password(password)
-		user.save(using=self._db)
-		return user

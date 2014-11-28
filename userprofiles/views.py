@@ -33,6 +33,11 @@ def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formul
 			#return render_to_response('lista_usuarios.html', { 'save_success': save_success, 'usuario': usuario })
 	else:
 			form = RegistrationUsuarioPromotorForm() # En caso de no ser una peticion POST se crea la instancia del formulario
+			form.fields['username'].widget.attrs = { 'class': 'form-control' } # Esto agrega un atributo class a cada widget para ponerle estilos
+			form.fields['nombre'].widget.attrs = { 'class': 'form-control' }
+			form.fields['apellidos'].widget.attrs = { 'class': 'form-control' }
+			form.fields['password1'].widget.attrs = { 'class': 'form-control' }
+			form.fields['password2'].widget.attrs = { 'class': 'form-control' }
 	return render_to_response('usuarios_agregar.html', { 'form': form }, context_instance=RequestContext(request)) # Renderizamos el formulario para que se muestra en el template
 
 def lista_usuarios_view(request):

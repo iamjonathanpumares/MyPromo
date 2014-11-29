@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
 from django.contrib.auth.forms import UserCreationForm
 from django.views.generic.edit import CreateView
+from django.views.generic import ListView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
@@ -21,6 +22,10 @@ class RegistrationUserPromotorView(SuccessMessageMixin, CreateView):
 
 	def get_success_message(self, cleaned_data):
 		return self.success_message % cleaned_data['username']
+
+class UsuarioPromotorListView(ListView):
+	model = UsuarioPromotor
+	template_name = 'lista_usuarios.html'
 
 def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formulario de registro
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST

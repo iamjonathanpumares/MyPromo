@@ -1,3 +1,4 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,13 +11,13 @@
     <title>Login</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="static/css/bootstrap.css" rel="stylesheet">
+    <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
     <!--external css-->
-    <link href="static/font-awesome/css/font-awesome.css" rel="stylesheet" />
+    <link href="{% static "font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
         
     <!-- Custom styles for this template -->
-    <link href="static/css/style.css" rel="stylesheet">
-    <link href="static/css/style-responsive.css" rel="stylesheet">
+    <link href="{% static "css/style.css" %}" rel="stylesheet">
+    <link href="{% static "css/style-responsive.css" %}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -33,7 +34,7 @@
 
 	  <div id="login-page">
 	  	<div class="container">
-	  		<img class="imagen1" src="static/img/logoveltium.png" height="10%"><img class="imagen2" src="static/img/byveltium.png" height="5%"><img class="imagen3" src="static/img/titulo.png" height="10%">
+	  		<img class="imagen1" src="{% static "img/logoveltium.png" %}" width="30px" height="39px"><img class="imagen2" src="{% static "img/byveltium.png" %}" width="122px" height="20px"><img class="imagen3" src="{% static "img/titulo.png" %}" width="434px" height="70px">
 	  	
 		      <form class="form-login" action="index.html">
 		        <h2 class="form-login-heading">Inicio de sesión</h2>
@@ -83,14 +84,14 @@
 	  </div>
 
     <!-- js placed at the end of the document so the pages load faster -->
-    <script src="static/js/jquery.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
+    <script src="{% static "js/jquery.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
 
     <!--BACKSTRETCH-->
     <!-- You can use an image of whatever size. This script will stretch to fit in any screen size.-->
-    <script type="text/javascript" src="static/js/jquery.backstretch.min.js"></script>
+    <script type="text/javascript" src="{% static "js/jquery.backstretch.min.js" %}"></script>
     <script>
-        $.backstretch("static/img/login-bg.jpg", {speed: 500});
+        $.backstretch("{% static "img/login-bg.jpg" %}", {speed: 500});
     </script>
 
 

@@ -10,7 +10,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     #url(r'^signup/','userprofiles.views.signup', name='signup'),
     #url(r'^home/$', TemplateView.as_view(template_name='base.html'), name='home'),
-    url(r'^login/$', LoginUserPromotorView.as_view(), name='login'),
+    url(r'^entrar/$', LoginUserPromotorView.as_view(), name='entrar'),
     url(r'^agregar/$', 'userprofiles.views.RegisterUsuarioPromotorView', name='agregar'),
     url(r'^lista-usuarios/$', UsuarioPromotorListView.as_view(), name='agregar'),
 )

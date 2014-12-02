@@ -2,6 +2,10 @@
 from django import forms
 from .models import UsuarioPromotor, UsuarioAfiliado
 
+class LoginForm(forms.Form):
+	usuario = forms.CharField()
+	password = forms.CharField(widget=forms.PasswordInput)
+
 class RegistrationUsuarioPromotorForm(forms.ModelForm):
 	username = forms.CharField(max_length=100, required=True)
 	nombre = forms.CharField(max_length=200, required=True)

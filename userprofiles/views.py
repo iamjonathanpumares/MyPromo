@@ -1,18 +1,21 @@
 from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
 from django.contrib.auth.forms import UserCreationForm
-from django.views.generic import FormView, ListView
+from django.views.generic import ListView
+from django.views.generic.edit import FormView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
 from django.contrib import messages
 from .models import UsuarioPromotor
+from .forms import LoginForm
 
 class LoginUserPromotorView(FormView):
-	model = UsuarioPromotor
+	#model = UsuarioPromotor
 	template_name = 'login.html'
 	success_url = '/agregar/'
+	form_class = LoginForm
 
-	def form_valid(self, form):
-		return super(LoginUserPromotorView, self).form_valid(form)
+	"""def form_valid(self, form):
+		return super(LoginUserPromotorView, self).form_valid(form)"""
 
 class UsuarioPromotorListView(ListView):
 	model = UsuarioPromotor

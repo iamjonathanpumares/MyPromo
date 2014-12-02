@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django import forms
 from .models import UsuarioPromotor, UsuarioAfiliado
+from django.contrib.auth.forms import AuthenticationForm
 
 class LoginForm(forms.Form):
 	usuario = forms.CharField()

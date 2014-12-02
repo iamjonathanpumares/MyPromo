@@ -1,8 +1,6 @@
 from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
-from django.contrib.auth.forms import UserCreationForm
-from django.views.generic import ListView
-from django.views.generic.edit import FormView
+from django.views.generic import ListView, FormView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
 from django.contrib import messages
 from .models import UsuarioPromotor

@@ -1,27 +1,18 @@
 from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
 from django.contrib.auth.forms import UserCreationForm
-from django.views.generic.edit import CreateView
-from django.views.generic import ListView
+from django.views.generic import FormView, ListView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from .models import UsuarioPromotor
 
-class RegistrationUserPromotorView(SuccessMessageMixin, CreateView):
+class LoginUserPromotorView(FormView):
 	model = UsuarioPromotor
-	#fields = ['username', 'nombre', 'apellidos', 'password']
-	form_class = RegistrationUsuarioPromotorForm
-	template_name = 'usuarios_agregar.html'
-	#success_url = '/agregar/'
-	success_message = 'El usuario %s se ha creado correctamente en el modelo'
+	template_name = 'login.html'
+	success_url = '/agregar/'
 
 	def form_valid(self, form):
-		form.save()
-		return super(RegistrationUserPromotorView, self).form_valid(form)
-
-	def get_success_message(self, cleaned_data):
-		return self.success_message % cleaned_data['username']
+		return super(LoginUserPromotorView, self).form_valid(form)
 
 class UsuarioPromotorListView(ListView):
 	model = UsuarioPromotor

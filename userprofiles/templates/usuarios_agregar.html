@@ -37,7 +37,7 @@
                   <div class="form-panel">
                       <h4 class="mb"><i class="fa fa-angle-right"></i> Método individual</h4>
                       <form class="form-horizontal style-form" method="post">
-                        {% csrf_token %}
+                          {% csrf_token %}
                           <div class="form-group">
                               {{ form.non_field_errors }}
                               {{ form.username.errors }}

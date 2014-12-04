@@ -4,8 +4,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import UsuarioPromotor, UsuarioAfiliado
 
 class LoginForm(AuthenticationForm):
-	usuario = forms.CharField()
-	password = forms.CharField(widget=forms.PasswordInput)
+	pass
 
 """ Gracias a la herencia en Python podemos aprovecharla para utilizar clases ya definidas y sin escribir tanto codigo, 
 	Django ya trae clases para la autenticacion del usuario.

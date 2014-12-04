@@ -3,6 +3,7 @@ from django.template import RequestContext
 from django.views.generic import ListView, FormView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
 from django.contrib import messages
+from django.contrib.auth.forms import AuthenticationForm
 from .models import UsuarioPromotor
 from .forms import LoginForm
 
@@ -10,10 +11,11 @@ class LoginUserPromotorView(FormView):
 	#model = UsuarioPromotor
 	template_name = 'login.html'
 	success_url = '/agregar/'
-	form_class = LoginForm
+	form_class = AuthenticationForm
 
-	"""def form_valid(self, form):
-		return super(LoginUserPromotorView, self).form_valid(form)"""
+	def form_valid(self, form):
+		login(self.user_cache)
+		return super(LoginUserPromotorView, self).form_valid(form)
 
 class UsuarioPromotorListView(ListView):
 	model = UsuarioPromotor

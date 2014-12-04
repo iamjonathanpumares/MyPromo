@@ -36,14 +36,15 @@
 	  	<div class="container">
 	  		<img class="imagen1" src="{% static "img/logoveltium.png" %}" height="10%"><img class="imagen2" src="{% static "img/byveltium.png" %}" height="5%"><img class="imagen3" src="{% static "img/titulo.png" %}" height="10%">
 	  	
-		      <form class="form-login" action="index.html">
+		      <form class="form-login" action="" method="post">
+		      	{% csrf_token %}
 		        <h2 class="form-login-heading">Inicio de sesión</h2>
 		        <div class="login-wrap">
-		            <input type="text" class="form-control" placeholder="ID" autofocus>
+		            {{ form.username }}
 		            <br>
-		            <input type="password" class="form-control" placeholder="Contraseña">
+		            {{ form.password }}
 		            <br>
-		            <button class="btn btn-theme btn-block" href="index.html" type="submit"><i class="fa fa-lock"></i> Entrar</button>
+		            <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-lock"></i> Entrar</button>
 		            <hr>
 		            
 		            

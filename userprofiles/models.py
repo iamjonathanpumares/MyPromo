@@ -17,7 +17,7 @@ class UsuarioPromotorManager(BaseUserManager):
 
 class UsuarioPromotor(AbstractBaseUser):
 	idUsuarioPromotor = models.IntegerField(primary_key=True)
-	username = models.CharField(verbose_name='Usuario', unique=True, max_length=100)
+	username = models.CharField(verbose_name='Usuario', unique=True, max_length=25)
 	nombre = models.CharField(max_length=200, verbose_name='Nombre')
 	apellidos = models.CharField(max_length=200, verbose_name='Apellidos')
 

@@ -40,8 +40,11 @@
 		      	{% csrf_token %}
 		        <h2 class="form-login-heading">Inicio de sesión</h2>
 		        <div class="login-wrap">
+		        	{{ form.non_field_errors }}
+		        	{{ form.username.errors }}
 		            {{ form.username }}
 		            <br>
+		            {{ form.password.errors }}
 		            {{ form.password }}
 		            <br>
 		            <button class="btn btn-theme btn-block" type="submit"><i class="fa fa-lock"></i> Entrar</button>

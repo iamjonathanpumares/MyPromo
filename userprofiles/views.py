@@ -4,6 +4,7 @@ from django.views.generic import ListView, FormView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth import login
 from .models import UsuarioPromotor
 from .forms import LoginForm
 
@@ -14,7 +15,7 @@ class LoginUserPromotorView(FormView):
 	form_class = AuthenticationForm
 
 	def form_valid(self, form):
-		login(self.user_cache)
+		#login(self.request, form.get_user())
 		return super(LoginUserPromotorView, self).form_valid(form)
 
 class UsuarioPromotorListView(ListView):

@@ -21,7 +21,7 @@ class UsuarioPromotor(AbstractBaseUser):
 	nombre = models.CharField(max_length=200, verbose_name='Nombre')
 	apellidos = models.CharField(max_length=200, verbose_name='Apellidos')
 
-	is_active = True
+	is_active = models.BooleanField(default=True)
 
 	USERNAME_FIELD = 'username'
 	REQUIRED_FIELDS = ['nombre', 'apellidos']

@@ -55,6 +55,8 @@ ROOT_URLCONF = 'mypromo.urls'
 
 WSGI_APPLICATION = 'mypromo.wsgi.application'
 
+#AUTH_USER_MODEL = 'userprofiles.UsuarioPromotor'
+
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

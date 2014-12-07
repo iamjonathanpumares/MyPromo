@@ -1,7 +1,7 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.models import User
 
-class UsuarioPromotorManager(BaseUserManager):
+"""class UsuarioPromotorManager(BaseUserManager):
 	def create_user(self, username, nombre, apellidos, password):
 		if not username:
 			raise ValueError('Necesita tener un username')
@@ -13,26 +13,14 @@ class UsuarioPromotorManager(BaseUserManager):
 		)
 		user.set_password(password)
 		user.save(using=self._db)
-		return user
+		return user"""
 
-class UsuarioPromotor(AbstractBaseUser):
-	idUsuarioPromotor = models.IntegerField(primary_key=True)
-	username = models.CharField(verbose_name='Usuario', unique=True, max_length=25)
+class UsuarioPromotor(models.Model):
+	user = models.OneToOneField(User)
 	nombre = models.CharField(max_length=200, verbose_name='Nombre')
 	apellidos = models.CharField(max_length=200, verbose_name='Apellidos')
 
-	is_active = models.BooleanField(default=True)
-
-	USERNAME_FIELD = 'username'
-	REQUIRED_FIELDS = ['nombre', 'apellidos']
-
 	objects = UsuarioPromotorManager()
-
-	def __unicode__(self):
-		return self.username
-
-	def get_full_name(self):
-		return self.nombre + " " + self.apellidos
 
 	def get_short_name(self):
 		return self.nombre

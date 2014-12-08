@@ -38,7 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     #Apps proyecto
     'userprofiles',
-    'mypromo'
+    'mypromo',
+    'cupones'
 )
 
 MIDDLEWARE_CLASSES = (

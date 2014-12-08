@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, BaseUserManager, AbstractBaseUser
 
 """class UsuarioPromotorManager(BaseUserManager):
 	def create_user(self, username, nombre, apellidos, password):
@@ -15,15 +15,10 @@ from django.contrib.auth.models import User
 		user.save(using=self._db)
 		return user"""
 
-class UsuarioPromotor(models.Model):
+class Promotor(models.Model):
 	user = models.OneToOneField(User)
 	nombre = models.CharField(max_length=200, verbose_name='Nombre')
 	apellidos = models.CharField(max_length=200, verbose_name='Apellidos')
-
-	objects = UsuarioPromotorManager()
-
-	def get_short_name(self):
-		return self.nombre
 
 class UsuarioAfiliadoManager(BaseUserManager):
 	def create_user(self, username, nombreEmpresa, representante, direccion, telefono, email, facebook, twitter, codigoValidacion, logo, giro, cartel, password):

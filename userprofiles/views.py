@@ -3,23 +3,24 @@ from django.template import RequestContext
 from django.views.generic import ListView, FormView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
 from django.contrib import messages
+from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login
-from .models import UsuarioPromotor
+from .models import Promotor
 from .forms import LoginForm
 
 class LoginUserPromotorView(FormView):
 	#model = UsuarioPromotor
 	template_name = 'login.html'
 	success_url = '/agregar/'
-	form_class = AuthenticationForm
+	form_class = LoginForm
 
 	def form_valid(self, form):
 		#login(self.request, form.get_user())
 		return super(LoginUserPromotorView, self).form_valid(form)
 
 class UsuarioPromotorListView(ListView):
-	model = UsuarioPromotor
+	model = User
 	template_name = 'lista_usuarios.html'
 
 def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formulario de registro

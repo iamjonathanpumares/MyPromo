@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     #Apps proyecto
     'userprofiles',
     'mypromo',
-    'cupones'
+    'cupones',
+    'promociones',
 )
 
 MIDDLEWARE_CLASSES = (

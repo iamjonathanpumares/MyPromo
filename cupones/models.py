@@ -9,7 +9,14 @@ class Cupon(models.Model):
 	descripcion = models.TextField()
 	imagen = models.ImageField(upload_to='cupones')
 
+	def __unicode__(self):
+		return self.titulo
+
 class UsuariosCupones(models.Model):
 	usuario = models.ForeignKey(User)
-	cupon = models.ForeignKey(Cupon)
+	cupon_usuario = models.ForeignKey(Cupon)
 	status = models.CharField(max_length=10)
+	fecha = models.DateField()
+
+	def __unicode__(self):
+		return "%s - %s" % (self.usuario.username, self.cupon_usuario.titulo)

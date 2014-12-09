@@ -1,51 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User, BaseUserManager, AbstractBaseUser
 
-"""class UsuarioPromotorManager(BaseUserManager):
-	def create_user(self, username, nombre, apellidos, password):
-		if not username:
-			raise ValueError('Necesita tener un username')
-
-		user = self.model(
-			username=username,
-			nombre=nombre,
-			apellidos=apellidos
-		)
-		user.set_password(password)
-		user.save(using=self._db)
-		return user"""
-
-class Promotor(models.Model):
+class Afiliado(models.Model):
 	user = models.OneToOneField(User)
-	nombre = models.CharField(max_length=200, verbose_name='Nombre')
-	apellidos = models.CharField(max_length=200, verbose_name='Apellidos')
-
-class UsuarioAfiliadoManager(BaseUserManager):
-	def create_user(self, username, nombreEmpresa, representante, direccion, telefono, email, facebook, twitter, codigoValidacion, logo, giro, cartel, password):
-		if not username:
-			raise ValueError('Necesita tener un username')
-
-		user = self.model(
-			username=username,
-			nombreEmpresa=nombreEmpresa,
-			representante=representante,
-			direccion=direccion,
-			telefono=telefono,
-			email=email,
-			facebook=facebook,
-			twitter=twitter,
-			codigoValidacion=codigoValidacion,
-			logo=logo,
-			giro=giro,
-			cartel=cartel 
-		)
-		user.set_password(password)
-		user.save(using=self._db)
-		return user
-
-class UsuarioAfiliado(AbstractBaseUser):
-	idUsuarioAfiliado = models.IntegerField(primary_key=True)
-	username = models.CharField(verbose_name='Usuario', unique=True, max_length=100)
 	nombreEmpresa = models.CharField(max_length=255, verbose_name='Empresa')
 	representante = models.CharField(max_length=200, verbose_name='Representante')
 	direccion = models.CharField(max_length=255, verbose_name='Direccion')
@@ -54,22 +11,9 @@ class UsuarioAfiliado(AbstractBaseUser):
 	facebook = models.CharField(max_length=200, verbose_name='Facebook')
 	twitter = models.CharField(max_length=100, verbose_name='Twitter')
 	codigoValidacion = models.CharField(max_length=255, verbose_name='Codigo validacion')
-	logo = models.ImageField(upload_to='logos', verbose_name='Logo')
+	logo = models.ImageField(upload_to='userprofiles/logos', verbose_name='Logo')
 	giro = models.CharField(max_length=100, verbose_name='Giro')
-	cartel = models.ImageField(upload_to='carteles', verbose_name='Cartel')
-
-	is_active = True
-
-	USERNAME_FIELD = 'username'
-	REQUIRED_FIELDS = ['nombreEmpresa', 'representante', 'direccion, telefono', 'email', 'facebook', 'twitter', 'codigoValidacion', 'logo', 'giro', 'cartel']
-
-	objects = UsuarioAfiliadoManager()
+	cartel = models.ImageField(upload_to='userprofiles/carteles', verbose_name='Cartel')
 
 	def __unicode__(self):
-		self.username
-
-	def get_full_name(self):
-		return self.nombreEmpresa + " " + self.representante
-
-	def get_short_name(self):
 		return self.nombreEmpresa

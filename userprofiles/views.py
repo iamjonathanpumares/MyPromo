@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login
-from .models import Promotor
 from .forms import LoginForm
 
 class LoginUserPromotorView(FormView):

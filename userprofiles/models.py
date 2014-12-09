@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, BaseUserManager, AbstractBaseUser
+from django.contrib.auth.models import User
 
 class Afiliado(models.Model):
 	user = models.OneToOneField(User)
@@ -17,3 +17,9 @@ class Afiliado(models.Model):
 
 	def __unicode__(self):
 		return self.nombreEmpresa
+
+class Local(models.Model):
+	latitud = models.FloatField()
+	longitud = models.FloatField()
+	direccion = models.CharField(max_length=80)
+	local_afiliado = models.ForeignKey(Afiliado)

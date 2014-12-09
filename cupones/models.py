@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from userprofiles.models import Afiliado
 
 class Cupon(models.Model):
 	titulo = models.CharField(max_length=40)
@@ -7,7 +8,8 @@ class Cupon(models.Model):
 	fecha_creacion = models.DateField(auto_now=True)
 	vigencia = models.DateField()
 	descripcion = models.TextField()
-	imagen = models.ImageField(upload_to='cupones')
+	imagen = models.ImageField(upload_to='cupones/imagenes')
+	cupon_afiliado = models.ForeignKey(Afiliado)
 
 	def __unicode__(self):
 		return self.titulo

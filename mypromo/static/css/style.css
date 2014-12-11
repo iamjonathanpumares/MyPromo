@@ -123,6 +123,7 @@ a, a:hover, a:focus {
   color: #fff;
   background-color: #A12020;
   border-color: #CC2929;
+  margin-left: 0.5em
 }
 .btn-theme:hover,
 .btn-theme:focus,

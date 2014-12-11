@@ -39,10 +39,43 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 			user.save()
 		return user
 
-class AfiliadoForm(forms.ModelForm):
+class UserAfiliadoForm(UserCreationForm):
+	username = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	password1 = forms.CharField(widget=forms.PasswordInput(attrs={ 'class': 'form-control'}), label="Password", required=True)
+	password2 = forms.CharField(widget=forms.PasswordInput(attrs={ 'class': 'form-control'}), label="Password (again)", required=True)
+
+	""" Como nuestra clase padre UserCreationForm hereda de forms.ModelForm, 
+		que practicamente es un formulario basado en un modelo, 
+		en este caso de nuestro modelo personalizado de usuario UsuarioPromotor """
+	class Meta:
+		model = User
+		fields = ['username', 'password1', 'password2']
+
+	""" En este caso estamos usando un metodo llamado save que ya traen los formularios, 
+		y que se ejecuta para guardar un objeto de tipo Modelo y guardarlo en la base de datos """
+	def save(self, commit=True):
+		user = super(UserAfiliadoForm, self).save(commit=True)
+		promotor = Group.objects.get(name='Afiliado')
+		user.groups.add(promotor)
+		if commit:
+			user.save()
+		return user
+
+class PerfilAfiliadoForm(forms.ModelForm):
+	nombreEmpresa = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	representante = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	direccion = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	telefono = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	email = forms.EmailField(widget=forms.EmailInput(attrs={ 'class': 'form-control'}))
+	facebook = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	twitter = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	giro = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	logo = forms.ImageField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))
+	cartel = forms.ImageField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))
+
 	class Meta:
 		model = Afiliado
-		fields = ['nombreEmpresa', 'representante', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'codigoValidacion', 'logo', 'giro', 'cartel']
+		fields = ['nombreEmpresa', 'representante', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'giro', 'cartel']
 
 	def guardarAfiliado(self, usuario):
 		nombreEmpresa = self.cleaned_data['nombreEmpresa']
@@ -52,7 +85,7 @@ class AfiliadoForm(forms.ModelForm):
 		email = self.cleaned_data['email']
 		facebook = self.cleaned_data['facebook']
 		twitter = self.cleaned_data['twitter']
-		codigoValidacion = self.cleaned_data['codigoValidacion']
+		codigoValidacion = 'jaiqajiqajaqjoqajoqaj'
 		logo = self.cleaned_data['logo']
 		giro = self.cleaned_data['giro']
 		cartel = self.cleaned_data['cartel']

@@ -29,6 +29,8 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 		model = User
 		fields = ['username', 'first_name', 'last_name', 'password1', 'password2']
 
+	""" En este caso estamos usando un metodo llamado save que ya traen los formularios, 
+		y que se ejecuta para guardar un objeto de tipo Modelo y guardarlo en la base de datos """
 	def save(self, commit=True):
 		user = super(RegistrationUsuarioPromotorForm, self).save(commit=True)
 		promotor = Group.objects.get(name='Promotor')
@@ -36,6 +38,27 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 		if commit:
 			user.save()
 		return user
+
+class AfiliadoForm(forms.ModelForm):
+	class Meta:
+		model = Afiliado
+		fields = ['nombreEmpresa', 'representante', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'codigoValidacion', 'logo', 'giro', 'cartel']
+
+	def guardarAfiliado(self, usuario):
+		nombreEmpresa = self.cleaned_data['nombreEmpresa']
+		representante = self.cleaned_data['representante']
+		direccion = self.cleaned_data['direccion']
+		telefono = self.cleaned_data['telefono']
+		email = self.cleaned_data['email']
+		facebook = self.cleaned_data['facebook']
+		twitter = self.cleaned_data['twitter']
+		codigoValidacion = self.cleaned_data['codigoValidacion']
+		logo = self.cleaned_data['logo']
+		giro = self.cleaned_data['giro']
+		cartel = self.cleaned_data['cartel']
+		afiliado = Afiliado(user=usuario, nombreEmpresa=nombreEmpresa, representante=representante, direccion=direccion, telefono=telefono, email=email, facebook=facebook, twitter=twitter, codigoValidacion=codigoValidacion, logo=logo, giro=giro, cartel=cartel)
+		afiliado.save()
+		return afiliado
 
 	#def clean(self): # Este metodo override(sobreescrito) es el encargado de la validacion de multiples campos del formulario
 		""" Llamamos a la superclase para que se ejecute el metodo clean del padre 

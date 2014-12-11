@@ -12,5 +12,6 @@ urlpatterns = patterns('',
     #url(r'^home/$', TemplateView.as_view(template_name='base.html'), name='home'),
     url(r'^entrar/$', LoginUserPromotorView.as_view(), name='entrar'),
     url(r'^agregar/$', 'userprofiles.views.RegisterUsuarioPromotorView', name='agregar'),
+    url(r'^agregar/afiliados$', 'userprofiles.views.AfiliadoView', name='agregar_afiliados'),
     url(r'^lista-usuarios/$', UsuarioPromotorListView.as_view(), name='agregar'),
 )

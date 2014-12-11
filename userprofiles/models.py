@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Afiliado(models.Model):
-	user = models.OneToOneField(User)
+	user = models.OneToOneField(User, related_name='perfil_afiliado')
 	nombreEmpresa = models.CharField(max_length=255, verbose_name='Empresa')
 	representante = models.CharField(max_length=200, verbose_name='Representante')
 	direccion = models.CharField(max_length=255, verbose_name='Direccion')

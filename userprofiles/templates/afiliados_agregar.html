@@ -6,9 +6,10 @@
 </head>
 <body>
 	<section>
-		<form method='post' action=''>
+		<form enctype="multipart/form-data" method='post' action=''>
 			{% csrf_token %}
-			{{form.as_p}}
+			{{ form_user.as_p }}
+			{{ form_afiliado.as_p }}
 			<p><input type="submit" value="Registrar"></p>
 		</form>
 	</section>

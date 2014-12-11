@@ -4,9 +4,10 @@ from django.views.generic import ListView, FormView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login
-from .forms import LoginForm
+from .forms import LoginForm, AfiliadoForm
+from .models import Afiliado
 
 class LoginUserPromotorView(FormView):
 	#model = UsuarioPromotor
@@ -21,6 +22,19 @@ class LoginUserPromotorView(FormView):
 class UsuarioPromotorListView(ListView):
 	model = User
 	template_name = 'lista_usuarios.html'
+
+def AfiliadoView(request):
+	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
+		form_user = UserCreationForm(request.POST) # Se crea una instancia del formulario UserCreationForm y le pasamos los datos del formulario
+		form_afiliado = AfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario AfiliadoForm y le pasamos los datos junto con los archivo subidos
+		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
+			usuario = form_user.save() # Se crea el usuario
+			form_afiliado.guardarAfiliado(usuario) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
+			return redirect('/lista-usuarios/')
+	else:
+		form_user = UserCreationForm()
+		form_afiliado = AfiliadoForm()
+	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
 
 def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formulario de registro
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST

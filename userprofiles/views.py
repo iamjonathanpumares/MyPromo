@@ -1,31 +1,40 @@
 from django.shortcuts import render_to_response, redirect, render
 from django.template import RequestContext
-from django.contrib.auth.forms import UserCreationForm
-from django.views.generic.edit import CreateView
-from django.views.generic import ListView
+from django.views.generic import ListView, FormView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
-from .models import UsuarioPromotor
+from django.contrib.auth.models import Group, User
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login
+from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm
+from .models import Afiliado
 
-class RegistrationUserPromotorView(SuccessMessageMixin, CreateView):
-	model = UsuarioPromotor
-	#fields = ['username', 'nombre', 'apellidos', 'password']
-	form_class = RegistrationUsuarioPromotorForm
-	template_name = 'usuarios_agregar.html'
-	#success_url = '/agregar/'
-	success_message = 'El usuario %s se ha creado correctamente en el modelo'
+class LoginUserPromotorView(FormView):
+	#model = UsuarioPromotor
+	template_name = 'login.html'
+	success_url = '/agregar/'
+	form_class = LoginForm
 
 	def form_valid(self, form):
-		form.save()
-		return super(RegistrationUserPromotorView, self).form_valid(form)
-
-	def get_success_message(self, cleaned_data):
-		return self.success_message % cleaned_data['username']
+		#login(self.request, form.get_user())
+		return super(LoginUserPromotorView, self).form_valid(form)
 
 class UsuarioPromotorListView(ListView):
-	model = UsuarioPromotor
+	model = User
 	template_name = 'lista_usuarios.html'
+
+def AfiliadoView(request):
+	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
+		form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserCreationForm y le pasamos los datos del formulario
+		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario AfiliadoForm y le pasamos los datos junto con los archivo subidos
+		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
+			usuario = form_user.save() # Se crea el usuario
+			form_afiliado.guardarAfiliado(usuario) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
+			return redirect('/lista-usuarios/')
+	else:
+		form_user = UserAfiliadoForm()
+		form_afiliado = PerfilAfiliadoForm()
+	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
 
 def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formulario de registro
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
@@ -35,14 +44,8 @@ def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formul
 			usuario = form.cleaned_data['username'] # Guardamos el nombre del usuario con ayuda de la variable cleaned_data
 			messages.info(request, 'Usuario %s agregado correctamente' % usuario) # Creamos un mensaje de exito para mostrarlo en la otra vista
 			return redirect('/lista-usuarios/') # Nos redirijimos a la vista lista_usuarios
-			#return render_to_response('lista_usuarios.html', { 'save_success': save_success, 'usuario': usuario })
 	else:
 			form = RegistrationUsuarioPromotorForm() # En caso de no ser una peticion POST se crea la instancia del formulario
-			form.fields['username'].widget.attrs = { 'class': 'form-control' } # Esto agrega un atributo class a cada widget para ponerle estilos
-			form.fields['nombre'].widget.attrs = { 'class': 'form-control' }
-			form.fields['apellidos'].widget.attrs = { 'class': 'form-control' }
-			form.fields['password1'].widget.attrs = { 'class': 'form-control' }
-			form.fields['password2'].widget.attrs = { 'class': 'form-control' }
 	return render_to_response('usuarios_agregar.html', { 'form': form }, context_instance=RequestContext(request)) # Renderizamos el formulario para que se muestra en el template
 
 def lista_usuarios_view(request):

@@ -38,7 +38,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     #Apps proyecto
     'userprofiles',
-    'mypromo'
+    'mypromo',
+    'cupones',
+    'promociones',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -54,6 +56,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'mypromo.urls'
 
 WSGI_APPLICATION = 'mypromo.wsgi.application'
+
+#AUTH_USER_MODEL = 'userprofiles.UsuarioPromotor'
 
 
 # Database

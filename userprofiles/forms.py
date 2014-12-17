@@ -55,8 +55,8 @@ class UserAfiliadoForm(UserCreationForm):
 		y que se ejecuta para guardar un objeto de tipo Modelo y guardarlo en la base de datos """
 	def save(self, commit=True):
 		user = super(UserAfiliadoForm, self).save(commit=True)
-		promotor = Group.objects.get(name='Afiliado')
-		user.groups.add(promotor)
+		group_afiliado = Group.objects.get(name='Afiliado')
+		user.groups.add(group_afiliado)
 		if commit:
 			user.save()
 		return user
@@ -91,17 +91,7 @@ class PerfilAfiliadoForm(forms.ModelForm):
 		cartel = self.cleaned_data['cartel']
 		afiliado = Afiliado(user=usuario, nombreEmpresa=nombreEmpresa, representante=representante, direccion=direccion, telefono=telefono, email=email, facebook=facebook, twitter=twitter, codigoValidacion=codigoValidacion, logo=logo, giro=giro, cartel=cartel)
 		afiliado.save()
-		return afiliado
+		return afiliadogroup_
 
-	#def clean(self): # Este metodo override(sobreescrito) es el encargado de la validacion de multiples campos del formulario
-		""" Llamamos a la superclase para que se ejecute el metodo clean del padre 
-		        y nos devuelva un diccionario cleaned_data, 
-		        con los campos del formulario ya convertidos a su tipo de dato correcto """
-		#cleaned_data = super(RegistrationUsuarioPromotorForm, self).clean()
-
-		""" Comprobamos si en el diccionario cleaned_data 
-			contiene los campos del formulario password1 y password2 """
-		"""if 'password1' in self.cleaned_data and 'password2' in self.cleaned_data: 
-			if self.cleaned_data['password1'] != self.cleaned_data['password2']: # Comprobamos si la contrasenas son diferentes
-				raise forms.ValidationError('Las contraseñas no coinciden') # Si son diferentes lanzamos un error
-			return self.cleaned_data # De lo contrario retornamos el diccionario cleaned_data"""
+class UsuarioCSVForm(forms.Form):
+	archivoCSV = forms.FileField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))

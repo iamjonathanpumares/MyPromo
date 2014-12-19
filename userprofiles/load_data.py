@@ -11,8 +11,8 @@ def importarCSV(archivo_csv):
 		if row[0] != 'matricula': # ignoramos la primera línea del archivo CSV
 			usuario = User()
 			usuario.username = row[0]
-			usuario.first_name = row[1].encode('utf-8')
-			usuario.last_name = row[2].encode('utf-8')
+			usuario.first_name = row[1]
+			usuario.last_name = row[2]
 			usuario.set_password = row[3]
 			usuario.save()
 			group_usuario = Group.objects.get(name='Usuario')

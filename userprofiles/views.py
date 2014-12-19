@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login
-from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm
+from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm
 from .models import Afiliado
 from .load_data import importarCSV
 
@@ -24,6 +24,10 @@ class LoginUserPromotorView(FormView):
 class UsuarioPromotorListView(ListView):
 	model = User
 	template_name = 'lista_usuarios.html'
+
+class LocalView(FormView):
+	form_class = LocalForm
+	template_name = 'locales.html'
 
 def AfiliadoView(request):
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST

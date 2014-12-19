@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User, Group
-from .models import Afiliado
+from .models import Afiliado, Local
 
 class LoginForm(AuthenticationForm):
 	username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'ID' }))
@@ -95,3 +95,7 @@ class PerfilAfiliadoForm(forms.ModelForm):
 
 class UsuarioCSVForm(forms.Form):
 	archivoCSV = forms.FileField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))
+
+class LocalForm(forms.ModelForm):
+	class Meta:
+		model = Local

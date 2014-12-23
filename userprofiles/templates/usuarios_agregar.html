@@ -29,6 +29,29 @@
     <![endif]-->
 {% endblock styles_tags %}
 
+{% block menu_inicio %} 
+<li class="mt">
+    <a href="index.html">
+        <i class="fa fa-home"></i>
+        <span>Inicio</span>
+    </a>
+</li>
+{% endblock menu_inicio %}
+
+{% block menu_familia_unid %}
+<li class="sub-menu">
+    <a class="active" href="javascript:;" >
+        <i class="fa fa-users"></i>
+        <span>Familia UNID</span>
+    </a>
+    <ul class="sub">
+        <li class="active"><a href ="/agregar-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i>Agregar</a></li>
+         <li><a href ="/lista-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i>Modificar</a></li>
+        
+    </ul>
+</li>
+{% endblock menu_familia_unid %}
+
 {% block section %}
     <h3><i class="fa fa-angle-right"></i> Agregar usuario final</h3>
     

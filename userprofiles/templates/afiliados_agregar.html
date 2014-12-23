@@ -27,6 +27,28 @@
     <![endif]-->
 {% endblock styles_tags %}
 
+{% block menu_inicio %} 
+<li class="mt">
+    <a href="index.html">
+        <i class="fa fa-home"></i>
+        <span>Inicio</span>
+    </a>
+</li>
+{% endblock menu_inicio %}
+{% block menu_afiliados %}
+<li class="sub-menu">
+    <a class="active" href="javascript:;" >
+        <i class="fa fa-users"></i>
+        <span>Afiliados</span>
+    </a>
+    <ul class="sub">
+        <li class="active"><a href ="/agregar-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i>Agregar</a></li>
+         <li><a href ="/lista-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i>Modificar</a></li>
+        
+    </ul>
+</li>
+{% endblock menu_afiliados %}
+
 {% block section %}
 	<h3><i class="fa fa-angle-right"></i> Agregar Empresas</h3>
  <div class="row mt">
@@ -148,9 +170,9 @@
 
                           <button type="reset" class="btn btn-primary goright ml">Limpiar</button>
                           &nbsp;
-                          <button type="submit" class="btn btn-theme goright btn btn-default">Guardar y salir</button>
+                          <button type="submit" name="submit-guardar-salir" class="btn btn-theme goright btn btn-default">Guardar y salir</button>
                           &nbsp;
-                          <button type="submit" class="btn btn-theme goright btn btn-default">Guardar y agregar locales</button>
+                          <button type="submit" name="submit-guardar-locales" class="btn btn-theme goright btn btn-default">Guardar y agregar locales</button>
                         </form>
                        </div> 
               </div>

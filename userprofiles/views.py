@@ -1,14 +1,17 @@
 # -*- encoding: utf-8 -*-
+import json
 from django.shortcuts import render_to_response, redirect, render
+from django.http import HttpResponse
 from django.template import RequestContext
 from django.views.generic import ListView, FormView
 from userprofiles.forms import RegistrationUsuarioPromotorForm
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import login, logout
 from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm
-from .models import Afiliado
+from .models import Afiliado, Local
 from .load_data import importarCSV
 
 class LoginUserPromotorView(FormView):
@@ -18,30 +21,48 @@ class LoginUserPromotorView(FormView):
 	form_class = LoginForm
 
 	def form_valid(self, form):
-		#login(self.request, form.get_user())
+		login(self.request, form.user_cache)
 		return super(LoginUserPromotorView, self).form_valid(form)
 
 class UsuarioPromotorListView(ListView):
 	model = User
 	template_name = 'lista_usuarios.html'
 
-class LocalView(FormView):
-	form_class = LocalForm
-	template_name = 'locales.html'
+def LocalView(request, usuario, id_usuario):
+	if request.method == 'POST':
+		json_locales = request.read()
+		locales = json.loads(json_locales)
+		usuario_afiliado = Afiliado.objects.get(user=id_usuario)
+		if usuario_afiliado.user.username == usuario:
+			i = 0
+			num_locales = len(locales['direcciones'])
+			while i < num_locales:
+				local_afiliado = Local(direccion=locales['direcciones'][i], latitud=locales['latitudes'][i], longitud=locales['longitudes'][i], local_afiliado=usuario_afiliado)
+				local_afiliado.save()
+				i += 1
+			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
+			return HttpResponse('/lista-usuarios/')
+	else:
+		form = LocalForm()
+	return render_to_response('locales.html', { 'form': form }, context_instance=RequestContext(request))
 
 def AfiliadoView(request):
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
-		form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserCreationForm y le pasamos los datos del formulario
-		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario AfiliadoForm y le pasamos los datos junto con los archivo subidos
+		form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserAfiliadoForm y le pasamos los datos del formulario
+		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario PerfilAfiliadoForm y le pasamos los datos junto con los archivo subidos
 		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
 			usuario = form_user.save() # Se crea el usuario
-			form_afiliado.guardarAfiliado(usuario) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
-			return redirect('/lista-usuarios/')
+			afiliado = form_afiliado.guardarAfiliado(usuario) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
+			if 'submit-guardar-salir' in request.POST:
+				return redirect('/lista-afiliados/')
+			elif 'submit-guardar-locales' in request.POST:
+				return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + usuario.id + '/')
 	else:
 		form_user = UserAfiliadoForm()
 		form_afiliado = PerfilAfiliadoForm()
 	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
 
+@login_required(login_url='/login/')
 def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formulario de registro
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
 		if 'submit-agregar' in request.POST:
@@ -65,3 +86,7 @@ def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formul
 
 def lista_usuarios_view(request):
 	return render(request, 'lista_usuarios.html')
+
+def logout_view(request):
+	logout(request)
+	return redirect('/login/')

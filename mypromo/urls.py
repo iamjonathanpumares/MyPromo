@@ -12,11 +12,12 @@ urlpatterns = patterns('',
     #url(r'^home/$', TemplateView.as_view(template_name='base.html'), name='home'),
 
 
-    url(r'^entrar/$', LoginUserPromotorView.as_view(), name='entrar'), # URL para entrar al Login de MyPromo
+    url(r'^login/$', LoginUserPromotorView.as_view(), name='login'), # URL para entrar al Login de MyPromo
+    url(r'^logout/$', 'userprofiles.views.logout_view', name='logout'), # URL para entrar al Login de MyPromo
 
     # App userprofiles ----------------------------------------------------------------------------------------------------
     url(r'^agregar-usuarios/$', 'userprofiles.views.RegisterUsuarioPromotorView', name='agregar'), # URL para agregar usuarios finales
     url(r'^agregar-afiliados/$', 'userprofiles.views.AfiliadoView', name='agregar_afiliados'), # URL para agregar afiliados
-    url(r'^agregar-locales/$', LocalView.as_view(), name='agregar_locales'), # URL para agregar locales
+    url(r'^agregar-locales/(?P<usuario>[\w\-]+)/(?P<id_usuario>\d+)/$', 'userprofiles.views.LocalView', name='agregar_locales'), # URL para agregar locales
     url(r'^lista-usuarios/$', UsuarioPromotorListView.as_view(), name='agregar'), # URL para ver lista de usuarios finales
 )

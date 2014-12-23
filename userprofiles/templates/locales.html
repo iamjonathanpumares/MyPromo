@@ -101,6 +101,8 @@
       <input type="text" id="longitud" placeholder="Longitude" style="display: none;"/>
       <br>
     </div>
+    {% csrf_token %}
+    <button id="enviar-locales">Guardar</button>
             
     <div class="form-panel">
       <table class="table table-striped table-advance table-hover">
@@ -135,7 +137,10 @@
                           </table>
 
                       </div>
-                      <script type="text/javascript" src="{% static "js/local.js" %}"></script>
+                      {% block scripts_tags %}
+                        <script type="text/javascript" src="{% static "js/local.js" %}"></script>
+                      {% endblock scripts_tags %}
+                      
 
 {% endblock section %}
 </html>

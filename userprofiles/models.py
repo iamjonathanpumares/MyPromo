@@ -23,3 +23,6 @@ class Local(models.Model):
 	longitud = models.FloatField()
 	direccion = models.CharField(max_length=80)
 	local_afiliado = models.ForeignKey(Afiliado)
+
+	def __unicode__(self):
+		return self.local_afiliado.user.username + " - " + self.direccion

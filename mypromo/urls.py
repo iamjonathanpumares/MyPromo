@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from userprofiles.views import UsuarioPromotorListView, LoginUserPromotorView, LocalView
+from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, LoginUserPromotorView, LocalView
 
 urlpatterns = patterns('',
     # Examples:
@@ -19,5 +19,5 @@ urlpatterns = patterns('',
     url(r'^agregar-usuarios/$', 'userprofiles.views.RegisterUsuarioPromotorView', name='agregar'), # URL para agregar usuarios finales
     url(r'^agregar-afiliados/$', 'userprofiles.views.AfiliadoView', name='agregar_afiliados'), # URL para agregar afiliados
     url(r'^agregar-locales/(?P<usuario>[\w\-]+)/(?P<id_usuario>\d+)/$', 'userprofiles.views.LocalView', name='agregar_locales'), # URL para agregar locales
-    url(r'^lista-usuarios/$', UsuarioPromotorListView.as_view(), name='agregar'), # URL para ver lista de usuarios finales
+    url(r'^lista-usuarios/$', UsuarioFinalListView.as_view(), name='agregar'), # URL para ver lista de usuarios finales
 )

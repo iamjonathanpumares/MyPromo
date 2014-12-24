@@ -39,6 +39,17 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 			user.save()
 		return user
 
+""" Eres genial Python, gracias a tu herencia no tengo que repetir codigo y herede de mi formulario
+	de arriba y solo sobreescribe el metodo save para que me asigne el grupo Usuario """
+class RegistrationUsuarioFinalForm(RegistrationUsuarioPromotorForm):
+	def save(self, commit=True):
+		user = super(RegistrationUsuarioPromotorForm, self).save(commit=True)
+		usuario_group = Group.objects.get(name='Usuario')
+		user.groups.add(usuario_group)
+		if commit:
+			user.save()
+		return user
+
 class UserAfiliadoForm(UserCreationForm):
 	username = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	password1 = forms.CharField(widget=forms.PasswordInput(attrs={ 'class': 'form-control'}), label="Password", required=True)

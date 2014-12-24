@@ -4,13 +4,13 @@ from django.shortcuts import render_to_response, redirect, render
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.views.generic import ListView, FormView
-from userprofiles.forms import RegistrationUsuarioPromotorForm
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login, logout
-from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm
+from .decorators import is_promotor
+from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm
 from .models import Afiliado, Local
 from .load_data import importarCSV
 
@@ -28,6 +28,12 @@ class UsuarioPromotorListView(ListView):
 	model = User
 	template_name = 'lista_usuarios.html'
 
+class UsuarioFinalListView(ListView):
+	queryset = User.objects.filter(groups__name='Usuario')
+	template_name = 'lista_usuarios.html'
+
+@permission_required('userprofiles.add_local', login_url='/login/')
+@login_required(login_url='/login/')
 def LocalView(request, usuario, id_usuario):
 	if request.method == 'POST':
 		json_locales = request.read()
@@ -42,10 +48,9 @@ def LocalView(request, usuario, id_usuario):
 				i += 1
 			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
 			return HttpResponse('/lista-usuarios/')
-	else:
-		form = LocalForm()
-	return render_to_response('locales.html', { 'form': form }, context_instance=RequestContext(request))
+	return render_to_response('locales.html', {}, context_instance=RequestContext(request))
 
+@login_required(login_url='/login/')
 def AfiliadoView(request):
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
 		form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserAfiliadoForm y le pasamos los datos del formulario
@@ -62,25 +67,26 @@ def AfiliadoView(request):
 		form_afiliado = PerfilAfiliadoForm()
 	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
 
+@permission_required('auth.add_user', login_url='/login/')
 @login_required(login_url='/login/')
 def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formulario de registro
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
 		if 'submit-agregar' in request.POST:
 			form_csv = UsuarioCSVForm()
-			form = RegistrationUsuarioPromotorForm(data=request.POST) # Creamos una instancia y le pasamos los datos del formulario
+			form = RegistrationUsuarioFinalForm(data=request.POST) # Creamos una instancia y le pasamos los datos del formulario
 			if form.is_valid(): # Verificar si los campos fueron validados correctamente
 				user = form.save() # Guarda un usuario con los datos dados en el formulario
 				usuario = form.cleaned_data['username'] # Guardamos el nombre del usuario con ayuda de la variable cleaned_data
 				messages.info(request, 'Usuario %s agregado correctamente' % usuario) # Creamos un mensaje de exito para mostrarlo en la otra vista
 				return redirect('/lista-usuarios/') # Nos redirijimos a la vista lista_usuarios
 		elif 'submit-csv' in request.POST:
-			form = RegistrationUsuarioPromotorForm()
+			form = RegistrationUsuarioFinalForm()
 			form_csv = UsuarioCSVForm(request.POST, request.FILES)
 			if form_csv.is_valid():
 				importarCSV(request.FILES['archivoCSV'])
 				return redirect('/lista-usuarios/') # Nos redirijimos a la vista lista_usuarios
 	else:
-		form = RegistrationUsuarioPromotorForm() # En caso de no ser una peticion POST se crea la instancia del formulario
+		form = RegistrationUsuarioFinalForm() # En caso de no ser una peticion POST se crea la instancia del formulario
 		form_csv = UsuarioCSVForm()
 	return render_to_response('usuarios_agregar.html', { 'form': form, 'form_csv': form_csv }, context_instance=RequestContext(request)) # Renderizamos el formulario para que se muestra en el template
 

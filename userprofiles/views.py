@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login, logout
 from .decorators import is_promotor
 from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm
+from .mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Afiliado, Local
 from .load_data import importarCSV
 
@@ -28,11 +29,12 @@ class UsuarioPromotorListView(ListView):
 	model = User
 	template_name = 'lista_usuarios.html'
 
-class UsuarioFinalListView(ListView):
+class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+	permission = 'auth.change_user'
 	queryset = User.objects.filter(groups__name='Usuario')
 	template_name = 'lista_usuarios.html'
 
-class AfiliadoListView(ListView):
+class AfiliadoListView(LoginRequiredMixin, ListView):
 	queryset = Afiliado.objects.all()
 	template_name = 'lista_empresas.html'
 
@@ -54,6 +56,7 @@ def LocalView(request, usuario, id_usuario):
 			return HttpResponse('/lista-usuarios/')
 	return render_to_response('locales.html', {}, context_instance=RequestContext(request))
 
+@permission_required('userprofiles.add_afiliado', login_url='/login/')
 @login_required(login_url='/login/')
 def AfiliadoView(request):
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
@@ -73,7 +76,7 @@ def AfiliadoView(request):
 
 @permission_required('auth.add_user', login_url='/login/')
 @login_required(login_url='/login/')
-def RegisterUsuarioPromotorView(request): # Vista encargada de mostrar el formulario de registro
+def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulario de registro
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
 		if 'submit-agregar' in request.POST:
 			form_csv = UsuarioCSVForm()

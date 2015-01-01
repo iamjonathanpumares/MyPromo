@@ -103,31 +103,35 @@
                       </a>
                       <ul class="sub">
                           <li><a href ="/agregar-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i>Agregar</a></li>
-                           <li><a href ="/lista-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i>Modificar</a></li>
+                           <li><a href ="/lista-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i>Modificar</a></li>
                           
                       </ul>
                   </li>
                   {% endblock menu_afiliados %}
 
+                  {% block menu_cupones %}
                   <li class="sub-menu">
                       <a href="javascript:;" >
                           <i class="fa fa-tag"></i>
                           <span>Cupones</span>
                       </a>
                       <ul class="sub">
-                          <li><a href ="/agregar-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-th-list"></i>Ver empresas</a></li>
+                          <li><a href ="/cupones/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-th-list"></i>Ver empresas</a></li>
                       </ul>
                   </li>
+                  {% endblock menu_cupones %}
 
+                  {% block menu_promociones %}
                   <li class="sub-menu">
                       <a href="javascript:;" >
                           <i class="fa fa-flag"></i>
                           <span>Promociones</span>
                       </a>
                       <ul class="sub">
-                          <li><a href ="/agregar-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-th-list"></i>Ver empresas</a></li>
+                          <li><a href ="/promociones/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-th-list"></i>Ver empresas</a></li>
                       </ul>
                   </li>
+                  {% endblock menu_promociones %}
 
                   <li class="sub-menu">
                       <a href="javascript:;" >
@@ -172,8 +176,8 @@
   </section>
 
     <!-- js placed at the end of the document so the pages load faster -->
-    <script src="{% static "js/jquery.js" %}"></script>
-    <script src="{% static "js/jquery-1.8.3.min.js" %}"></script>
+    <!-- <script src="{% static "js/jquery.js" %}"></script> -->
+    <!-- <script src="{% static "js/jquery-1.8.3.min.js" %}"></script> -->
     <script src="{% static "js/bootstrap.min.js" %}"></script>
     <script class="include" type="text/javascript" src="{% static "js/jquery.dcjqaccordion.2.7.js" %}"></script>
     <script src="{% static "js/jquery.scrollTo.min.js" %}"></script>

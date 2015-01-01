@@ -1,3 +1,7 @@
 from django.shortcuts import render
+from django.views.generic import ListView
+from userprofiles.models import Afiliado
 
-# Create your views here.
+class AfiliadoPromocionListView(ListView):
+	model = Afiliado
+	template_name = 'promociones_afiliados.html'

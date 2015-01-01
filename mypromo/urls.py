@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, LoginUserPromotorView, LocalView
+from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView
+from cupones.views import AfiliadoCuponListView, CuponUpdateView
+from promociones.views import AfiliadoPromocionListView
 
 urlpatterns = patterns('',
     # Examples:
@@ -19,5 +21,16 @@ urlpatterns = patterns('',
     url(r'^agregar-usuarios/$', 'userprofiles.views.RegisterUsuarioPromotorView', name='agregar'), # URL para agregar usuarios finales
     url(r'^agregar-afiliados/$', 'userprofiles.views.AfiliadoView', name='agregar_afiliados'), # URL para agregar afiliados
     url(r'^agregar-locales/(?P<usuario>[\w\-]+)/(?P<id_usuario>\d+)/$', 'userprofiles.views.LocalView', name='agregar_locales'), # URL para agregar locales
-    url(r'^lista-usuarios/$', UsuarioFinalListView.as_view(), name='agregar'), # URL para ver lista de usuarios finales
+    url(r'^lista-usuarios/$', UsuarioFinalListView.as_view(), name='lista_usuarios'), # URL para ver lista de usuarios finales
+    url(r'^lista-afiliados/$', AfiliadoListView.as_view(), name='lista_afiliados'), # URL para ver lista de usuarios afiliados
+
+    # App cupones -------------------------------------------------------------------------------------------------------------
+    url(r'^cupones/$', AfiliadoCuponListView.as_view(), name='cupones'), # URL para ver lista de usuarios afiliados y ver sus cupones
+    url(r'^cupones/(?P<afiliado>[\w\-]+)/$', 'cupones.views.CuponView', name='cupones_afiliado'), # URL para ver lista de usuarios afiliados y ver sus cupones
+    url(r'^cupones/(?P<pk>[\w\-]+)/modificar/$', CuponUpdateView.as_view(), name='cupones_afiliado'), # URL para ver lista de usuarios afiliados y ver sus cupones
+
+    # App promociones -------------------------------------------------------------------------------------------------------------
+    url(r'^promociones/$', AfiliadoPromocionListView.as_view(), name='promociones'), # URL para ver lista de usuarios afiliados y ver sus cupones
+    url(r'^promociones/(?P<afiliado>[\w\-]+)/$', 'cupones.views.CuponView', name='cupones_afiliado'), # URL para ver lista de usuarios afiliados y ver sus cupones
+    url(r'^promociones/(?P<pk>[\w\-]+)/modificar/$', CuponUpdateView.as_view(), name='cupones_afiliado'), # URL para ver lista de usuarios afiliados y ver sus cupones
 )

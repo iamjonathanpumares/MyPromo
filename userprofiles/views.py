@@ -32,6 +32,10 @@ class UsuarioFinalListView(ListView):
 	queryset = User.objects.filter(groups__name='Usuario')
 	template_name = 'lista_usuarios.html'
 
+class AfiliadoListView(ListView):
+	queryset = Afiliado.objects.all()
+	template_name = 'lista_empresas.html'
+
 @permission_required('userprofiles.add_local', login_url='/login/')
 @login_required(login_url='/login/')
 def LocalView(request, usuario, id_usuario):

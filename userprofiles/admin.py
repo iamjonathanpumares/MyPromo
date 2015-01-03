@@ -2,7 +2,7 @@ from django.contrib import admin
 #from django.contrib.auth.admin import UserAdmin
 #from django.contrib.auth.models import User
 
-from .models import Afiliado, Local
+from .models import Afiliado, Promotor, UsuarioFinal, Local
 
 class LocalAdmin(admin.ModelAdmin):
 	list_filter = ('local_afiliado',)
@@ -17,4 +17,6 @@ class UserAdmin(UserAdmin):
 
 admin.site.unregister(User)"""
 admin.site.register(Afiliado)
+admin.site.register(Promotor)
+admin.site.register(UsuarioFinal)
 admin.site.register(Local, LocalAdmin)

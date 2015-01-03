@@ -88,10 +88,10 @@
                               <tbody>
                               {% for usuario in object_list %}
                               <tr>
-                                  <td>{{ usuario.username }}</td>
+                                  <td>{{ usuario.user.username }}</td>
                                   <!-- <td class="hidden-phone">{{ usuario.password }}</td> -->
-                                  <td>{{ usuario.last_name }}</td>
-                                  <td>{{ usuario.first_name }}</td>
+                                  <td>{{ usuario.user.last_name }}</td>
+                                  <td>{{ usuario.user.first_name }}</td>
                                   <td>
                                       <button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button>
                                       <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>

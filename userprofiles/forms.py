@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User, Group
-from .models import Afiliado, Local
+from .models import Afiliado, Local, UsuarioFinal
 
 class LoginForm(AuthenticationForm):
 	username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'ID' }))
@@ -44,10 +44,12 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 class RegistrationUsuarioFinalForm(RegistrationUsuarioPromotorForm):
 	def save(self, commit=True):
 		user = super(RegistrationUsuarioPromotorForm, self).save(commit=True)
-		usuario_group = Group.objects.get(name='Usuario')
-		user.groups.add(usuario_group)
+		usuario_final = UsuarioFinal(user=user)
+		#usuario_group = Group.objects.get(name='Usuario')
+		#user.groups.add(usuario_group)
 		if commit:
 			user.save()
+			usuario_final.save()
 		return user
 
 class UserAfiliadoForm(UserCreationForm):
@@ -88,7 +90,7 @@ class PerfilAfiliadoForm(forms.ModelForm):
 		model = Afiliado
 		fields = ['nombreEmpresa', 'representante', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'giro', 'cartel']
 
-	def guardarAfiliado(self, usuario):
+	def save(self, commit=True, *args, **kwargs):
 		nombreEmpresa = self.cleaned_data['nombreEmpresa']
 		representante = self.cleaned_data['representante']
 		direccion = self.cleaned_data['direccion']
@@ -100,8 +102,9 @@ class PerfilAfiliadoForm(forms.ModelForm):
 		logo = self.cleaned_data['logo']
 		giro = self.cleaned_data['giro']
 		cartel = self.cleaned_data['cartel']
-		afiliado = Afiliado(user=usuario, nombreEmpresa=nombreEmpresa, representante=representante, direccion=direccion, telefono=telefono, email=email, facebook=facebook, twitter=twitter, codigoValidacion=codigoValidacion, logo=logo, giro=giro, cartel=cartel)
-		afiliado.save()
+		afiliado = Afiliado(user=kwargs['afiliado'], nombreEmpresa=nombreEmpresa, representante=representante, direccion=direccion, telefono=telefono, email=email, facebook=facebook, twitter=twitter, codigoValidacion=codigoValidacion, logo=logo, giro=giro, cartel=cartel)
+		if commit:
+			afiliado.save()
 		return afiliado
 
 class UsuarioCSVForm(forms.Form):

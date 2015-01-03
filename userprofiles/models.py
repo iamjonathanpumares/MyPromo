@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 class Afiliado(models.Model):
 	user = models.OneToOneField(User, related_name='perfil_afiliado')
@@ -17,6 +17,18 @@ class Afiliado(models.Model):
 
 	def __unicode__(self):
 		return self.nombreEmpresa
+
+class Promotor(models.Model):
+	user = models.OneToOneField(User, related_name='perfil_promotor')
+
+	def __unicode__(self):
+		return self.user.username
+
+class UsuarioFinal(models.Model):
+	user = models.OneToOneField(User, related_name='perfil_usuariofinal')
+
+	def __unicode__(self):
+		return self.user.username
 
 class Local(models.Model):
 	latitud = models.FloatField()

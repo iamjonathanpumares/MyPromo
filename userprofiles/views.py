@@ -12,9 +12,10 @@ from django.contrib.auth import login, logout
 from .decorators import is_promotor
 from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import Afiliado, Local
+from .models import Afiliado, Local, UsuarioFinal
 from .load_data import importarCSV
 
+# Login ----------------------------------------------------------------------------------------------------
 class LoginUserPromotorView(FormView):
 	#model = UsuarioPromotor
 	template_name = 'login.html'
@@ -25,18 +26,34 @@ class LoginUserPromotorView(FormView):
 		login(self.request, form.user_cache)
 		return super(LoginUserPromotorView, self).form_valid(form)
 
-class UsuarioPromotorListView(ListView):
-	model = User
-	template_name = 'lista_usuarios.html'
+# Logout -----------------------------------------------------------------------------------------------------
+def logout_view(request):
+	logout(request)
+	return redirect('/login/')
 
-class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-	permission = 'auth.change_user'
-	queryset = User.objects.filter(groups__name='Usuario')
-	template_name = 'lista_usuarios.html'
-
+# Views Afiliado ---------------------------------------------------------------------------------------------
 class AfiliadoListView(LoginRequiredMixin, ListView):
 	queryset = Afiliado.objects.all()
 	template_name = 'lista_empresas.html'
+
+@permission_required('userprofiles.add_afiliado', login_url='/login/')
+@login_required(login_url='/login/')
+def AfiliadoView(request):
+	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
+		form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserAfiliadoForm y le pasamos los datos del formulario
+		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario PerfilAfiliadoForm y le pasamos los datos junto con los archivo subidos
+		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
+			usuario = form_user.save() # Se crea el usuario
+			afiliado = form_afiliado.save(commit=True, afiliado=usuario) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
+			if 'submit-guardar-salir' in request.POST:
+				messages.info(request, 'Afiliado %s agregado' % form_afiliado.cleaned_data['nombreEmpresa'])
+				return redirect('/lista-afiliados/')
+			elif 'submit-guardar-locales' in request.POST:
+				return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + usuario.id + '/')
+	else:
+		form_user = UserAfiliadoForm()
+		form_afiliado = PerfilAfiliadoForm()
+	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
 
 @permission_required('userprofiles.add_local', login_url='/login/')
 @login_required(login_url='/login/')
@@ -56,23 +73,15 @@ def LocalView(request, usuario, id_usuario):
 			return HttpResponse('/lista-usuarios/')
 	return render_to_response('locales.html', {}, context_instance=RequestContext(request))
 
-@permission_required('userprofiles.add_afiliado', login_url='/login/')
-@login_required(login_url='/login/')
-def AfiliadoView(request):
-	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
-		form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserAfiliadoForm y le pasamos los datos del formulario
-		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario PerfilAfiliadoForm y le pasamos los datos junto con los archivo subidos
-		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
-			usuario = form_user.save() # Se crea el usuario
-			afiliado = form_afiliado.guardarAfiliado(usuario) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
-			if 'submit-guardar-salir' in request.POST:
-				return redirect('/lista-afiliados/')
-			elif 'submit-guardar-locales' in request.POST:
-				return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + usuario.id + '/')
-	else:
-		form_user = UserAfiliadoForm()
-		form_afiliado = PerfilAfiliadoForm()
-	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
+class UsuarioPromotorListView(ListView):
+	model = User
+	template_name = 'lista_usuarios.html'
+
+class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+	permission = 'auth.change_user'
+	model = UsuarioFinal
+	#queryset = User.objects.filter(groups__name='Usuario')
+	template_name = 'lista_usuarios.html'
 
 @permission_required('auth.add_user', login_url='/login/')
 @login_required(login_url='/login/')
@@ -96,10 +105,3 @@ def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulari
 		form = RegistrationUsuarioFinalForm() # En caso de no ser una peticion POST se crea la instancia del formulario
 		form_csv = UsuarioCSVForm()
 	return render_to_response('usuarios_agregar.html', { 'form': form, 'form_csv': form_csv }, context_instance=RequestContext(request)) # Renderizamos el formulario para que se muestra en el template
-
-def lista_usuarios_view(request):
-	return render(request, 'lista_usuarios.html')
-
-def logout_view(request):
-	logout(request)
-	return redirect('/login/')

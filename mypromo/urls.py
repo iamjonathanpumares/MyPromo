@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'userprofiles.views.logout_view', name='logout'), # URL para entrar al Login de MyPromo
 
     # App userprofiles ----------------------------------------------------------------------------------------------------
+    url(r'^home/$', 'userprofiles.views.home', name='home'), # URL para agregar usuarios finales
     url(r'^agregar-usuarios/$', 'userprofiles.views.RegisterUsuarioFinalView', name='agregar'), # URL para agregar usuarios finales
     url(r'^agregar-afiliados/$', 'userprofiles.views.AfiliadoView', name='agregar_afiliados'), # URL para agregar afiliados
     url(r'^agregar-locales/(?P<usuario>[\w\-]+)/(?P<id_usuario>\d+)/$', 'userprofiles.views.LocalView', name='agregar_locales'), # URL para agregar locales

@@ -19,7 +19,7 @@ from .load_data import importarCSV
 class LoginUserPromotorView(FormView):
 	#model = UsuarioPromotor
 	template_name = 'login.html'
-	success_url = '/agregar-usuarios/'
+	success_url = '/home/'
 	form_class = LoginForm
 
 	def form_valid(self, form):
@@ -30,6 +30,9 @@ class LoginUserPromotorView(FormView):
 def logout_view(request):
 	logout(request)
 	return redirect('/login/')
+
+def home(request):
+	return render(request, 'home.html')
 
 # Views Afiliado ---------------------------------------------------------------------------------------------
 class AfiliadoListView(LoginRequiredMixin, ListView):

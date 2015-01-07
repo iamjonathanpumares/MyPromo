@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 import json
-from django.shortcuts import render_to_response, redirect, render
+from django.shortcuts import render_to_response, redirect, render, get_object_or_404
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.views.generic import ListView, FormView
@@ -74,6 +74,8 @@ def LocalView(request, usuario, id_usuario):
 				i += 1
 			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
 			return HttpResponse('/lista-usuarios/')
+	else:
+		usuario_afiliado = get_object_or_404(Afiliado, user__username=usuario, user__id=id_usuario)
 	return render_to_response('locales.html', {}, context_instance=RequestContext(request))
 
 class UsuarioPromotorListView(ListView):

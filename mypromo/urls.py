@@ -1,5 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
+from django.views.generic import RedirectView
 from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView
 from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
@@ -14,6 +15,7 @@ urlpatterns = patterns('',
     #url(r'^home/$', TemplateView.as_view(template_name='base.html'), name='home'),
 
 
+    url(r'^$', RedirectView.as_view(url='/home/'), name='redirect_home'), # URL para entrar al Login de MyPromo
     url(r'^login/$', LoginUserPromotorView.as_view(), name='login'), # URL para entrar al Login de MyPromo
     url(r'^logout/$', 'userprofiles.views.logout_view', name='logout'), # URL para entrar al Login de MyPromo
 

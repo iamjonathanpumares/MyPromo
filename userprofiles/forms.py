@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User, Group
-from .models import Afiliado, Local, UsuarioFinal
+from .models import Afiliado, Local, UsuarioFinal, Promotor
 
 class LoginForm(AuthenticationForm):
 	username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'ID' }))
@@ -33,10 +33,12 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 		y que se ejecuta para guardar un objeto de tipo Modelo y guardarlo en la base de datos """
 	def save(self, commit=True):
 		user = super(RegistrationUsuarioPromotorForm, self).save(commit=True)
-		promotor = Group.objects.get(name='Promotor')
-		user.groups.add(promotor)
+		usuario_promotor = Promotor(user=user)
+		group_promotor = Group.objects.get(name='Promotor')
+		user.groups.add(group_promotor)
 		if commit:
 			user.save()
+			usuario_promotor.save()
 		return user
 
 """ Eres genial Python, gracias a tu herencia no tengo que repetir codigo y herede de mi formulario

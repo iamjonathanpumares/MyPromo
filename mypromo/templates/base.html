@@ -133,15 +133,17 @@
                   </li>
                   {% endblock menu_promociones %}
 
+                  {% block menu_administrar %}
                   <li class="sub-menu">
                       <a href="javascript:;" >
                           <i class="fa fa-gear"></i>
                           <span>Administrar</span>
                       </a>
                       <ul class="sub">
-                          <li><a href ="/agregar-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user"></i>Usuarios promotor</a></li>
+                          <li><a href ="/administrar-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user"></i>Usuarios promotor</a></li>
                       </ul>
                   </li>
+                  {% endblock menu_administrar %}
 
                  
 

@@ -9,10 +9,9 @@ from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login, logout
-from .decorators import is_promotor
 from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import Afiliado, Local, UsuarioFinal
+from .models import Afiliado, Local, UsuarioFinal, Promotor
 from .load_data import importarCSV
 
 # Login ----------------------------------------------------------------------------------------------------
@@ -31,6 +30,8 @@ def logout_view(request):
 	logout(request)
 	return redirect('/login/')
 
+# Home -------------------------------------------------------------------------------------------------------
+@login_required(login_url='/login/')
 def home(request):
 	return render(request, 'home.html')
 
@@ -52,7 +53,7 @@ def AfiliadoView(request):
 				messages.info(request, 'Afiliado %s agregado' % form_afiliado.cleaned_data['nombreEmpresa'])
 				return redirect('/lista-afiliados/')
 			elif 'submit-guardar-locales' in request.POST:
-				return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + usuario.id + '/')
+				return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + str(usuario.id) + '/')
 	else:
 		form_user = UserAfiliadoForm()
 		form_afiliado = PerfilAfiliadoForm()
@@ -73,7 +74,7 @@ def LocalView(request, usuario, id_usuario):
 				local_afiliado.save()
 				i += 1
 			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
-			return HttpResponse('/lista-usuarios/')
+			return HttpResponse('/lista-afiliados/')
 	else:
 		usuario_afiliado = get_object_or_404(Afiliado, user__username=usuario, user__id=id_usuario)
 	return render_to_response('locales.html', {}, context_instance=RequestContext(request))
@@ -110,3 +111,16 @@ def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulari
 		form = RegistrationUsuarioFinalForm() # En caso de no ser una peticion POST se crea la instancia del formulario
 		form_csv = UsuarioCSVForm()
 	return render_to_response('usuarios_agregar.html', { 'form': form, 'form_csv': form_csv }, context_instance=RequestContext(request)) # Renderizamos el formulario para que se muestra en el template
+
+def PromotorView(request):
+	promotores = Promotor.objects.all()
+	if request.method == 'POST':
+		form = RegistrationUsuarioPromotorForm(request.POST)
+		if form.is_valid():
+			promotor = form.save()
+			messages.info(request, 'Usuario promotor %s agregado' % promotor)
+			form = RegistrationUsuarioPromotorForm()
+			return render(request, 'promotores.html', { 'promotores': promotores, 'form': form })
+	else:
+		form = RegistrationUsuarioPromotorForm()
+	return render(request, 'promotores.html', { 'promotores': promotores, 'form': form })

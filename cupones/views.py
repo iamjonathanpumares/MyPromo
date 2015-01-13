@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, BaseUpdateView
@@ -35,3 +36,20 @@ class CuponUpdateView(UpdateView): # Vista que hereda de UpdateView para actuali
 		request = self.request # Asignamos a una variable local el self.request
 		messages.info(request, 'Cupon modificado') # Mandamos un mensaje de informacion especificando que se ha modificado el cupon
 		return super(BaseUpdateView, self).get(request) # Mandamos a llamar al padre de get para que renderize de vuelta el formulario
+
+def AfiliadoCuponView(request, usuario):
+	if request.user.username == usuario:
+		cupon_afiliado = get_object_or_404(Afiliado, user__username=usuario) # Usamos el shortcut get_object_or_404 para traernos el username del afiliado
+		cupones = Cupon.objects.filter(cupon_afiliado__user__username=usuario)
+		if request.method == 'POST': # Se comprueba si el metodo es POST
+			form = CuponForm(request.POST, request.FILES) # Creamos una instancia de CuponForm y le pasamos los datos del formulario para que los valide
+			if form.is_valid(): # Si todo a salido bien y no hubo error al momento de validar los datos del formulario pasa a lo siguiente
+				cupon = form.save(commit=True, cupon_af=cupon_afiliado) # Llamamos al metodo save() del form para guardar un cupon nuevo y nos retorna el objeto ya creado
+				messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				form = CuponForm() # Ahora instanciamos otra vez form para que me muestre el formulario
+				return render(request, 'afiliado_cupones.html', { 'cupones': cupones, 'form': form }) # Renderizamos la plantilla junto con su contexto
+		else:
+			form = CuponForm()
+		return render(request, 'afiliado_cupones.html', { 'cupones': cupones, 'form': form })
+	else:
+		raise Http404

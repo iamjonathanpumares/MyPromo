@@ -34,3 +34,20 @@ class PromocionUpdateView(UpdateView):
 		request = self.request
 		messages.info(request, 'Promocion modificada')
 		return super(BaseUpdateView, self).get(request)
+
+def AfiliadoPromocionView(request, usuario):
+	if request.user.username == usuario:
+		promocion_afiliado = get_object_or_404(Afiliado, user__username=usuario) # Usamos el shortcut get_object_or_404 para traernos el username del afiliado
+		promociones = Promocion.objects.filter(promocion_afiliado__user__username=usuario)
+		if request.method == 'POST': # Se comprueba si el metodo es POST
+			form = PromocionForm(request.POST, request.FILES) # Creamos una instancia de promocionForm y le pasamos los datos del formulario para que los valide
+			if form.is_valid(): # Si todo a salido bien y no hubo error al momento de validar los datos del formulario pasa a lo siguiente
+				promocion = form.save(commit=True, promocion_af=promocion_afiliado) # Llamamos al metodo save() del form para guardar un promocion nuevo y nos retorna el objeto ya creado
+				messages.info(request, 'Promocion agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				form = PromocionForm() # Ahora instanciamos otra vez form para que me muestre el formulario
+				return render(request, 'afiliado_promociones.html', { 'promociones': promociones, 'form': form }) # Renderizamos la plantilla junto con su contexto
+		else:
+			form = PromocionForm()
+		return render(request, 'afiliado_promociones.html', { 'promociones': promociones, 'form': form })
+	else:
+		raise Http404

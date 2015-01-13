@@ -37,4 +37,10 @@ urlpatterns = patterns('',
     url(r'^promociones/$', AfiliadoPromocionListView.as_view(), name='promociones'), # URL para ver lista de usuarios afiliados y ver sus promociones
     url(r'^promociones/(?P<afiliado>[\w\-]+)/$', 'promociones.views.PromocionView', name='promociones_afiliado'), # URL para ver lista de promociones de cada afiliado
     url(r'^promociones/(?P<pk>[\w\-]+)/modificar/$', PromocionUpdateView.as_view(), name='promocion_modificar'), # URL para modificar la promocion seleccionada
+
+    url(r'^(?P<usuario>[\w\-]+)/$', 'userprofiles.views.home_afiliado', name='home_afiliado'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/cupones/$', 'cupones.views.AfiliadoCuponView', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/cupones/(?P<pk>[\w\-]+)/modificar/$', 'cupones.views.AfiliadoCuponView', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/promociones/$', 'promociones.views.AfiliadoPromocionView', name='afiliado_promociones'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/administrar/$', 'userprofiles.views.AdministrarAfiliadoView', name='afiliado_administrar'), # URL del home de MyPromo para afiliados
 )

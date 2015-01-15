@@ -53,6 +53,16 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "django.core.context_processors.static",
+    "django.core.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    "userprofiles.context_processors.datos_afiliado",
+)
+
 ROOT_URLCONF = 'mypromo.urls'
 
 WSGI_APPLICATION = 'mypromo.wsgi.application'
@@ -95,6 +105,10 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+MEDIA_ROOT = '/home/jonathan/www/mypromo.com/media'
+
+MEDIA_URL = '/media/'
 
 
 # Static files (CSS, JavaScript, Images)

@@ -148,7 +148,7 @@
           <tbody>
             {% for cupon in cupones %}
             <tr>
-              <td>{{ cupon.imagen }}</td>
+              <td><a href="{{ cupon.imagen.url }}" class="fancybox-cupon"><img src="{{ cupon.imagen.url }}" alt="cupon" width="80px" height="40px" /></a></td>
               <td class="hidden-phone">{{ cupon.titulo }}</td>
               <td>{{ cupon.vigencia }}</td>
               <td>
@@ -175,16 +175,23 @@
           format: "dd/mm/yyyy"
       });
       $(".fancybox").fancybox({
-      'autoScale'         : false,
-      'transitionIn'      : 'none',
-      'transitionOut'     : 'none',
-      'width'             : 900,
-      'height'            : 500,
-      'type'              : 'iframe',
-      'afterClose'        : function() {
-        location.reload();
-      },
-    });
+        'autoScale'         : false,
+        'transitionIn'      : 'none',
+        'transitionOut'     : 'none',
+        'width'             : 900,
+        'height'            : 500,
+        'type'              : 'iframe',
+        'afterClose'        : function() {
+          location.reload();
+        },
+      });
+      $(".fancybox-cupon").fancybox({
+          helpers: {
+              title : {
+                  type : 'float'
+              }
+          }
+      });
     });  
 </script>
 {% endblock scripts_tags %}

@@ -15,6 +15,10 @@
     <link rel="stylesheet" type="text/css" href="{% static "js/gritter/css/jquery.gritter.css" %}" />
    <link href="{% static "css/style.css" %}" rel="stylesheet">
     <link href="{% static "css/style-responsive.css" %}" rel="stylesheet">
+    <!-- FANCY BOX -->
+    <script type="text/javascript" src="stactic/js/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+    <link rel="stylesheet" href="{% static "js/fancybox/jquery.fancybox.css" %}" type="text/css" media="screen" />
+    <script type="text/javascript" src="{% static "js/fancybox/jquery.fancybox.js" %}"></script>
 {% endblock styles_tags %}
 
 {% block menu_inicio %} 
@@ -83,7 +87,7 @@
             <tbody>
               {% for afiliado in object_list %}
               <tr>
-                  <td><img src="{{ afiliado.logo }}" alt="Logo" /></td>
+                  <td><a href="{{ afiliado.logo.url }}" class="fancybox-logo"><img src="{{ afiliado.logo.url }}" width="35px" height="35px" alt="Logo" /></a></td>
                   <td class="hidden-phone">{{ afiliado.nombreEmpresa }}</td>
                   <td>{{ afiliado.giro }}</td>
                   <td>
@@ -98,3 +102,8 @@
     </div>
   </div>
 {% endblock section %}
+
+{% block scripts_tags %}
+<!-- Funcion Javascript de calendario -->
+<script src="{% static "js/fancybox/fancybox-afiliado.js" %}"></script>
+{% endblock scripts_tags %}

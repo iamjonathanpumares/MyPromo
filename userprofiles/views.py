@@ -39,10 +39,12 @@ def logout_view(request):
 	return redirect('/login/')
 
 # Home -------------------------------------------------------------------------------------------------------
-#@login_required(login_url='/login/')
+@login_required(login_url='/login/')
 def home(request):
+	num_afiliados = Afiliado.objects.all().count()
+	num_usuarios = UsuarioFinal.objects.all().count()
 	if request.user.is_superuser == True:
-		return render(request, 'home.html')
+		return render(request, 'home.html', { 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
 	try:
 		request.user.groups.get(name='Promotor')
 	except Group.DoesNotExist:
@@ -53,11 +55,11 @@ def home(request):
 		else:
 			return redirect('/%s/' % request.user.username)
 	else:
-		return render(request, 'home.html')
+		return render(request, 'home.html', { 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
 
 def home_afiliado(request, usuario):
 	afiliado = get_object_or_404(Afiliado, user__username=usuario)
-	return render(request, 'home_afiliado.html', { 'afiliado': afiliado })
+	return render(request, 'home_afiliado.html')
 
 
 

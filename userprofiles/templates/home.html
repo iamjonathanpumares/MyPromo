@@ -120,7 +120,11 @@
                 
                 <footer>
                   <div class="centered">
-                    <h1><i class="fa fa-trophy"></i> 17,988</h1>
+                    <h1><i class="fa fa-trophy"></i>{% if num_afiliados > 0 %} 
+                                                      {{ num_afiliados }}</h1>
+                                                    {% else %}
+                                                      0<a class="btn btn-primary goright" href="/agregar-afiliados/">Comienza ahora</a>
+                                                    {% endif %}
                   </div>
                 </footer>
                           </div><!-- /darkblue panel -->
@@ -136,7 +140,11 @@
                 
                 <footer>
                   <div class="centered">
-                    <h1><i class="fa fa-trophy"></i> 17,988</h1>
+                    <h1><i class="fa fa-trophy"></i>{% if num_usuarios > 0 %} 
+                                                      {{ num_usuarios }}</h1>
+                                                    {% else %}
+                                                      0<a class="btn btn-primary goright" href="/agregar-usuarios/">Comienza ahora</a>
+                                                    {% endif %}</h1>
                   </div>
                 </footer>
                           </div><!-- /darkblue panel -->

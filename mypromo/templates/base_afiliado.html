@@ -70,7 +70,7 @@
               <!-- sidebar menu start-->
               <ul class="sidebar-menu" id="nav-accordion">
               
-              	  <p class="centered"><a href="profile.html"><img src="{% static "img/leyenda.jpg" %}" class="img-circle" width="60"></a></p>
+              	  <p class="centered"><a href="profile.html"><img src="{{ afiliado.logo.url }}" class="img-circle" width="60"></a></p>
               	  <h5 class="centered">{{ afiliado }}</h5>
               	  {% block menu_inicio %}	
                   <li class="mt">

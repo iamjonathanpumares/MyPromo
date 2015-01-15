@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import RedirectView
@@ -43,4 +45,4 @@ urlpatterns = patterns('',
     url(r'^(?P<usuario>[\w\-]+)/cupones/(?P<pk>[\w\-]+)/modificar/$', 'cupones.views.AfiliadoCuponView', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/promociones/$', 'promociones.views.AfiliadoPromocionView', name='afiliado_promociones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/administrar/$', 'userprofiles.views.AdministrarAfiliadoView', name='afiliado_administrar'), # URL del home de MyPromo para afiliados
-)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

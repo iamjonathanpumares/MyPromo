@@ -71,7 +71,7 @@
               <ul class="sidebar-menu" id="nav-accordion">
               
               	  <p class="centered"><a href="profile.html"><img src="{% static "img/leyenda.jpg" %}" class="img-circle" width="60"></a></p>
-              	  <h5 class="centered">Veltium</h5>
+              	  <h5 class="centered">{{ user }}</h5>
               	  {% block menu_inicio %}	
                   <li class="mt">
                       <a class="active" href="/home/">

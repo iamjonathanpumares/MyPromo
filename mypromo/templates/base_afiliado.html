@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% load thumbnail %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -70,7 +71,14 @@
               <!-- sidebar menu start-->
               <ul class="sidebar-menu" id="nav-accordion">
               
-              	  <p class="centered"><a href="profile.html"><img src="{{ afiliado.logo.url }}" class="img-circle" width="60"></a></p>
+              	  <p class="centered">
+                    <a href="profile.html">
+                      {% thumbnail afiliado.logo "150x150" crop="center" as im %}
+                        <img src="{{ im.url }}" class="img-circle" width="60">
+                      {% endthumbnail %}
+                      <!--<img src="{{ afiliado.logo.url }}" class="img-circle" width="60">-->
+                    </a>
+                  </p>
               	  <h5 class="centered">{{ afiliado }}</h5>
               	  {% block menu_inicio %}	
                   <li class="mt">

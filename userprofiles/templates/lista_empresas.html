@@ -87,7 +87,11 @@
             <tbody>
               {% for afiliado in object_list %}
               <tr>
-                  <td><a href="{{ afiliado.logo.url }}" class="fancybox-logo"><img src="{{ afiliado.logo.url }}" width="35px" height="35px" alt="Logo" /></a></td>
+                  <td>
+                    <a href="{{ afiliado.logo.url }}" class="fancybox-logo">
+                      <img src="{{ afiliado.logo.url }}" width="35px" height="35px" alt="Logo" />
+                    </a>
+                  </td>
                   <td class="hidden-phone">{{ afiliado.nombreEmpresa }}</td>
                   <td>{{ afiliado.giro }}</td>
                   <td>

@@ -83,8 +83,8 @@ class PerfilAfiliadoForm(forms.ModelForm):
 	direccion = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	telefono = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	email = forms.EmailField(widget=forms.EmailInput(attrs={ 'class': 'form-control'}))
-	facebook = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
-	twitter = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	facebook = forms.CharField(required=False, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'Nombre de usuario'}))
+	twitter = forms.CharField(required=False, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'Nombre de usuario'}))
 	giro = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	logo = forms.ImageField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))
 	cartel = forms.ImageField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))
@@ -102,7 +102,7 @@ class PerfilAfiliadoForm(forms.ModelForm):
 		email = self.cleaned_data['email']
 		facebook = self.cleaned_data['facebook']
 		twitter = self.cleaned_data['twitter']
-		codigoValidacion = 'jaiqajiqajaqjoqajoqaj'
+		codigoValidacion = User.objects.make_random_password(length=200)
 		logo = self.cleaned_data['logo']
 		giro = self.cleaned_data['giro']
 		cartel = self.cleaned_data['cartel']
@@ -110,6 +110,20 @@ class PerfilAfiliadoForm(forms.ModelForm):
 		if commit:
 			afiliado.save()
 		return afiliado
+
+	def clean_facebook(self):
+		facebook = self.cleaned_data.get('facebook', '')
+		if facebook != '':
+			facebook = 'https://www.facebook.com/%s' % self.cleaned_data['facebook']
+		return facebook
+
+	def clean_twitter(self):
+		twitter = self.cleaned_data.get('twitter', '')
+		if twitter != '':
+			twitter = 'https://twitter.com/%s' % self.cleaned_data['twitter']
+		return twitter
+
+
 
 class UsuarioCSVForm(forms.Form):
 	archivoCSV = forms.FileField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))

@@ -6,12 +6,24 @@ from cupones.serializers import CuponSerializer
 from promociones.serializers import PromocionSerializer
 
 class AfiliadoSerializer(serializers.ModelSerializer):
+
+	class Meta:
+		model = Afiliado
+		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'descripcion', 'giro')
+
+class AfiliadoCuponesSerializer(serializers.ModelSerializer):
 	cupones = CuponSerializer(many=True, read_only=True)
+
+	class Meta:
+		model = Afiliado
+		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'descripcion', 'giro', 'cupones')
+
+class AfiliadoPromocionesSerializer(serializers.ModelSerializer):
 	promociones = PromocionSerializer(many=True, read_only=True)
 
 	class Meta:
 		model = Afiliado
-		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'descripcion', 'giro', 'cupones', 'promociones')
+		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'descripcion', 'giro', 'promociones')
 
 class LocalSerializer(serializers.ModelSerializer):
 	class Meta:

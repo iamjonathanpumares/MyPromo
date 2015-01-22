@@ -173,11 +173,19 @@ def AdministrarAfiliadoView(request):
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
 from rest_framework import viewsets, generics
-from .serializers import AfiliadoSerializer, LocalSerializer
+from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, LocalSerializer
 
 class AfiliadoAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
 	serializer_class = AfiliadoSerializer
+
+class AfiliadoCuponesAPIView(generics.ListAPIView):
+	queryset = Afiliado.objects.filter(user__is_active=True)
+	serializer_class = AfiliadoCuponesSerializer
+
+class AfiliadoPromocionesAPIView(generics.ListAPIView):
+	queryset = Afiliado.objects.filter(user__is_active=True)
+	serializer_class = AfiliadoPromocionesSerializer
 
 class LocalAfiliadoAPIView(generics.ListAPIView):
 	serializer_class = LocalSerializer

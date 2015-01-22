@@ -2,20 +2,19 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import django_resized.forms
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('userprofiles', '0001_initial'),
+        ('promociones', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='afiliado',
-            name='logo',
-            field=django_resized.forms.ResizedImageField(upload_to=b'userprofiles/logos', verbose_name=b'Logo'),
+            model_name='promocion',
+            name='promocion_afiliado',
+            field=models.ForeignKey(related_name='promociones', to='userprofiles.Afiliado'),
             preserve_default=True,
         ),
     ]

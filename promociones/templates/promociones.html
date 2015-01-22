@@ -148,7 +148,7 @@
           <tbody>
             {% for promocion in promociones %}
             <tr>
-              <td>{{ promocion.imagen }}</td>
+              <td><a href="{{ promocion.imagen.url }}" class="fancybox-promocion"><img src="{{ promocion.imagen.url }}" alt="promocion" width="80px" height="40px" /></a></td>
               <td class="hidden-phone">{{ promocion.titulo }}</td>
               <td>{{ promocion.vigencia }}</td>
               <td>

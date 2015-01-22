@@ -79,6 +79,7 @@ class UserAfiliadoForm(UserCreationForm):
 class PerfilAfiliadoForm(forms.ModelForm):
 	nombreEmpresa = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	representante = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	descripcion = forms.CharField(widget=forms.Textarea(attrs={ 'class': 'form-control'}))
 	direccion = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	telefono = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	email = forms.EmailField(widget=forms.EmailInput(attrs={ 'class': 'form-control'}))
@@ -95,6 +96,7 @@ class PerfilAfiliadoForm(forms.ModelForm):
 	def save(self, commit=True, *args, **kwargs):
 		nombreEmpresa = self.cleaned_data['nombreEmpresa']
 		representante = self.cleaned_data['representante']
+		descripcion = self.cleaned_data['descripcion']
 		direccion = self.cleaned_data['direccion']
 		telefono = self.cleaned_data['telefono']
 		email = self.cleaned_data['email']
@@ -104,7 +106,7 @@ class PerfilAfiliadoForm(forms.ModelForm):
 		logo = self.cleaned_data['logo']
 		giro = self.cleaned_data['giro']
 		cartel = self.cleaned_data['cartel']
-		afiliado = Afiliado(user=kwargs['afiliado'], nombreEmpresa=nombreEmpresa, representante=representante, direccion=direccion, telefono=telefono, email=email, facebook=facebook, twitter=twitter, codigoValidacion=codigoValidacion, logo=logo, giro=giro, cartel=cartel)
+		afiliado = Afiliado(user=kwargs['afiliado'], nombreEmpresa=nombreEmpresa, representante=representante, descripcion=descripcion, direccion=direccion, telefono=telefono, email=email, facebook=facebook, twitter=twitter, codigoValidacion=codigoValidacion, logo=logo, giro=giro, cartel=cartel)
 		if commit:
 			afiliado.save()
 		return afiliado

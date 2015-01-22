@@ -53,3 +53,23 @@ def AfiliadoCuponView(request, usuario):
 		return render(request, 'afiliado_cupones.html', { 'cupones': cupones, 'form': form })
 	else:
 		raise Http404
+
+# Django REST Framework -----------------------------------------------------------------------------------------------------------------
+
+from rest_framework import viewsets, generics
+from .serializers import CuponSerializer
+
+class CuponAPIView(generics.ListAPIView):
+	queryset = Cupon.objects.all()
+	serializer_class = CuponSerializer
+
+class CuponAfiliadoAPIView(generics.ListAPIView):
+	serializer_class = CuponSerializer
+
+	"""
+		Sobreescribimos el metodo get_queryset, para que nos devuelva
+		una consulta, que seran los cupones de cada afiliado.
+	"""
+	def get_queryset(self):
+		cupon_afiliado = self.kwargs['cupon_afiliado'] # Desde la URL por medio de los kwargs le pasamos el id del afiliado
+		return Cupon.objects.filter(cupon_afiliado=cupon_afiliado) # Retorna un tipo de dato queryset para mostrarse en la vista

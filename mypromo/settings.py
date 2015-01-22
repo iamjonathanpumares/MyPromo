@@ -42,7 +42,13 @@ INSTALLED_APPS = (
     'cupones',
     'promociones',
     'sorl.thumbnail',
+    'rest_framework',
 )
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'PAGINATE_BY': 10
+}
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -107,7 +113,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-MEDIA_ROOT = '/Users/jonathan/www/mypromo.com/media'
+MEDIA_ROOT = '/home/jonathan/www/mypromo.com/media'
 
 MEDIA_URL = '/media/'
 

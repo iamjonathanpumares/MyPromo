@@ -7,6 +7,7 @@ class Afiliado(models.Model):
 	user = models.OneToOneField(User, related_name='perfil_afiliado')
 	nombreEmpresa = models.CharField(max_length=255, verbose_name='Empresa')
 	representante = models.CharField(max_length=200, verbose_name='Representante')
+	descripcion = models.TextField()
 	direccion = models.CharField(max_length=255, verbose_name='Direccion')
 	telefono = models.CharField(max_length=15, verbose_name='Telefono')
 	email = models.EmailField(max_length=100, verbose_name='Email')
@@ -36,7 +37,7 @@ class Local(models.Model):
 	latitud = models.FloatField()
 	longitud = models.FloatField()
 	direccion = models.CharField(max_length=80)
-	local_afiliado = models.ForeignKey(Afiliado)
+	local_afiliado = models.ForeignKey(Afiliado, related_name='locales')
 
 	def __unicode__(self):
 		return self.local_afiliado.user.username + " - " + self.direccion

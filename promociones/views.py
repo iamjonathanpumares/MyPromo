@@ -51,3 +51,23 @@ def AfiliadoPromocionView(request, usuario):
 		return render(request, 'afiliado_promociones.html', { 'promociones': promociones, 'form': form })
 	else:
 		raise Http404
+
+# Django REST Framework -----------------------------------------------------------------------------------------------------------------
+
+from rest_framework import viewsets, generics
+from .serializers import PromocionSerializer
+
+class PromocionAPIView(generics.ListAPIView):
+	queryset = Promocion.objects.all()
+	serializer_class = PromocionSerializer
+
+class PromocionAfiliadoAPIView(generics.ListAPIView):
+	serializer_class = PromocionSerializer
+
+	"""
+		Sobreescribimos el metodo get_queryset, para que nos devuelva
+		una consulta, que seran los cupones de cada afiliado.
+	"""
+	def get_queryset(self):
+		promocion_afiliado = self.kwargs['promocion_afiliado'] # Desde la URL por medio de los kwargs le pasamos el id del afiliado
+		return Promocion.objects.filter(promocion_afiliado=promocion_afiliado) # Retorna un tipo de dato queryset para mostrarse en la vista

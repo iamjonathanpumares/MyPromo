@@ -7,12 +7,31 @@ from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, Af
 from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
+#from rest_framework import routers
+from userprofiles.views import AfiliadoAPIView, LocalAfiliadoAPIView
+from cupones.views import CuponAPIView, CuponAfiliadoAPIView
+from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView
+from rest_framework.urlpatterns import format_suffix_patterns
+
+#router = routers.DefaultRouter()
+#router.register(r'afiliados', AfiliadoViewSet.as_view())
+#router.register(r'users', UserViewSet)
+#router.register(r'grupos', GroupViewSet)
+
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'mypromo.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
-
+    url(r'^api/afiliados/$', AfiliadoAPIView.as_view()),
+    url(r'^api/locales/(?P<local_afiliado>[0-9]+)/$', LocalAfiliadoAPIView.as_view()),
+    url(r'^api/cupones/$', CuponAPIView.as_view()),
+    url(r'^api/cupones/(?P<cupon_afiliado>[0-9]+)/$', CuponAfiliadoAPIView.as_view()),
+    url(r'^api/promociones/$', PromocionAPIView.as_view()),
+    url(r'^api/promociones/(?P<promocion_afiliado>[0-9]+)/$', PromocionAfiliadoAPIView.as_view()),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)), # URL para la vista del admin de Django
+    
+    
     #url(r'^signup/','userprofiles.views.signup', name='signup'),
     #url(r'^home/$', TemplateView.as_view(template_name='base.html'), name='home'),
 
@@ -45,4 +64,8 @@ urlpatterns = patterns('',
     url(r'^(?P<usuario>[\w\-]+)/cupones/(?P<pk>[\w\-]+)/modificar/$', 'cupones.views.AfiliadoCuponView', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/promociones/$', 'promociones.views.AfiliadoPromocionView', name='afiliado_promociones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/administrar/$', 'userprofiles.views.AdministrarAfiliadoView', name='afiliado_administrar'), # URL del home de MyPromo para afiliados
+
+
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns = format_suffix_patterns(urlpatterns)

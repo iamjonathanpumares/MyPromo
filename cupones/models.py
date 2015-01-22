@@ -9,7 +9,7 @@ class Cupon(models.Model):
 	vigencia = models.DateField()
 	descripcion = models.TextField()
 	imagen = models.ImageField(upload_to='cupones/imagenes')
-	cupon_afiliado = models.ForeignKey(Afiliado)
+	cupon_afiliado = models.ForeignKey(Afiliado, related_name='cupones')
 
 	def __unicode__(self):
 		return self.titulo

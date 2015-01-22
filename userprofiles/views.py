@@ -169,3 +169,31 @@ def AdministrarAfiliadoView(request):
 		form_user = UserAfiliadoForm()
 		form_afiliado = PerfilAfiliadoForm()
 	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
+
+# Django REST Framework -----------------------------------------------------------------------------------------------------------------
+
+from rest_framework import viewsets, generics
+from .serializers import AfiliadoSerializer, LocalSerializer
+
+class AfiliadoAPIView(generics.ListAPIView):
+	queryset = Afiliado.objects.filter(user__is_active=True)
+	serializer_class = AfiliadoSerializer
+
+class LocalAfiliadoAPIView(generics.ListAPIView):
+	serializer_class = LocalSerializer
+
+	"""
+		Sobreescribimos el metodo get_queryset, para que nos devuelva
+		una consulta, que seran los cupones de cada afiliado.
+	"""
+	def get_queryset(self):
+		local_afiliado = self.kwargs['local_afiliado'] # Desde la URL por medio de los kwargs le pasamos el id del afiliado
+		return Local.objects.filter(local_afiliado=local_afiliado) # Retorna un tipo de dato queryset para mostrarse en la vista
+
+"""class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer"""

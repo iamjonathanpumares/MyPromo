@@ -10,7 +10,7 @@ class Promocion(models.Model):
 	descripcion = models.TextField()
 	status = models.CharField(max_length=10)
 	imagen = models.ImageField(upload_to='promociones/imagenes')
-	promocion_afiliado = models.ForeignKey(Afiliado)
+	promocion_afiliado = models.ForeignKey(Afiliado, related_name='promociones')
 
 	def __unicode__(self):
 		return self.titulo

@@ -123,11 +123,14 @@ class PerfilAfiliadoForm(forms.ModelForm):
 			twitter = 'https://twitter.com/%s' % self.cleaned_data['twitter']
 		return twitter
 
-
-
 class UsuarioCSVForm(forms.Form):
 	archivoCSV = forms.FileField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))
 
 class LocalForm(forms.ModelForm):
 	class Meta:
 		model = Local
+
+class StatusUpdateForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = ['is_active']

@@ -16,14 +16,14 @@ class AfiliadoCuponesSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Afiliado
-		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'descripcion', 'giro', 'cupones')
+		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'codigoValidacion', 'logo', 'descripcion', 'giro', 'cupones')
 
 class AfiliadoPromocionesSerializer(serializers.ModelSerializer):
 	promociones = PromocionSerializer(many=True, read_only=True)
 
 	class Meta:
 		model = Afiliado
-		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'descripcion', 'giro', 'promociones')
+		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'codigoValidacion', 'logo', 'descripcion', 'giro', 'promociones')
 
 class LocalSerializer(serializers.ModelSerializer):
 	class Meta:

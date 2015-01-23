@@ -88,18 +88,6 @@ DATABASES = {
     }
 }
 
-"""DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'veltium_mypromo',
-        'USER': 'veltium_jonathan',
-        'PASSWORD': 'dF74CEEA,=y2',
-        'HOST': '108.167.133.21',
-        'PORT': '3306',
-        'ATOMIC_REQUESTS': True,
-    }
-}"""
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 

@@ -3,13 +3,13 @@ import json
 from django.shortcuts import render_to_response, redirect, render, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.template import RequestContext
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, UpdateView
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login, logout
-from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm
+from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Afiliado, Local, UsuarioFinal, Promotor
 from .load_data import importarCSV
@@ -106,6 +106,18 @@ def LocalView(request, usuario, id_usuario):
 	else:
 		usuario_afiliado = get_object_or_404(Afiliado, user__username=usuario, user__id=id_usuario)
 	return render_to_response('locales.html', {}, context_instance=RequestContext(request))
+
+class StatusUpdateView(UpdateView): # Vista que hereda de UpdateView para actualizar un objeto ya creado
+	form_class = StatusUpdateForm # Especificamos el formulario a usar
+	template_name = 'modificar_status.html' # Especificamos la plantilla a renderizar
+	model = User # Especificamos el modelo en donde buscara el objeto a actualizar
+	#success_url = '/lista-afiliados/'
+
+	def form_valid(self, form): # Sobreescribimos el metodo form_valid para cambiar su comportamiento
+		self.object = form.save() # Actualizamos el objeto con sus cambios y retorna ese mismo objeto
+		request = self.request # Asignamos a una variable local el self.request
+		messages.info(request, 'Status modificado') # Mandamos un mensaje de informacion especificando que se ha modificado el cupon
+		return super(StatusUpdateView, self).get(request) # Mandamos a llamar al padre de get para que renderize de vuelta el formulario
 
 class UsuarioPromotorListView(ListView):
 	model = User

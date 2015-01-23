@@ -80,7 +80,7 @@
                 <th><i class="fa fa-picture-o"></i> Logo</th>
                 <th class="hidden-phone"><i class="fa fa-user"></i> Nombre</th>
                 <th><i class="fa fa-briefcase"></i> Giro</th>
-                <th></th>
+                <th>Status</th>
               </tr>
             </thead>
 
@@ -95,7 +95,11 @@
                   <td class="hidden-phone">{{ afiliado.nombreEmpresa }}</td>
                   <td>{{ afiliado.giro }}</td>
                   <td>
-                      <button class="btn btn-primary btn-xs"><i class="fa fa-check-square"></i></button>
+                      {% if afiliado.user.is_active %}
+                        <a href="/modificar-status/{{ afiliado.user.id }}/" class="fancybox-status btn btn-primary btn-xs" title="Activo"><i class="fa fa-check-square"></i></a>
+                      {% else %}
+                        <a href="/modificar-status/{{ afiliado.user.id }}/" class="fancybox-status btn btn-theme btn-xs" title="Inactivo"><i class="fa fa-ban"></i></a>
+                      {% endif %}
                   </td>
               </tr>
               {% endfor %}
@@ -109,5 +113,27 @@
 
 {% block scripts_tags %}
 <!-- Funcion Javascript de calendario -->
-<script src="{% static "js/fancybox/fancybox-afiliado.js" %}"></script>
+<script type="text/javascript">
+$(document).ready(function () {
+  $(".fancybox-status").fancybox({
+        'autoScale'         : false,
+        'transitionIn'      : 'none',
+        'transitionOut'     : 'none',
+        'width'             : 900,
+        'height'            : 500,
+        'type'              : 'iframe',
+        'afterClose'        : function() {
+          location.reload();
+        },
+      });
+      $(".fancybox-logo").fancybox({
+          helpers: {
+              title : {
+                  type : 'float'
+              }
+          }
+      });
+      
+});
+</script>
 {% endblock scripts_tags %}

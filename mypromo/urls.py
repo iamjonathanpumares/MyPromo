@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import RedirectView
-from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView
+from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView, StatusUpdateView
 from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
@@ -50,6 +50,7 @@ urlpatterns = patterns('',
     url(r'^lista-usuarios/$', UsuarioFinalListView.as_view(), name='lista_usuarios'), # URL para ver lista de usuarios finales
     url(r'^lista-afiliados/$', AfiliadoListView.as_view(), name='lista_afiliados'), # URL para ver lista de usuarios afiliados
     url(r'^administrar-usuarios/$', 'userprofiles.views.PromotorView', name='promotor_administrar'), # URL para agregar usuarios finales
+    url(r'^modificar-status/(?P<pk>[\w\-]+)/$', StatusUpdateView.as_view(), name='status_modificar'), # URL para modificar el cupon seleccionado
 
     # App cupones -------------------------------------------------------------------------------------------------------------
     url(r'^cupones/$', AfiliadoCuponListView.as_view(), name='cupones'), # URL para ver lista de usuarios afiliados y ver sus cupones

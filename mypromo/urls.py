@@ -46,6 +46,7 @@ urlpatterns = patterns('',
     url(r'^home/$', 'userprofiles.views.home', name='home'), # URL del home de MyPromo
     url(r'^agregar-usuarios/$', 'userprofiles.views.RegisterUsuarioFinalView', name='agregar'), # URL para agregar usuarios finales
     url(r'^agregar-afiliados/$', 'userprofiles.views.AfiliadoView', name='agregar_afiliados'), # URL para agregar afiliados
+    url(r'^modificar-afiliado/(?P<usuario>[\w\-]+)/(?P<id>[0-9]+)/$', 'userprofiles.views.AfiliadoUpdateView', name='agregar_afiliados'), # URL para agregar afiliados
     url(r'^agregar-locales/(?P<usuario>[\w\-]+)/(?P<id_usuario>\d+)/$', 'userprofiles.views.LocalView', name='agregar_locales'), # URL para agregar locales
     url(r'^lista-usuarios/$', UsuarioFinalListView.as_view(), name='lista_usuarios'), # URL para ver lista de usuarios finales
     url(r'^lista-afiliados/$', AfiliadoListView.as_view(), name='lista_afiliados'), # URL para ver lista de usuarios afiliados

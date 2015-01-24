@@ -38,7 +38,7 @@
     </a>
     <ul class="sub">
         <li><a href ="/agregar-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i>Agregar</a></li>
-         <li class="active"><a href ="/lista-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i>Modificar</a></li>
+         <li class="active"><a href ="/lista-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i>Modificar</a></li>
         
     </ul>
 </li>
@@ -81,6 +81,8 @@
                 <th class="hidden-phone"><i class="fa fa-user"></i> Nombre</th>
                 <th><i class="fa fa-briefcase"></i> Giro</th>
                 <th>Status</th>
+                <th>Perfil</th>
+                <th>Locales</th>
               </tr>
             </thead>
 
@@ -95,11 +97,17 @@
                   <td class="hidden-phone">{{ afiliado.nombreEmpresa }}</td>
                   <td>{{ afiliado.giro }}</td>
                   <td>
-                      {% if afiliado.user.is_active %}
-                        <a href="/modificar-status/{{ afiliado.user.id }}/" class="fancybox-status btn btn-primary btn-xs" title="Activo"><i class="fa fa-check-square"></i></a>
-                      {% else %}
-                        <a href="/modificar-status/{{ afiliado.user.id }}/" class="fancybox-status btn btn-theme btn-xs" title="Inactivo"><i class="fa fa-ban"></i></a>
-                      {% endif %}
+                    {% if afiliado.user.is_active %}
+                      <a href="/modificar-status/{{ afiliado.user.id }}/" class="fancybox-status btn btn-primary btn-xs" title="Activo"><i class="fa fa-check-square"></i></a>
+                    {% else %}
+                      <a href="/modificar-status/{{ afiliado.user.id }}/" class="fancybox-status btn btn-theme btn-xs" title="Inactivo"><i class="fa fa-ban"></i></a>
+                    {% endif %}
+                  </td>
+                  <td>
+                    <a href="/modificar-afiliado/{{ afiliado.user.username }}/{{ afiliado.id }}/" class="btn btn-primary btn-xs" title="Modificar perfil"><i class="fa fa-pencil"></i></a>
+                  </td>
+                  <td>
+                    <a href="/modificar-afiliado/{{ afiliado.id }}/" class="btn btn-primary btn-xs" title="Modificar perfil"><i class="fa fa-location-arrow"></i></a>
                   </td>
               </tr>
               {% endfor %}

@@ -101,7 +101,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-MEDIA_ROOT = '/home/jonathan/www/mypromo.com/media'
+MEDIA_ROOT = '/Users/jonathan/www/mypromo.com/media'
 
 MEDIA_URL = '/media/'
 

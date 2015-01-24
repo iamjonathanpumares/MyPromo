@@ -76,6 +76,18 @@ class UserAfiliadoForm(UserCreationForm):
 			user.save()
 		return user
 
+class UserAfiliadoUpdateForm(forms.ModelForm):
+	username = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	class Meta:
+		model = User
+		fields = ['username']
+
+""" 
+	Cada ModelForm tiene un método save(). Este método crea y guarda un objeto a la base de datos desde los datos
+	proporcionados por el formulario. Una subclase de un ModelForm puede aceptar una instancia modelo existente como
+	el argumento instance; si esto es suministrado, save() actualizará la instancia. Si esto no es suministrado, save()
+	creará una nueva instancia del modelo especificado.
+"""
 class PerfilAfiliadoForm(forms.ModelForm):
 	nombreEmpresa = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	representante = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
@@ -91,7 +103,7 @@ class PerfilAfiliadoForm(forms.ModelForm):
 
 	class Meta:
 		model = Afiliado
-		fields = ['nombreEmpresa', 'representante', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'giro', 'cartel']
+		fields = ['nombreEmpresa', 'representante', 'descripcion', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'giro', 'cartel']
 
 	def save(self, commit=True, *args, **kwargs):
 		nombreEmpresa = self.cleaned_data['nombreEmpresa']
@@ -122,6 +134,14 @@ class PerfilAfiliadoForm(forms.ModelForm):
 		if twitter != '':
 			twitter = 'https://twitter.com/%s' % self.cleaned_data['twitter']
 		return twitter
+
+class PerfilAfiliadoUpdateForm(PerfilAfiliadoForm):
+	class Meta:
+		model = Afiliado
+		fields = fields = ['nombreEmpresa', 'representante', 'descripcion', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'giro', 'cartel']
+
+	def save(self, commit=True, *args, **kwargs):
+		super(PerfilAfiliadoForm, self).save()
 
 class UsuarioCSVForm(forms.Form):
 	archivoCSV = forms.FileField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))

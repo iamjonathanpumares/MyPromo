@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login, logout
-from .forms import LoginForm, UserAfiliadoForm, PerfilAfiliadoForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm
+from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Afiliado, Local, UsuarioFinal, Promotor
 from .load_data import importarCSV
@@ -86,6 +86,29 @@ def AfiliadoView(request):
 		form_user = UserAfiliadoForm()
 		form_afiliado = PerfilAfiliadoForm()
 	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
+
+def AfiliadoUpdateView(request, usuario, id): # Vista que hereda de UpdateView para actualizar un objeto ya creado
+	user_afiliado = get_object_or_404(User, username=usuario)
+	afiliado = get_object_or_404(Afiliado, id=id)
+	if request.method == 'POST':
+		form_user = UserAfiliadoUpdateForm(request.POST, instance=user_afiliado)
+		form_afiliado = PerfilAfiliadoUpdateForm(request.POST, request.FILES, instance=afiliado)
+		if form_user.is_valid() and form_afiliado.is_valid():
+			form_user.save()
+			form_afiliado.save()
+			messages.info(request, 'Afiliado %s modificado' % afiliado) # Creamos un mensaje de exito para mostrarlo en la otra vista
+			return redirect('/lista-afiliados/')
+
+	else:
+		if afiliado.facebook != '':
+			datos = afiliado.facebook.split('.com/')
+			afiliado.facebook = datos[1]
+		if afiliado.twitter != '':
+			datos = afiliado.twitter.split('.com/')
+			afiliado.twitter = datos[1]
+		form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
+		form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
+	return render(request, 'modificar_afiliado.html', { 'form_user': form_user, 'form_afiliado': form_afiliado })
 
 @permission_required('userprofiles.add_local', login_url='/login/')
 @login_required(login_url='/login/')

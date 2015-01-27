@@ -258,7 +258,8 @@ class LocalAfiliadoAPIView(generics.ListAPIView):
 @api_view(['POST'])
 def iniciar_sesion(request):
 	if request.method == 'POST':
-		data = JSONParser().parse(request)
+		#data = JSONParser().parse(request)
+		data = request.data
 		usuario = data['usuario']
 		clave = data['clave']
 		respuesta = {}

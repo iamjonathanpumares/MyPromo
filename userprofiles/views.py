@@ -227,6 +227,10 @@ def AdministrarAfiliadoView(request):
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
 from rest_framework import viewsets, generics
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
 from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, LocalSerializer
 
 class AfiliadoAPIView(generics.ListAPIView):
@@ -243,7 +247,6 @@ class AfiliadoPromocionesAPIView(generics.ListAPIView):
 
 class LocalAfiliadoAPIView(generics.ListAPIView):
 	serializer_class = LocalSerializer
-
 	"""
 		Sobreescribimos el metodo get_queryset, para que nos devuelva
 		una consulta, que seran los cupones de cada afiliado.
@@ -251,6 +254,26 @@ class LocalAfiliadoAPIView(generics.ListAPIView):
 	def get_queryset(self):
 		local_afiliado = self.kwargs['local_afiliado'] # Desde la URL por medio de los kwargs le pasamos el id del afiliado
 		return Local.objects.filter(local_afiliado=local_afiliado) # Retorna un tipo de dato queryset para mostrarse en la vista
+
+@api_view(['POST'])
+def iniciar_sesion(request):
+	if request.method == 'POST':
+		data = JSONParser().parse(request)
+		usuario = data['usuario']
+		clave = data['clave']
+		respuesta = {}
+		try:
+			usuario_final = UsuarioFinal.objects.get(user__username=usuario)
+		except UsuarioFinal.DoesNotExist:
+			respuesta['estado'] = "False"
+			return Response(respuesta)
+		else:
+			if usuario_final.user.check_password(clave):
+				respuesta['estado'] = "True"
+				return Response(respuesta)
+			else:
+				respuesta['estado'] = "False"
+				return Response(respuesta)
 
 """class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

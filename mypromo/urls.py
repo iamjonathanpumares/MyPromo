@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'mypromo.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
+    url(r'^api/iniciar-sesion/$', 'userprofiles.views.iniciar_sesion'),
     url(r'^api/afiliados/$', AfiliadoAPIView.as_view()),
     url(r'^api/afiliados-cupones/$', AfiliadoCuponesAPIView.as_view()),
     url(r'^api/afiliados-promociones/$', AfiliadoPromocionesAPIView.as_view()),

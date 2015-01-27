@@ -6,7 +6,6 @@ from cupones.serializers import CuponSerializer
 from promociones.serializers import PromocionSerializer
 
 class AfiliadoSerializer(serializers.ModelSerializer):
-
 	class Meta:
 		model = Afiliado
 		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'descripcion', 'giro')

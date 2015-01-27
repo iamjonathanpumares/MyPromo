@@ -3,6 +3,7 @@ $latitud = $('#latitud'),
 $longitud = $('#longitud'),
 $fila = $('.TableBody-row').eq(0),
 $tabla = $('.TableBody');
+$('#enviar-locales').attr("disabled", true);
 
 var csrftoken = $.cookie('csrftoken');
 var url_afiliado = location.href;
@@ -29,12 +30,28 @@ function agregarLocal()
 
 	$clone.appendTo('.TableBody');
 	$clone.fadeIn();
+	if ($('.TableBody').children().size() > 1)
+	{
+		$('#enviar-locales').attr("disabled", false);
+	}
+	else
+	{
+		$('#enviar-locales').attr("disabled", true);
+	}
 }
 
 function eliminarLocal()
 {
 	var $parent = $(this).parents().get(0);
 	$($parent).remove();
+	if ($('.TableBody').children().size() > 1)
+	{
+		$('#enviar-locales').attr("disabled", false);
+	}
+	else
+	{
+		$('#enviar-locales').attr("disabled", true);
+	}
 }
 
 function convertirJSON()

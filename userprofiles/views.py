@@ -130,6 +130,25 @@ def LocalView(request, usuario, id_usuario):
 		usuario_afiliado = get_object_or_404(Afiliado, user__username=usuario, user__id=id_usuario)
 	return render_to_response('locales.html', {}, context_instance=RequestContext(request))
 
+@permission_required('userprofiles.add_local', login_url='/login/')
+@login_required(login_url='/login/')
+def LocalUpdateView(request, usuario, id):
+	afiliado = get_object_or_404(Afiliado, user__username=usuario, id=id)
+	locales = afiliado.locales.all()
+	if request.method == 'POST':
+		json_locales = request.read()
+		locales = json.loads(json_locales)
+		if afiliado.user.username == usuario:
+			i = 0
+			num_locales = len(locales['direcciones'])
+			while i < num_locales:
+				local_afiliado = Local(direccion=locales['direcciones'][i], latitud=locales['latitudes'][i], longitud=locales['longitudes'][i], local_afiliado=afiliado)
+				local_afiliado.save()
+				i += 1
+			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
+			return HttpResponse('/lista-afiliados/')
+	return render_to_response('modificar_locales.html', { 'locales': locales }, context_instance=RequestContext(request))
+
 class StatusUpdateView(UpdateView): # Vista que hereda de UpdateView para actualizar un objeto ya creado
 	form_class = StatusUpdateForm # Especificamos el formulario a usar
 	template_name = 'modificar_status.html' # Especificamos la plantilla a renderizar

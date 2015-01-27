@@ -8,7 +8,7 @@ from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
 #from rest_framework import routers
-from userprofiles.views import AfiliadoAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, LocalAfiliadoAPIView
+from userprofiles.views import AfiliadoAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView
 from cupones.views import CuponAPIView, CuponAfiliadoAPIView
 from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^api/cupones/(?P<cupon_afiliado>[0-9]+)/$', CuponAfiliadoAPIView.as_view()),
     url(r'^api/promociones/$', PromocionAPIView.as_view()),
     url(r'^api/promociones/(?P<promocion_afiliado>[0-9]+)/$', PromocionAfiliadoAPIView.as_view()),
+    url(r'^api/correos/(?P<username>[\w\-]+)/$', CorreoUsuarioFinalAPIView.as_view()),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^admin/', include(admin.site.urls)), # URL para la vista del admin de Django
     
@@ -42,6 +43,7 @@ urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(url='/home/'), name='redirect_home'), # URL raiz que te redirecciona al Home si estas logueado
     url(r'^login/$', LoginUserPromotorView.as_view(), name='login'), # URL para entrar al Login de MyPromo
     url(r'^logout/$', 'userprofiles.views.logout_view', name='logout'), # URL para desloguearse de MyPromo
+    url(r'^enviar-correo/$', 'userprofiles.views.enviar_correo', name='enviar_correo'), # URL del home de MyPromo para afiliados
 
     # App userprofiles ----------------------------------------------------------------------------------------------------
     url(r'^home/$', 'userprofiles.views.home', name='home'), # URL del home de MyPromo

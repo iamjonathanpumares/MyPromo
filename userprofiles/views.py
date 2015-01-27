@@ -224,6 +224,24 @@ def AdministrarAfiliadoView(request):
 		form_afiliado = PerfilAfiliadoForm()
 	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
 
+from django.core.mail.message import EmailMultiAlternatives
+from django.http.response import HttpResponseRedirect
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import send_mail
+ 
+ 
+def enviar_correo(request):
+    subject = 'Asunto'
+    text_content = 'Mensaje...nLinea 2nLinea3'
+    html_content = '<h2>Mensaje</2><p>Linea 1<br>Linea 2</p>'
+    from_email = 'contacto@grupoveltium.com'
+    to = 'veltiumdevelopment@gmail.com'
+    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+    return HttpResponse("Correo enviado")
+
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
 from rest_framework import viewsets, generics
@@ -231,7 +249,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
-from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, LocalSerializer
+from rest_framework.views import APIView
+from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, LocalSerializer, UserSerializer
 
 class AfiliadoAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
@@ -275,6 +294,21 @@ def iniciar_sesion(request):
 			else:
 				respuesta['estado'] = "False"
 				return Response(respuesta)
+
+class CorreoUsuarioFinalAPIView(APIView):
+	queryset = User.objects.all()
+	serializer_class = UserSerializer
+
+	def get_object(self, username):
+		try:
+			return User.objects.get(username=username)
+		except User.DoesNotExist:
+			raise Http404
+
+	def get(self, request, username, format=None):
+		usuario = self.get_object(username)
+		serializer = UserSerializer(usuario)
+		return Response(serializer.data)
 
 """class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

@@ -114,3 +114,10 @@ STATICFILES_FINDERS = ('django.contrib.staticfiles.finders.FileSystemFinder',
  'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 #STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'))
+
+# Email
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'jepc1491@gmail.com'
+EMAIL_HOST_PASSWORD = 'vv1_barcelona'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True

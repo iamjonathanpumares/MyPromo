@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Afiliado, Local
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from cupones.models import Cupon
 from cupones.serializers import CuponSerializer
 from promociones.serializers import PromocionSerializer
@@ -29,12 +29,12 @@ class LocalSerializer(serializers.ModelSerializer):
 		model = Local
 		fields = ('id', 'latitud', 'longitud', 'direccion', 'local_afiliado')
 
-"""class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('url', 'username', 'email', 'groups')
+        fields = ('id', 'username', 'email')
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
+"""class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group
         fields = ('url', 'name')"""

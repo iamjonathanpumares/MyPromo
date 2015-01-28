@@ -24,6 +24,11 @@ class AfiliadoPromocionesSerializer(serializers.ModelSerializer):
 		model = Afiliado
 		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'codigoValidacion', 'logo', 'descripcion', 'giro', 'promociones')
 
+class AfiliadoCartelSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = Afiliado
+		fields = ('cartel',)
+
 class LocalSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Local

@@ -249,7 +249,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
-from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, LocalSerializer, UserSerializer
+from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, AfiliadoCartelSerializer, LocalSerializer, UserSerializer
 
 class AfiliadoAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
@@ -262,6 +262,10 @@ class AfiliadoCuponesAPIView(generics.ListAPIView):
 class AfiliadoPromocionesAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
 	serializer_class = AfiliadoPromocionesSerializer
+
+class AfiliadoCartelAPIView(generics.ListAPIView):
+	queryset = Afiliado.objects.all().order_by('?')[:10]
+	serializer_class = AfiliadoCartelSerializer
 
 class LocalAfiliadoAPIView(generics.ListAPIView):
 	serializer_class = LocalSerializer

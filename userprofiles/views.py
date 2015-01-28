@@ -232,15 +232,14 @@ from django.core.mail import send_mail
  
  
 def enviar_correo(request):
-    subject = 'Asunto'
-    text_content = 'Mensaje...nLinea 2nLinea3'
-    html_content = '<h2>Mensaje</2><p>Linea 1<br>Linea 2</p>'
-    from_email = 'contacto@grupoveltium.com'
-    to = 'veltiumdevelopment@gmail.com'
-    msg = EmailMultiAlternatives(subject, text_content, from_email, [to])
-    msg.attach_alternative(html_content, "text/html")
-    msg.send()
-    return HttpResponse("Correo enviado")
+	if request.method == 'POST':
+		form = PasswordResetForm(request.POST)
+		if form.is_valid():
+			form.save()
+			return HttpResponse("Correo enviado")
+	else:
+		form = PasswordResetForm()
+	return render(request, 'email.html', { 'form': form })
 
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 

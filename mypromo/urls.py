@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^api/promociones/(?P<promocion_afiliado>[0-9]+)/$', PromocionAfiliadoAPIView.as_view()),
     url(r'^api/correos/(?P<username>[\w\-]+)/$', CorreoUsuarioFinalAPIView.as_view()),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^password-reset/', include('password_reset.urls')),
     url(r'^admin/', include(admin.site.urls)), # URL para la vista del admin de Django
     
     

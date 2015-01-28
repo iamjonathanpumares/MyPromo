@@ -4,18 +4,25 @@
         <title>Prueba email</title>
     </head>
     <body>
+        <form method="post">
+            {% csrf_token %}
+            <label>Email: </label>
+            {{ form.email.errors }}
+            {{ form.email }}
+            <button type="submit">Enviar</button>     
+        </form>
         <table>
             <thead>
                 <tr>
-                    <th>{{ titulo }}</th>
+                    <th>Titulo</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Hola {{ usuario }}</td>
+                    <td>Hola usuario</td>
                 </tr>
                 <tr>
-                    <td>{{ mensaje }}</td>
+                    <td>Mensaje</td>
                 </tr>
             </tbody>
         </table>

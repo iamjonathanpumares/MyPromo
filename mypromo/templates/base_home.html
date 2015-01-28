@@ -42,6 +42,9 @@
       *********************************************************************************************************************************************************** -->
       <!--header start-->
       <header class="header black-bg">
+              <div class="sidebar-toggle-box">
+                  <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
+              </div>
             <!--logo start-->
             <a href="index.html" class="logo"><b>MYPROMO UNID</b></a>
             <!--logo end-->
@@ -50,8 +53,105 @@
                 
                 <!--  notification end -->
             </div>
+            <div class="top-menu">
+            	<ul class="nav pull-right top-menu">
+                    <li><a class="logout" href="/logout/"><i class="fa fa-sign-out"></i>Logout</a></li>
+            	</ul>
+            </div>
         </header>
       <!--header end-->
+      
+      <!-- **********************************************************************************************************************************************************
+      MAIN SIDEBAR MENU
+      *********************************************************************************************************************************************************** -->
+      <!--sidebar start-->
+      <aside>
+          <div id="sidebar"  class="nav-collapse ">
+              <!-- sidebar menu start-->
+              <ul class="sidebar-menu" id="nav-accordion">
+              
+              	  <p class="centered"><a href="profile.html"><img src="{% static "img/leyenda.jpg" %}" class="img-circle" width="60"></a></p>
+              	  <h5 class="centered">{{ user }}</h5>
+              	  {% block menu_inicio %}	
+                  <li class="mt">
+                      <a class="active" href="/home/">
+                          <i class="fa fa-home"></i>
+                          <span>Inicio</span>
+                      </a>
+                  </li>
+                  {% endblock menu_inicio %}
+
+                  {% block menu_familia_unid %}
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-users"></i>
+                          <span>Familia UNID</span>
+                      </a>
+                      <ul class="sub">
+                          <li><a href ="/agregar-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i>Agregar</a></li>
+                           <li><a href ="/lista-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i>Modificar</a></li>
+                          
+                      </ul>
+                  </li>
+                  {% endblock menu_familia_unid %}
+
+                  {% block menu_afiliados %}
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-briefcase"></i>
+                          <span>Afiliados</span>
+                      </a>
+                      <ul class="sub">
+                          <li><a href ="/agregar-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-plus"></i>Agregar</a></li>
+                           <li><a href ="/lista-afiliados/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-edit"></i>Modificar</a></li>
+                          
+                      </ul>
+                  </li>
+                  {% endblock menu_afiliados %}
+
+                  {% block menu_cupones %}
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-tag"></i>
+                          <span>Cupones</span>
+                      </a>
+                      <ul class="sub">
+                          <li><a href ="/cupones/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-th-list"></i>Ver empresas</a></li>
+                      </ul>
+                  </li>
+                  {% endblock menu_cupones %}
+
+                  {% block menu_promociones %}
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-flag"></i>
+                          <span>Promociones</span>
+                      </a>
+                      <ul class="sub">
+                          <li><a href ="/promociones/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-th-list"></i>Ver empresas</a></li>
+                      </ul>
+                  </li>
+                  {% endblock menu_promociones %}
+
+                  {% block menu_administrar %}
+                  <li class="sub-menu">
+                      <a href="javascript:;" >
+                          <i class="fa fa-gear"></i>
+                          <span>Administrar</span>
+                      </a>
+                      <ul class="sub">
+                          <li><a href ="/administrar-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user"></i>Usuarios promotor</a></li>
+                      </ul>
+                  </li>
+                  {% endblock menu_administrar %}
+
+                 
+
+              </ul>
+              <!-- sidebar menu end-->
+          </div>
+      </aside>
+      <!--sidebar end-->
       
       <!-- **********************************************************************************************************************************************************
       MAIN CONTENT
@@ -59,21 +159,10 @@
       <!--main content start-->
       <section id="main-content">
           <section class="wrapper" id="con">
-           
+           {% block section %}
+           {% endblock section %}
           </section>
       </section>
-      <div class="panel panel-default">
-        <div class="panel-heading">
-            <h3 class="panel-title">
-                Restablecer contraseña
-            </h3>
-        </div>
-        <div class="panel-body">
-            Te enviaremos un correo electrónico con más instrucciones para restablecer tu contraseña.
-            {% block content %}
-           {% endblock content %}
-        </div>
-      </div>
 
       <!--main content end-->
       <!--footer start-->

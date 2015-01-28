@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'promociones',
     'sorl.thumbnail',
     'rest_framework',
+    'password_reset',
 )
 
 REST_FRAMEWORK = {

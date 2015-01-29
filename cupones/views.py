@@ -57,6 +57,8 @@ def AfiliadoCuponView(request, usuario):
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
 from rest_framework import viewsets, generics
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from .serializers import CuponSerializer
 
 class CuponAPIView(generics.ListAPIView):
@@ -73,3 +75,10 @@ class CuponAfiliadoAPIView(generics.ListAPIView):
 	def get_queryset(self):
 		cupon_afiliado = self.kwargs['cupon_afiliado'] # Desde la URL por medio de los kwargs le pasamos el id del afiliado
 		return Cupon.objects.filter(cupon_afiliado=cupon_afiliado) # Retorna un tipo de dato queryset para mostrarse en la vista
+
+class UsuariosCuponesDisponibles(APIView):
+	def get(self, request, usuario, format=None):
+		cupones = Cupon.objects.exclude(users__username=usuario)
+		serializer = CuponSerializer(cupones, many=True)
+		return Response(serializer.data)
+

@@ -9,7 +9,7 @@ from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
 #from rest_framework import routers
 from userprofiles.views import AfiliadoAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView
-from cupones.views import CuponAPIView, CuponAfiliadoAPIView
+from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles
 from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -30,6 +30,7 @@ urlpatterns = patterns('',
     url(r'^api/locales/(?P<local_afiliado>[0-9]+)/$', LocalAfiliadoAPIView.as_view()),
     url(r'^api/cupones/$', CuponAPIView.as_view()),
     url(r'^api/cupones/(?P<cupon_afiliado>[0-9]+)/$', CuponAfiliadoAPIView.as_view()),
+    url(r'^api/cupones-disponibles/(?P<usuario>[0-9]+)/$', UsuariosCuponesDisponibles.as_view()),
     url(r'^api/promociones/$', PromocionAPIView.as_view()),
     url(r'^api/promociones/(?P<promocion_afiliado>[0-9]+)/$', PromocionAfiliadoAPIView.as_view()),
     url(r'^api/correos/(?P<username>[\w\-]+)/$', CorreoUsuarioFinalAPIView.as_view()),

@@ -255,6 +255,10 @@ class AfiliadoAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
 	serializer_class = AfiliadoSerializer
 
+class AfiliadoDetailAPIView(generics.RetrieveAPIView):
+	queryset = Afiliado.objects.all()
+	serializer_class = AfiliadoSerializer
+
 class AfiliadoCuponesAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
 	serializer_class = AfiliadoCuponesSerializer
@@ -266,6 +270,12 @@ class AfiliadoPromocionesAPIView(generics.ListAPIView):
 class AfiliadoCartelAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.all().order_by('?')[:10]
 	serializer_class = AfiliadoCartelSerializer
+
+class UsuariosCuponesAfiliados(APIView):
+	def get(self, request, usuario, format=None):
+		afiliados = Afiliado.objects.exclude(cupones__users__username=usuario).filter(cupones__status='Activo', user__is_active=True)
+		serializer = AfiliadoCuponesSerializer(afiliados, many=True)
+		return Response(serializer.data)
 
 class LocalAfiliadoAPIView(generics.ListAPIView):
 	serializer_class = LocalSerializer

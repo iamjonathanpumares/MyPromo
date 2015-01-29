@@ -8,7 +8,7 @@ from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
 #from rest_framework import routers
-from userprofiles.views import AfiliadoAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView
+from userprofiles.views import AfiliadoAPIView, AfiliadoDetailAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView, UsuariosCuponesAfiliados
 from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles
 from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -24,6 +24,7 @@ urlpatterns = patterns('',
     # url(r'^blog/', include('blog.urls')),
     url(r'^api/iniciar-sesion/$', 'userprofiles.views.iniciar_sesion'),
     url(r'^api/afiliados/$', AfiliadoAPIView.as_view()),
+    url(r'^api/afiliados/(?P<pk>[0-9]+)/$', AfiliadoDetailAPIView.as_view()),
     url(r'^api/afiliados-cupones/$', AfiliadoCuponesAPIView.as_view()),
     url(r'^api/afiliados-promociones/$', AfiliadoPromocionesAPIView.as_view()),
     url(r'^api/afiliados-carteles/$', AfiliadoCartelAPIView.as_view()),
@@ -31,6 +32,7 @@ urlpatterns = patterns('',
     url(r'^api/cupones/$', CuponAPIView.as_view()),
     url(r'^api/cupones/(?P<cupon_afiliado>[0-9]+)/$', CuponAfiliadoAPIView.as_view()),
     url(r'^api/cupones-disponibles/(?P<usuario>[0-9]+)/$', UsuariosCuponesDisponibles.as_view()),
+    url(r'^api/afiliados-disponibles/(?P<usuario>[0-9]+)/$', UsuariosCuponesAfiliados.as_view()),
     url(r'^api/usuarios-cupones/$', 'cupones.views.UsuariosCuponesAgregar'),
     url(r'^api/promociones/$', PromocionAPIView.as_view()),
     url(r'^api/promociones/(?P<promocion_afiliado>[0-9]+)/$', PromocionAfiliadoAPIView.as_view()),

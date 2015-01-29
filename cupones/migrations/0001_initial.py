@@ -21,8 +21,9 @@ class Migration(migrations.Migration):
                 ('fecha_creacion', models.DateField(auto_now=True)),
                 ('vigencia', models.DateField()),
                 ('descripcion', models.TextField()),
+                ('status', models.CharField(max_length=10)),
                 ('imagen', models.ImageField(upload_to=b'cupones/imagenes')),
-                ('cupon_afiliado', models.ForeignKey(to='userprofiles.Afiliado')),
+                ('cupon_afiliado', models.ForeignKey(related_name='cupones', to='userprofiles.Afiliado')),
             ],
             options={
             },
@@ -32,8 +33,7 @@ class Migration(migrations.Migration):
             name='UsuariosCupones',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('status', models.CharField(max_length=10)),
-                ('fecha', models.DateField()),
+                ('fecha', models.DateField(auto_now=True)),
                 ('cupon_usuario', models.ForeignKey(to='cupones.Cupon')),
                 ('usuario', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],

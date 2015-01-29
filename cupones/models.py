@@ -8,6 +8,7 @@ class Cupon(models.Model):
 	fecha_creacion = models.DateField(auto_now=True)
 	vigencia = models.DateField()
 	descripcion = models.TextField()
+	status = models.CharField(max_length=10, default='Activo')
 	imagen = models.ImageField(upload_to='cupones/imagenes')
 	cupon_afiliado = models.ForeignKey(Afiliado, related_name='cupones')
 
@@ -17,8 +18,7 @@ class Cupon(models.Model):
 class UsuariosCupones(models.Model):
 	usuario = models.ForeignKey(User)
 	cupon_usuario = models.ForeignKey(Cupon)
-	status = models.CharField(max_length=10)
-	fecha = models.DateField()
+	fecha = models.DateField(auto_now=True)
 
 	def __unicode__(self):
 		return "%s - %s" % (self.usuario.username, self.cupon_usuario.titulo)

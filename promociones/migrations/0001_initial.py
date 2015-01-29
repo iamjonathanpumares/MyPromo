@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('descripcion', models.TextField()),
                 ('status', models.CharField(max_length=10)),
                 ('imagen', models.ImageField(upload_to=b'promociones/imagenes')),
-                ('promocion_afiliado', models.ForeignKey(to='userprofiles.Afiliado')),
+                ('promocion_afiliado', models.ForeignKey(related_name='promociones', to='userprofiles.Afiliado')),
             ],
             options={
             },
@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
             name='UsuariosPromociones',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('fecha', models.DateField()),
+                ('fecha', models.DateField(auto_now=True)),
                 ('promocion', models.ForeignKey(to='promociones.Promocion')),
                 ('usuario', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],

@@ -1,11 +1,12 @@
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, BaseUpdateView
 from userprofiles.mixins import LoginRequiredMixin
 from userprofiles.models import Afiliado
-from .models import Cupon
+from .models import Cupon, UsuariosCupones
 from .forms import CuponForm, CuponUpdateForm
 
 class AfiliadoCuponListView(LoginRequiredMixin, ListView): # Vista que hereda de ListView para mostrar la lista de afiliados
@@ -59,10 +60,11 @@ def AfiliadoCuponView(request, usuario):
 from rest_framework import viewsets, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from .serializers import CuponSerializer
 
 class CuponAPIView(generics.ListAPIView):
-	queryset = Cupon.objects.all()
+	queryset = Cupon.objects.filter(status='Activo')
 	serializer_class = CuponSerializer
 
 class CuponAfiliadoAPIView(generics.ListAPIView):
@@ -78,7 +80,32 @@ class CuponAfiliadoAPIView(generics.ListAPIView):
 
 class UsuariosCuponesDisponibles(APIView):
 	def get(self, request, usuario, format=None):
-		cupones = Cupon.objects.exclude(users__username=usuario)
+		cupones = Cupon.objects.exclude(users__username=usuario).filter(status='Activo')
 		serializer = CuponSerializer(cupones, many=True)
 		return Response(serializer.data)
+
+@api_view(['POST'])
+def UsuariosCuponesAgregar(request):
+	if request.method == 'POST':
+		#data = JSONParser().parse(request)
+		data = request.data
+		id_usuario = data['id_usuario']
+		id_cupon = data['id_cupon']
+		respuesta = {}
+		try:
+			usuario = User.objects.get(username=id_usuario)
+		except User.DoesNotExist:
+			respuesta['estado'] = "False"
+			return Response(respuesta)
+		else:
+			try:
+				cupon = Cupon.objects.get(id=id_cupon)
+			except Cupon.DoesNotExist:
+				respuesta['estado'] = "False"
+				return Response(respuesta)
+			else:
+				UsuariosCupones.objects.create(usuario=usuario, cupon_usuario=cupon)
+				respuesta['estado'] = "True"
+				return Response(respuesta)
+
 

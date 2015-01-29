@@ -7,14 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('cupones', '0001_initial'),
+        ('promociones', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cupon',
-            name='cupon_afiliado',
-            field=models.ForeignKey(related_name='cupones', to='userprofiles.Afiliado'),
+            model_name='promocion',
+            name='status',
+            field=models.CharField(default=b'Activo', max_length=10),
             preserve_default=True,
         ),
     ]

@@ -8,7 +8,7 @@ class Promocion(models.Model):
 	fecha_creacion = models.DateField(auto_now=True)
 	vigencia = models.DateField()
 	descripcion = models.TextField()
-	status = models.CharField(max_length=10)
+	status = models.CharField(max_length=10, default='Activo')
 	imagen = models.ImageField(upload_to='promociones/imagenes')
 	promocion_afiliado = models.ForeignKey(Afiliado, related_name='promociones')
 
@@ -18,7 +18,7 @@ class Promocion(models.Model):
 class UsuariosPromociones(models.Model):
 	usuario = models.ForeignKey(User)
 	promocion = models.ForeignKey(Promocion)
-	fecha = models.DateField()
+	fecha = models.DateField(auto_now=True)
 
 	def __unicode__(self):
 		return "%s - %s" % (self.usuario.username, self.promocion.titulo)

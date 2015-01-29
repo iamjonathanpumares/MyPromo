@@ -1,9 +1,10 @@
 from django.contrib import messages
+from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, UpdateView
 from django.views.generic.edit import BaseUpdateView
 from userprofiles.models import Afiliado
-from .models import Promocion
+from .models import Promocion, UsuariosPromociones
 from .forms import PromocionForm, PromocionUpdateForm
 
 class AfiliadoPromocionListView(ListView):
@@ -55,6 +56,8 @@ def AfiliadoPromocionView(request, usuario):
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
 from rest_framework import viewsets, generics
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .serializers import PromocionSerializer
 
 class PromocionAPIView(generics.ListAPIView):
@@ -71,3 +74,27 @@ class PromocionAfiliadoAPIView(generics.ListAPIView):
 	def get_queryset(self):
 		promocion_afiliado = self.kwargs['promocion_afiliado'] # Desde la URL por medio de los kwargs le pasamos el id del afiliado
 		return Promocion.objects.filter(promocion_afiliado=promocion_afiliado) # Retorna un tipo de dato queryset para mostrarse en la vista
+
+@api_view(['POST'])
+def UsuariosPromocionesAgregar(request):
+	if request.method == 'POST':
+		#data = JSONParser().parse(request)
+		data = request.data
+		id_usuario = data['id_usuario']
+		id_promocion = data['id_promocion']
+		respuesta = {}
+		try:
+			usuario = User.objects.get(username=id_usuario)
+		except User.DoesNotExist:
+			respuesta['estado'] = "False"
+			return Response(respuesta)
+		else:
+			try:
+				promocion = Promocion.objects.get(id=id_promocion)
+			except Promocion.DoesNotExist:
+				respuesta['estado'] = "False"
+				return Response(respuesta)
+			else:
+				UsuariosPromociones.objects.create(usuario=usuario, promocion=promocion)
+				respuesta['estado'] = "True"
+				return Response(respuesta)

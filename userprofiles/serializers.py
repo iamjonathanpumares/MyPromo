@@ -8,7 +8,7 @@ from promociones.serializers import PromocionSerializer
 class AfiliadoSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Afiliado
-		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'descripcion', 'giro')
+		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'codigoValidacion', 'logo', 'descripcion', 'giro')
 
 class AfiliadoCuponesSerializer(serializers.ModelSerializer):
 	cupones = CuponSerializer(many=True, read_only=True)

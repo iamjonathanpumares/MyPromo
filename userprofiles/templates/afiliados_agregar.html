@@ -189,3 +189,11 @@
               </div>
 </div>
 {% endblock section %}
+
+{% block scripts_tags %}
+<script>
+$(document).ready(function (){
+  $('.input-group-btn .btn-default[type="submit"]').hide();
+});
+</script>
+{% endblock scripts_tags %}

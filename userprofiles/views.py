@@ -1,5 +1,7 @@
 # -*- encoding: utf-8 -*-
 import json
+from cupones.models import Cupon
+from django.db.models import Count
 from django.shortcuts import render_to_response, redirect, render, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.template import RequestContext
@@ -10,6 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login, logout
 from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm
+from .decorators import redirect_home
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Afiliado, Local, UsuarioFinal, Promotor
 from .load_data import importarCSV
@@ -39,7 +42,7 @@ def logout_view(request):
 	return redirect('/login/')
 
 # Home -------------------------------------------------------------------------------------------------------
-@login_required(login_url='/login/')
+"""@login_required(login_url='/login/')
 def home(request):
 	num_afiliados = Afiliado.objects.all().count()
 	num_usuarios = UsuarioFinal.objects.all().count()
@@ -55,7 +58,15 @@ def home(request):
 		else:
 			return redirect('/%s/' % request.user.username)
 	else:
-		return render(request, 'home.html', { 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
+		return render(request, 'home.html', { 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })"""
+
+@redirect_home
+@login_required(login_url='/login/')
+def home(request):
+	cupon_popular = Cupon.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
+	num_afiliados = Afiliado.objects.all().count()
+	num_usuarios = UsuarioFinal.objects.all().count()
+	return render(request, 'home.html', { 'cupon_popular': cupon_popular, 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
 
 def home_afiliado(request, usuario):
 	afiliado = get_object_or_404(Afiliado, user__username=usuario)

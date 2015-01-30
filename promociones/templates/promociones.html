@@ -182,9 +182,10 @@
       'height'            : 500,
       'type'              : 'iframe',
       'afterClose'        : function() {
-        location.reload();
-      },
-    });
-    });  
+          location.reload();
+        },
+      });
+      $('.input-group-btn .btn-default[type="submit"]').hide();
+  });  
 </script>
 {% endblock scripts_tags %}

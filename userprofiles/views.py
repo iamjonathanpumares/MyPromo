@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 import json
 from cupones.models import Cupon
+from promociones.models import Promocion
 from django.db.models import Count
 from django.shortcuts import render_to_response, redirect, render, get_object_or_404
 from django.http import HttpResponse, Http404
@@ -63,10 +64,13 @@ def home(request):
 @redirect_home
 @login_required(login_url='/login/')
 def home(request):
-	cupon_popular = Cupon.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
+	promocion_popular = Promocion.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
+	cupon_popular = Cupon.objects.annotate(Count('users')).order_by('users__count', 'usuarioscupones_set__fecha').reverse()[:1]
+	cupones_totales = Cupon.objects.all().count()
+	promociones_totales = Promocion.objects.count()
 	num_afiliados = Afiliado.objects.all().count()
 	num_usuarios = UsuarioFinal.objects.all().count()
-	return render(request, 'home.html', { 'cupon_popular': cupon_popular, 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
+	return render(request, 'home.html', { 'promocion_popular': promocion_popular, 'cupon_popular': cupon_popular, 'cupones_totales': cupones_totales, 'promociones_totales': promociones_totales, 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
 
 def home_afiliado(request, usuario):
 	afiliado = get_object_or_404(Afiliado, user__username=usuario)
@@ -318,6 +322,25 @@ def iniciar_sesion(request):
 			else:
 				respuesta['estado'] = "False"
 				return Response(respuesta)
+
+@api_view(['POST'])
+def cambiar_clave(request):
+	if request.method == 'POST':
+		#data = JSONParser().parse(request)
+		data = request.data
+		usuario = data['usuario']
+		clave = data['clave']
+		respuesta = {}
+		try:
+			usuario_final = UsuarioFinal.objects.get(user__username=usuario)
+		except UsuarioFinal.DoesNotExist:
+			respuesta['estado'] = "False"
+			return Response(respuesta)
+		else:
+			usuario_final.user.set_password(clave)
+			usuario_final.user.save()
+			respuesta['estado'] = "True"
+			return Response(respuesta)
 
 class CorreoUsuarioFinalAPIView(APIView):
 	queryset = User.objects.all()

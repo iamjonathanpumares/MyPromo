@@ -65,7 +65,7 @@ def home(request):
 @login_required(login_url='/login/')
 def home(request):
 	promocion_popular = Promocion.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
-	cupon_popular = Cupon.objects.annotate(Count('users')).order_by('users__count', 'usuarioscupones_set__fecha').reverse()[:1]
+	cupon_popular = Cupon.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
 	cupones_totales = Cupon.objects.all().count()
 	promociones_totales = Promocion.objects.count()
 	num_afiliados = Afiliado.objects.all().count()

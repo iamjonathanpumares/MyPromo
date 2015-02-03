@@ -1,7 +1,7 @@
 # -*- encoding: utf-8 -*-
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, BaseUpdateView
@@ -9,6 +9,7 @@ from userprofiles.mixins import LoginRequiredMixin
 from userprofiles.models import Afiliado
 from .models import Cupon, UsuariosCupones
 from .forms import CuponForm, CuponUpdateForm
+import json
 
 class AfiliadoCuponListView(LoginRequiredMixin, ListView): # Vista que hereda de ListView para mostrar la lista de afiliados
 	model = Afiliado # Especificamos el modelo para traernos todos los objetos y mostrar la lista
@@ -18,12 +19,23 @@ def CuponView(request, afiliado): # Vista de funcion donde se guardara un nuevo 
 	cupon_afiliado = get_object_or_404(Afiliado, user__username=afiliado) # Usamos el shortcut get_object_or_404 para traernos el username del afiliado
 	cupones = Cupon.objects.filter(cupon_afiliado__user__username=afiliado) # Una consulta que retorna todos los cupones de dicho afiliado que se tomo en el parametro afiliado
 	if request.method == 'POST': # Se comprueba si el metodo es POST
-		form = CuponForm(request.POST, request.FILES) # Creamos una instancia de CuponForm y le pasamos los datos del formulario para que los valide
-		if form.is_valid(): # Si todo a salido bien y no hubo error al momento de validar los datos del formulario pasa a lo siguiente
-			cupon = form.save(commit=True, cupon_af=cupon_afiliado) # Llamamos al metodo save() del form para guardar un cupon nuevo y nos retorna el objeto ya creado
-			messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
-			form = CuponForm() # Ahora instanciamos otra vez form para que me muestre el formulario
-			return render(request, 'cupones.html', { 'cupones': cupones, 'form': form }) # Renderizamos la plantilla junto con su contexto
+		if 'cupon_id' in request.POST:
+			try:
+				id_cupon = request.POST['cupon_id']
+				cupon = Cupon.objects.get(pk=id_cupon)
+				mensaje = { "status": "True", "cupon_id": cupon.id }
+				cupon.delete()
+				return HttpResponse(json.dumps(mensaje))
+			except:
+				mensaje = { "status": "False" }
+				return HttpResponse(json.dumps(mensaje))
+		else:
+			form = CuponForm(request.POST, request.FILES) # Creamos una instancia de CuponForm y le pasamos los datos del formulario para que los valide
+			if form.is_valid(): # Si todo a salido bien y no hubo error al momento de validar los datos del formulario pasa a lo siguiente
+				cupon = form.save(commit=True, cupon_af=cupon_afiliado) # Llamamos al metodo save() del form para guardar un cupon nuevo y nos retorna el objeto ya creado
+				messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				form = CuponForm() # Ahora instanciamos otra vez form para que me muestre el formulario
+				return render(request, 'cupones.html', { 'cupones': cupones, 'form': form }) # Renderizamos la plantilla junto con su contexto
 	else:
 		form = CuponForm()
 	return render(request, 'cupones.html', { 'cupones': cupones, 'form': form })

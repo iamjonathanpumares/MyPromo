@@ -8,8 +8,11 @@
     <meta name="author" content="Dashboard">
     <meta name="keyword" content="Dashboard, Bootstrap, Admin, Template, Theme, Responsive, Fluid, Retina">
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<!-- Bootstrap core CSS -->
+    <script type="text/javascript" src="{% static "js/jquery.form.min.js" %}"></script>
+    
+  	<!-- Bootstrap core CSS -->
     <link href="{% static "css/bootstrap.css" %}" rel="stylesheet">
+    <link href="{% static "js/bootstrap.min.js" %}" rel="stylesheet">
     <!--external css-->
     <link href="{% static "css/fileinput.css" %}" media="all" rel="stylesheet" type="text/css" />
     <link href="{% static "font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
@@ -69,6 +72,32 @@
     <div class="alert alert-success"><b>{{ message }}</b></div>
     {% endfor %}
 {% endif %}
+
+<!-- Modal eliminar cupón -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3 id="myModalLabel">Eliminar Cupón</h3>
+      </div>
+      <div class="modal-body">
+        <p>Realmente desea eliminar el cupón <span id="modal_name"></span>?</p>
+      </div>
+      <div class="modal-footer">
+        
+        <form method="post" id="frmEliminar">
+          {% csrf_token %}
+          <input type="hidden" id="modal_idProducto" name="cupon_id" />
+          <button class="btn" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+          <button type="submit" class="btn btn-danger">Eliminar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- EndModal -->
+
   <!-- Cabecera -->
 	   <h3><i class="fa fa-angle-right"></i>Agregar Cupón</h3>
       <div class="row mt">
@@ -128,7 +157,7 @@
   <div class="row mt">
     <div class="col-md-12">
       <div class="form-panel">
-        <table class="table table-striped table-advance table-hover">
+        <table class="table table-striped table-advance table-hover" id="tabla">
           <h4><i class="fa fa-angle-right"></i> Tabla de cupones</h4>
           <div class="col-md-4">
             <div class="input-group">
@@ -147,13 +176,19 @@
           </thead>
           <tbody>
             {% for cupon in cupones %}
-            <tr>
+            <tr id="tr{{cupon.id}}">
               <td><a href="{{ cupon.imagen.url }}" class="fancybox-cupon"><img src="{{ cupon.imagen.url }}" alt="cupon" width="80px" height="40px" /></a></td>
               <td class="hidden-phone">{{ cupon.titulo }}</td>
               <td>{{ cupon.vigencia }}</td>
               <td>
-                <a href="/cupones/{{ cupon.id }}/modificar/" class="fancybox" title="Modificar cupon"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button></a>
+                <a href="/cupones/{{ cupon.id }}/modificar/" class="fancybox" title="Modificar cupón"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button></a>
                 <!-- <a href="/cupones/{{ cupon.id }}/modificar/"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button></a> -->
+              </td>
+              <td>
+                <!-- Button trigger modal -->
+                <button type="button" class="btn btn-danger btn-xs delete" data-toggle="modal" data-target="#myModal" id="{{ cupon.id }}" data-name="{{ cupon.titulo }}" title="Eliminar cupón">
+                  <i class="fa fa-trash-o "></i>
+                </button>
               </td>
             </tr>
             {% endfor %}
@@ -170,6 +205,10 @@
 <!-- Funcion Javascript de calendario -->
 <script src="{% static "js/bootstrap-datepicker.js" %}"></script>
 <script type="text/javascript">
+  var nombre_tabla = "#tabla"; // id
+  var nombre_boton_eliminar = ".delete"; // Clase
+  var nombre_formulario_modal = "#frmEliminar"; //id
+  var nombre_ventana_modal = "#myModal"; // id
   $(document).ready(function () {
       $('#fecha').datepicker({
           format: "dd/mm/yyyy"
@@ -193,6 +232,37 @@
           }
       });
       $('.input-group-btn .btn-default[type="submit"]').hide();
+
+      $(nombre_boton_eliminar).on('click',function(e){
+        e.preventDefault();
+        var Pid = $(this).attr('id');
+        var name = $(this).data('name');
+        $('#modal_idProducto').val(Pid);
+        $('#modal_name').text(name);
+      });
+      var options = {
+        dataType: 'json',
+        success: function(response)
+        {
+          if(response.status=="True"){
+            alert("Eliminado!");
+            var idProd = response.cupon_id;
+            var elementos= $(nombre_tabla+' >tbody >tr').length;
+            if(elementos==1){
+            location.reload();
+            }else{
+            $('#tr'+idProd).remove();
+            $(nombre_ventana_modal).modal('hide');
+            }
+          }
+          else
+          {
+            alert("Hubo un error al eliminar!");
+            $(nombre_ventana_modal).modal('hide');
+          }
+        }
+      };
+      $(nombre_formulario_modal).ajaxForm(options);
     });  
 </script>
 {% endblock scripts_tags %}

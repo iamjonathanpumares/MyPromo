@@ -1,11 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.models import User
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, UpdateView
 from django.views.generic.edit import BaseUpdateView
 from userprofiles.models import Afiliado
 from .models import Promocion, UsuariosPromociones
 from .forms import PromocionForm, PromocionUpdateForm
+import json
 
 class AfiliadoPromocionListView(ListView):
 	model = Afiliado
@@ -15,12 +17,23 @@ def PromocionView(request, afiliado):
 	promocion_afiliado = get_object_or_404(Afiliado, user__username=afiliado)
 	promociones = Promocion.objects.filter(promocion_afiliado__user__username=afiliado)
 	if request.method == 'POST':
-		form = PromocionForm(request.POST, request.FILES)
-		if form.is_valid():
-			promocion = form.save(commit=True, promocion_af=promocion_afiliado)
-			messages.info(request, 'Promocion agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
-			form = PromocionForm()
-			return render(request, 'promociones.html', { 'promociones': promociones, 'form': form })
+		if 'promocion_id' in request.POST:
+			try:
+				id_promocion = request.POST['promocion_id']
+				promocion = Promocion.objects.get(pk=id_promocion)
+				mensaje = { "status": "True", "promocion_id": promocion.id }
+				promocion.delete()
+				return HttpResponse(json.dumps(mensaje))
+			except:
+				mensaje = { "status": "False" }
+				return HttpResponse(json.dumps(mensaje))
+		else:
+			form = PromocionForm(request.POST, request.FILES)
+			if form.is_valid():
+				promocion = form.save(commit=True, promocion_af=promocion_afiliado)
+				messages.info(request, 'Promocion agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				form = PromocionForm()
+				return render(request, 'promociones.html', { 'promociones': promociones, 'form': form })
 	else:
 		form = PromocionForm()
 	return render(request, 'promociones.html', { 'promociones': promociones, 'form': form })

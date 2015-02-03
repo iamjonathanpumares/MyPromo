@@ -29,38 +29,12 @@ class LoginUserPromotorView(FormView):
 		login(self.request, form.user_cache)
 		return super(LoginUserPromotorView, self).form_valid(form)
 
-"""def entrar(request):
-	if request.method == 'POST':
-		form = LoginForm(request.POST)
-		if form.is_valid():
-			login(request, form.user_cache)
-			if request.user"""
-
-
 # Logout -----------------------------------------------------------------------------------------------------
 def logout_view(request):
 	logout(request)
 	return redirect('/login/')
 
 # Home -------------------------------------------------------------------------------------------------------
-"""@login_required(login_url='/login/')
-def home(request):
-	num_afiliados = Afiliado.objects.all().count()
-	num_usuarios = UsuarioFinal.objects.all().count()
-	if request.user.is_superuser == True:
-		return render(request, 'home.html', { 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
-	try:
-		request.user.groups.get(name='Promotor')
-	except Group.DoesNotExist:
-		try:
-			request.user.groups.get(name='Afiliado')
-		except Group.DoesNotExist:
-			raise Http404
-		else:
-			return redirect('/%s/' % request.user.username)
-	else:
-		return render(request, 'home.html', { 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })"""
-
 @redirect_home
 @login_required(login_url='/login/')
 def home(request):
@@ -72,9 +46,16 @@ def home(request):
 	num_usuarios = UsuarioFinal.objects.all().count()
 	return render(request, 'home.html', { 'promocion_popular': promocion_popular, 'cupon_popular': cupon_popular, 'cupones_totales': cupones_totales, 'promociones_totales': promociones_totales, 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
 
+@login_required(login_url='/login/')
 def home_afiliado(request, usuario):
 	afiliado = get_object_or_404(Afiliado, user__username=usuario)
-	return render(request, 'home_afiliado.html')
+	promocion_popular = Promocion.objects.filter(promocion_afiliado__user__username=request.user.username).annotate(Count('users')).order_by('users__count').reverse()[:1]
+	cupon_popular = Cupon.objects.filter(cupon_afiliado__user__username=request.user.username).annotate(Count('users')).order_by('users__count').reverse()[:1]
+	cupones_totales = Cupon.objects.filter(cupon_afiliado__user__username=request.user.username).count()
+	promociones_totales = Promocion.objects.filter(promocion_afiliado__user__username=request.user.username).count()
+	num_afiliados = Afiliado.objects.all().count()
+	num_usuarios = UsuarioFinal.objects.all().count()
+	return render(request, 'home_afiliado.html', { 'promocion_popular': promocion_popular, 'cupon_popular': cupon_popular, 'cupones_totales': cupones_totales, 'promociones_totales': promociones_totales, 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
 
 
 

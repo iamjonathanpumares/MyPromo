@@ -1,5 +1,6 @@
 {% extends 'base_afiliado.html' %}
 {% load staticfiles %}
+{% load thumbnail %}
 {% block styles_tags %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -35,22 +36,82 @@
               <div class="col-lg-12">
                   <!-- 1st ROW OF PANELS -->
           <div class="row">
+            {% for r in promocion_popular %}
+            {% if r.users__count > 0 %}
             <!-- TWITTER PANEL -->
             <div class="col-lg-4 col-md-4 col-sm-4 mb">
               <div class="content-panel pn text-center">
                 <div id="blog-bg">
-                  <p><img src="{% static "img/ui-danro.jpg" %}" class="img-rounded " width="200"></p>
+                  <p>
+                    {% thumbnail r.imagen "400x400" as im %}
+                      <img src="{{ im.url }}" class="img-rounded" width="200" height="200">
+                    {% endthumbnail %}
+                  </p>
 
                   <div class="badge badge-popular">POPULAR</div>
                   <div class="blog-title">Promociones</div>
                 </div>
                 <div class="blog-text">
-                  <p>Titulo de la promoción. <strong>Nombre de la empresa</strong></p>
+                  <p>{{ r.titulo }}. <strong>{{ r.promocion_afiliado.nombreEmpresa }}</strong></p>
                 </div>
               </div>
             </div><!-- /col-md-4-->
+            {% else %}
+            <div class="col-lg-4 col-md-4 col-sm-4 mb">
+              <div class="content-panel pn text-center">
+                <div id="blog-bg">
+                  <p>
+                    <img src="{% static "img/ui-danro.jpg" %}" class="img-rounded " width="200">
+                  </p>
+
+                  <div class="badge badge-popular">POPULAR</div>
+                  <div class="blog-title">Promociones</div>
+                </div>
+                <div class="blog-text">
+                  <p>Aún no arrancamos. <strong>Esperando para escanear la primera promoción</strong></p>
+                </div>
+              </div>
+            </div><!-- /col-md-4-->
+            {% endif %}
+            {% empty %}
+            <div class="col-lg-4 col-md-4 col-sm-4 mb">
+              <div class="content-panel pn text-center">
+                <div id="blog-bg">
+                  <p>
+                    <img src="{% static "img/ui-danro.jpg" %}" class="img-rounded " width="200">
+                  </p>
+
+                  
+                  <div class="blog-title">Promociones</div>
+                </div>
+                <div class="blog-text">
+                  <p><a class="btn btn-primary text-center" href="/{{ user.username }}/promociones/">Agrega tu primera promoción</a></p>
+                </div>
+              </div>
+            </div><!-- /col-md-4-->
+            {% endfor %}
             
+             {% for r in cupon_popular %}
+            {% if r.users__count > 0 %}
              <div class="col-lg-4 col-md-4 col-sm-4 mb">
+              <div class="content-panel pn text-center">
+                <div id="blog-bg">
+                  <p>
+                    {% thumbnail r.imagen "400x400" as im %}
+                      <img src="{{ im.url }}" class="img-rounded" width="200" height="200">
+                    {% endthumbnail %}
+                  </p>
+
+                  <div class="badge badge-cupon">POPULAR</div>
+                  <div class="blog-title">Cupones</div>
+                </div>
+                <div class="blog-text">
+                  <p>{{ r.titulo}}. <strong>{{ r.cupon_afiliado.nombreEmpresa }}</strong></p>
+                </div>
+              </div>
+            </div><!-- /col-md-4-->
+            {% else %}
+            <div class="col-lg-4 col-md-4 col-sm-4 mb">
               <div class="content-panel pn text-center">
                 <div id="blog-bg">
                   <p><img src="{% static "img/ui-sam.jpg" %}" class="img-rounded " width="200"></p>
@@ -59,10 +120,28 @@
                   <div class="blog-title">Cupones</div>
                 </div>
                 <div class="blog-text">
-                  <p>Titulo del cupon. <strong>Nombre de la empresa</strong></p>
+                  <p>Aún no arrancamos. <strong>Esperando para escanear el primer cupón</strong></p>
                 </div>
               </div>
             </div><!-- /col-md-4-->
+            {% endif %}
+            {% empty %}
+            <div class="col-lg-4 col-md-4 col-sm-4 mb">
+              <div class="content-panel pn text-center">
+                <div id="blog-bg">
+                  <p><img src="{% static "img/ui-sam.jpg" %}" class="img-rounded " width="200"></p>
+
+                  
+                  <div class="blog-title">Cupones</div>
+                </div>
+                <div class="blog-text">
+                  <p>
+                    <a class="btn btn-primary text-center" href="/{{ user.username }}/cupones/">Agrega tu primer cupón</a>
+                  </p>
+                </div>
+              </div>
+            </div><!-- /col-md-4-->
+            {% endfor %}
             
             <div class="col-lg-4 col-md-4 col-sm-4 mb">
               <div class="content-panel pn text-center">
@@ -88,11 +167,11 @@
                 <script>
                   var doughnutData = [
                       {
-                        value: 34,
+                        value: {{ promociones_totales }},
                         color:"#222666"
                       },
                       {
-                        value : 66,
+                        value : {{ cupones_totales }},
                         color : "#8e0606"
                       }
                     ];
@@ -101,10 +180,10 @@
                 <p>April 17, 2014</p>
                 <footer>
                   <div class="pull-left">
-                    <h5 class="text-caja"><i class="fa fa-tags"></i> Cupones: 200</h5>
+                    <h5 class="text-caja"><i class="fa fa-tags"></i> Cupones: {{ cupones_totales }}</h5>
                   </div>
                   <div class="pull-right">
-                    <h5 class="text-caja"><i class="fa fa-flag"></i> Promociones:100</h5>
+                    <h5 class="text-caja"><i class="fa fa-flag"></i> Promociones: {{ promociones_totales }}</h5>
                   </div>
                 </footer>
                           </div><!-- /darkblue panel -->
@@ -120,7 +199,7 @@
                 
                 <footer>
                   <div class="centered">
-                    <h1><i class="fa fa-trophy"></i> 17,988</h1>
+                    <h1><i class="fa fa-trophy"></i> {{ num_afiliados }}</h1>
                   </div>
                 </footer>
                           </div><!-- /darkblue panel -->
@@ -136,7 +215,7 @@
                 
                 <footer>
                   <div class="centered">
-                    <h1><i class="fa fa-trophy"></i> 17,988</h1>
+                    <h1><i class="fa fa-trophy"></i> {{ num_usuarios }}</h1>
                   </div>
                 </footer>
                           </div><!-- /darkblue panel -->

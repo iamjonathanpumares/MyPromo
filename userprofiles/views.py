@@ -163,9 +163,22 @@ class UsuarioPromotorListView(ListView):
 
 class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
 	permission = 'auth.change_user'
-	model = UsuarioFinal
-	#queryset = User.objects.filter(groups__name='Usuario')
+	#queryset = UsuarioFinal.objects.order_by('user__last_name')
 	template_name = 'lista_usuarios.html'
+	#paginate_by = 5
+
+	def get_queryset(self):
+		try:
+		    name = self.request.GET.get('q', '')
+		except:
+		    name = ''
+		if (name != ''):
+		    object_list = UsuarioFinal.objects.filter(user__last_name__icontains=name)
+		    self.paginate_by = None
+		else:
+		    object_list = UsuarioFinal.objects.all().order_by('user__last_name')
+		    self.paginate_by = 15
+		return object_list
 
 @permission_required('auth.add_user', login_url='/login/')
 @login_required(login_url='/login/')

@@ -43,18 +43,26 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 
 """ Eres genial Python, gracias a tu herencia no tengo que repetir codigo y herede de mi formulario
 	de arriba y solo sobreescribe el metodo save para que me asigne el grupo Usuario """
-class RegistrationUsuarioFinalForm(RegistrationUsuarioPromotorForm):
+class RegistrationUsuarioFinalForm(forms.ModelForm):
+	username = forms.RegexField(
+        regex=r'^[0-9]+$',
+        error_messages={
+            'invalid': ("Este campo solo puede contener numeros.")}, widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	first_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	last_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	email = forms.CharField(required=True, widget=forms.EmailInput(attrs={ 'class': 'form-control'}))
 	class Meta:
 		model = User
-		fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+		fields = ['username', 'first_name', 'last_name', 'email']
 	def save(self, commit=True):
-		user = super(RegistrationUsuarioPromotorForm, self).save(commit=True)
-		usuario_final = UsuarioFinal(user=user)
+		user = super(RegistrationUsuarioFinalForm, self).save(commit=False)
+		user.set_password(self.cleaned_data['username'])
+		
 		#usuario_group = Group.objects.get(name='Usuario')
 		#user.groups.add(usuario_group)
 		if commit:
 			user.save()
+			usuario_final = UsuarioFinal(user=user)
 			usuario_final.save()
 		return user
 

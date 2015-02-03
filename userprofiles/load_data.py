@@ -14,6 +14,7 @@ def importarCSV(archivo_csv):
 			commit = True
 			usuario = User()
 			usuario.username = row[0]
+			usuario.set_password(row[0])
 			usuario.first_name = row[1]
 			usuario.last_name = row[2]
 			usuario.email = row[3]

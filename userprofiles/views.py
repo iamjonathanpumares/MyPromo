@@ -35,8 +35,8 @@ def logout_view(request):
 	return redirect('/login/')
 
 # Home -------------------------------------------------------------------------------------------------------
-@redirect_home
 @login_required(login_url='/login/')
+@redirect_home
 def home(request):
 	promocion_popular = Promocion.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
 	cupon_popular = Cupon.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]

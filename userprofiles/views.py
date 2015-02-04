@@ -35,7 +35,6 @@ def logout_view(request):
 	return redirect('/login/')
 
 # Home -------------------------------------------------------------------------------------------------------
-@login_required(login_url='/login/')
 @redirect_home
 def home(request):
 	promocion_popular = Promocion.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
@@ -218,20 +217,39 @@ def PromotorView(request):
 
 @permission_required('userprofiles.change_afiliado', login_url='/login/')
 @login_required(login_url='/login/')
-def AdministrarAfiliadoView(request):
-	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
-		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario PerfilAfiliadoForm y le pasamos los datos junto con los archivo subidos
-		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
-			afiliado = form_afiliado.save(commit=True, afiliado=usuario) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
-			if 'submit-guardar-salir' in request.POST:
-				messages.info(request, 'Afiliado %s agregado' % form_afiliado.cleaned_data['nombreEmpresa'])
-				return redirect('/lista-afiliados/')
-			elif 'submit-guardar-locales' in request.POST:
-				return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + str(usuario.id) + '/')
+def AdministrarPerfilAfiliadoView(request, usuario):
+	user_afiliado = get_object_or_404(User, username=request.user.username)
+	afiliado = get_object_or_404(Afiliado, id=request.user.perfil_afiliado.id)
+	if request.method == 'POST':
+		user_username = user_afiliado.username
+		form_user = UserAfiliadoUpdateForm(request.POST, instance=user_afiliado)
+		form_afiliado = PerfilAfiliadoUpdateForm(request.POST, request.FILES, instance=afiliado)
+		if form_user.is_valid() and form_afiliado.is_valid():
+			user = form_user.save()
+			form_afiliado.save()
+			if user_username == user.username:
+				messages.info(request, 'Perfil actualizado') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				if afiliado.facebook != '':
+					datos = afiliado.facebook.split('.com/')
+					afiliado.facebook = datos[1]
+				if afiliado.twitter != '':
+					datos = afiliado.twitter.split('.com/')
+					afiliado.twitter = datos[1]
+				form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
+				form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
+			else:
+				messages.info(request, 'Perfil actualizado. Vuelva a iniciar sesión con su nuevo username') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				return redirect('/logout/')
 	else:
-		form_user = UserAfiliadoForm()
-		form_afiliado = PerfilAfiliadoForm()
-	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
+		if afiliado.facebook != '':
+			datos = afiliado.facebook.split('.com/')
+			afiliado.facebook = datos[1]
+		if afiliado.twitter != '':
+			datos = afiliado.twitter.split('.com/')
+			afiliado.twitter = datos[1]
+		form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
+		form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
+	return render(request, 'modificar_perfil.html', { 'form_user': form_user, 'form_afiliado': form_afiliado })
 
 from django.core.mail.message import EmailMultiAlternatives
 from django.http.response import HttpResponseRedirect

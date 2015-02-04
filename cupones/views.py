@@ -29,16 +29,28 @@ def CuponView(request, afiliado): # Vista de funcion donde se guardara un nuevo 
 			except:
 				mensaje = { "status": "False" }
 				return HttpResponse(json.dumps(mensaje))
-		else:
-			form = CuponForm(request.POST, request.FILES) # Creamos una instancia de CuponForm y le pasamos los datos del formulario para que los valide
-			if form.is_valid(): # Si todo a salido bien y no hubo error al momento de validar los datos del formulario pasa a lo siguiente
-				cupon = form.save(commit=True, cupon_af=cupon_afiliado) # Llamamos al metodo save() del form para guardar un cupon nuevo y nos retorna el objeto ya creado
-				messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
-				form = CuponForm() # Ahora instanciamos otra vez form para que me muestre el formulario
-				return render(request, 'cupones.html', { 'cupones': cupones, 'form': form }) # Renderizamos la plantilla junto con su contexto
 	else:
 		form = CuponForm()
-	return render(request, 'cupones.html', { 'cupones': cupones, 'form': form })
+	return render(request, 'cupones.html', { 'cupon_afiliado': cupon_afiliado, 'cupones': cupones })
+
+def agregar_cupon(request, afiliado):
+	afiliado = Afiliado.objects.get(user__username=afiliado)
+	if request.method == 'POST':
+		form = CuponForm(request.POST, request.FILES)
+		if form.is_valid():
+			user_afiliado = form.save(commit=False)
+			user_afiliado.cupon_afiliado = afiliado
+			user_afiliado.save()
+			if 'guardar-agregar' in request.POST:
+				messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				form = CuponForm()
+				return render(request, 'agregar_cupon.html', { 'form': form })
+			elif 'guardar-salir' in request.POST:
+				messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				return redirect('/cupones/lista/%s' % afiliado.user.username)
+	else:
+		form = CuponForm()
+	return render(request, 'agregar_cupon.html', { 'form': form })
 
 class CuponUpdateView(UpdateView): # Vista que hereda de UpdateView para actualizar un objeto ya creado
 	form_class = CuponUpdateForm # Especificamos el formulario a usar
@@ -51,20 +63,48 @@ class CuponUpdateView(UpdateView): # Vista que hereda de UpdateView para actuali
 		messages.info(request, 'Cupon modificado') # Mandamos un mensaje de informacion especificando que se ha modificado el cupon
 		return super(BaseUpdateView, self).get(request) # Mandamos a llamar al padre de get para que renderize de vuelta el formulario
 
+# Comienzan los módulos del afiliado --------------------------------------------------------------------------------------
+
 def AfiliadoCuponView(request, usuario):
 	if request.user.username == usuario:
 		cupon_afiliado = get_object_or_404(Afiliado, user__username=usuario) # Usamos el shortcut get_object_or_404 para traernos el username del afiliado
 		cupones = Cupon.objects.filter(cupon_afiliado__user__username=usuario)
 		if request.method == 'POST': # Se comprueba si el metodo es POST
-			form = CuponForm(request.POST, request.FILES) # Creamos una instancia de CuponForm y le pasamos los datos del formulario para que los valide
-			if form.is_valid(): # Si todo a salido bien y no hubo error al momento de validar los datos del formulario pasa a lo siguiente
-				cupon = form.save(commit=True, cupon_af=cupon_afiliado) # Llamamos al metodo save() del form para guardar un cupon nuevo y nos retorna el objeto ya creado
-				messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
-				form = CuponForm() # Ahora instanciamos otra vez form para que me muestre el formulario
-				return render(request, 'afiliado_cupones.html', { 'cupones': cupones, 'form': form }) # Renderizamos la plantilla junto con su contexto
+			if 'cupon_id' in request.POST:
+				try:
+					id_cupon = request.POST['cupon_id']
+					cupon = Cupon.objects.get(pk=id_cupon)
+					mensaje = { "status": "True", "cupon_id": cupon.id }
+					cupon.delete()
+					return HttpResponse(json.dumps(mensaje))
+				except:
+					mensaje = { "status": "False" }
+					return HttpResponse(json.dumps(mensaje))
 		else:
 			form = CuponForm()
-		return render(request, 'afiliado_cupones.html', { 'cupones': cupones, 'form': form })
+		return render(request, 'afiliado_cupones.html', { 'cupones': cupones })
+	else:
+		raise Http404
+
+def agregar_cupon_afiliado(request, usuario):
+	if request.user.username == usuario:
+		afiliado = Afiliado.objects.get(user__username=usuario)
+		if request.method == 'POST':
+			form = CuponForm(request.POST, request.FILES)
+			if form.is_valid():
+				user_afiliado = form.save(commit=False)
+				user_afiliado.cupon_afiliado = afiliado
+				user_afiliado.save()
+				if 'guardar-agregar' in request.POST:
+					messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
+					form = CuponForm()
+					return render(request, 'afiliado_agregar_cupon.html', { 'form': form })
+				elif 'guardar-salir' in request.POST:
+					messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
+					return redirect('/%s/cupones/' % afiliado.user.username)
+		else:
+			form = CuponForm()
+		return render(request, 'afiliado_agregar_cupon.html', { 'form': form })
 	else:
 		raise Http404
 

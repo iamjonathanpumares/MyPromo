@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.http import HttpResponse
@@ -27,16 +28,28 @@ def PromocionView(request, afiliado):
 			except:
 				mensaje = { "status": "False" }
 				return HttpResponse(json.dumps(mensaje))
-		else:
-			form = PromocionForm(request.POST, request.FILES)
-			if form.is_valid():
-				promocion = form.save(commit=True, promocion_af=promocion_afiliado)
-				messages.info(request, 'Promocion agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
-				form = PromocionForm()
-				return render(request, 'promociones.html', { 'promociones': promociones, 'form': form })
 	else:
 		form = PromocionForm()
-	return render(request, 'promociones.html', { 'promociones': promociones, 'form': form })
+	return render(request, 'promociones.html', { 'promocion_afiliado': promocion_afiliado, 'promociones': promociones })
+
+def agregar_promocion(request, afiliado):
+	afiliado = Afiliado.objects.get(user__username=afiliado)
+	if request.method == 'POST':
+		form = PromocionForm(request.POST, request.FILES)
+		if form.is_valid():
+			user_afiliado = form.save(commit=False)
+			user_afiliado.promocion_afiliado = afiliado
+			user_afiliado.save()
+			if 'guardar-agregar' in request.POST:
+				messages.info(request, 'Promoción agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				form = PromocionForm()
+				return render(request, 'agregar_promocion.html', { 'form': form })
+			elif 'guardar-salir' in request.POST:
+				messages.info(request, 'Promoción agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
+				return redirect('/promociones/lista/%s' % afiliado.user.username)
+	else:
+		form = PromocionForm()
+	return render(request, 'agregar_promocion.html', { 'form': form })
 
 class PromocionUpdateView(UpdateView):
 	form_class = PromocionUpdateForm
@@ -51,20 +64,44 @@ class PromocionUpdateView(UpdateView):
 
 def AfiliadoPromocionView(request, usuario):
 	if request.user.username == usuario:
-		promocion_afiliado = get_object_or_404(Afiliado, user__username=usuario) # Usamos el shortcut get_object_or_404 para traernos el username del afiliado
+		promocion_afiliado = get_object_or_404(Afiliado, user__username=usuario)
 		promociones = Promocion.objects.filter(promocion_afiliado__user__username=usuario)
-		if request.method == 'POST': # Se comprueba si el metodo es POST
-			form = PromocionForm(request.POST, request.FILES) # Creamos una instancia de promocionForm y le pasamos los datos del formulario para que los valide
-			if form.is_valid(): # Si todo a salido bien y no hubo error al momento de validar los datos del formulario pasa a lo siguiente
-				promocion = form.save(commit=True, promocion_af=promocion_afiliado) # Llamamos al metodo save() del form para guardar un promocion nuevo y nos retorna el objeto ya creado
-				messages.info(request, 'Promocion agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
-				form = PromocionForm() # Ahora instanciamos otra vez form para que me muestre el formulario
-				return render(request, 'afiliado_promociones.html', { 'promociones': promociones, 'form': form }) # Renderizamos la plantilla junto con su contexto
+		if request.method == 'POST':
+			if 'promocion_id' in request.POST:
+				try:
+					id_promocion = request.POST['promocion_id']
+					promocion = Promocion.objects.get(pk=id_promocion)
+					mensaje = { "status": "True", "promocion_id": promocion.id }
+					promocion.delete()
+					return HttpResponse(json.dumps(mensaje))
+				except:
+					mensaje = { "status": "False" }
+					return HttpResponse(json.dumps(mensaje))
 		else:
 			form = PromocionForm()
-		return render(request, 'afiliado_promociones.html', { 'promociones': promociones, 'form': form })
+		return render(request, 'afiliado_promociones.html', { 'promocion_afiliado': promocion_afiliado, 'promociones': promociones })
 	else:
 		raise Http404
+
+def agregar_promocion_afiliado(request, usuario):
+	if request.user.username == usuario:
+		afiliado = Afiliado.objects.get(user__username=usuario)
+		if request.method == 'POST':
+			form = PromocionForm(request.POST, request.FILES)
+			if form.is_valid():
+				user_afiliado = form.save(commit=False)
+				user_afiliado.promocion_afiliado = afiliado
+				user_afiliado.save()
+				if 'guardar-agregar' in request.POST:
+					messages.info(request, 'Promoción agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
+					form = PromocionForm()
+					return render(request, 'afiliado_agregar_promocion.html', { 'form': form })
+				elif 'guardar-salir' in request.POST:
+					messages.info(request, 'Promoción agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
+					return redirect('/%s/promociones/' % afiliado.user.username)
+		else:
+			form = PromocionForm()
+		return render(request, 'afiliado_agregar_promocion.html', { 'form': form })
 
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 

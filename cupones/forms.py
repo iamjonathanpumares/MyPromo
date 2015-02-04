@@ -13,15 +13,6 @@ class CuponForm(forms.ModelForm):
 		model = Cupon
 		fields = ['titulo', 'vigencia', 'descripcion', 'imagen']
 
-	def save(self, commit=True, *args, **kwargs):
-		cupon = super(CuponForm, self).save(commit=False)
-		cupon.cupon_afiliado = kwargs['cupon_af']
-		#usuarios_finales = User.objects.filter(gruops__name='Usuario')
-		#for usuario_final in usuarios_finales:
-		if commit:
-			cupon.save()
-		return cupon
-
 class CuponUpdateForm(CuponForm):
 	def save(self, commit=True, *args, **kwargs):
 		cupon = kwargs['cupon']

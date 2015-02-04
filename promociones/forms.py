@@ -11,15 +11,6 @@ class PromocionForm(forms.ModelForm):
 		model = Promocion
 		fields = ['titulo', 'vigencia', 'descripcion', 'imagen']
 
-	def save(self, commit=True, *args, **kwargs):
-		promocion = super(PromocionForm, self).save(commit=False)
-		promocion.promocion_afiliado = kwargs['promocion_af']
-		#usuarios_finales = User.objects.filter(gruops__name='Usuario')
-		#for usuario_final in usuarios_finales:
-		if commit:
-			promocion.save()
-		return promocion
-
 class PromocionUpdateForm(PromocionForm):
 	def save(self, commit=True, *args, **kwargs):
 		promocion = kwargs['promocion']

@@ -40,6 +40,11 @@
 		      	{% csrf_token %}
 		        <h2 class="form-login-heading">Inicio de sesión</h2>
 		        <div class="login-wrap">
+		        	{% if messages %}
+					    {% for message in messages %}
+						    <div class="alert alert-success"><b>{{ message }}</b></div>
+					    {% endfor %}
+					{% endif %}
 		        	{{ form.non_field_errors }}
 		        	{{ form.username.errors }}
 		            {{ form.username }}

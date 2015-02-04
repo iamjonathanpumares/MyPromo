@@ -109,10 +109,14 @@
 
                   {% block menu_administrar %}
                   <li class="sub-menu">
-                      <a href="/{{ user.username }}/administrar/" >
+                      <a href="javascript:;" >
                           <i class="fa fa-gear"></i>
                           <span>Administrar</span>
                       </a>
+                      <ul class="sub">
+                          <li><a href ="/{{ user.username }}/administrar/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user"></i>Perfil</a></li>
+                          <li><a href ="/administrar-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-location-arrow"></i>Locales</a></li>
+                      </ul>
                   </li>
                   {% endblock menu_administrar %}
 

@@ -84,7 +84,7 @@
                   <td class="hidden-phone">{{ afiliado.nombreEmpresa }}</td>
                   <td>{{ afiliado.giro }}</td>
                   <td>
-                      <a href="/cupones/{{ afiliado.user.username }}/" class="btn btn-primary btn-xs"><i class="fa fa-tag"></i>Ver cupones</a>
+                      <a href="/cupones/lista/{{ afiliado.user.username }}/" class="btn btn-primary btn-xs"><i class="fa fa-tag"></i>Ver cupones</a>
                   </td>
               </tr>
               {% endfor %}
@@ -97,6 +97,16 @@
 {% endblock section %}
 
 {% block scripts_tags %}
-<!-- Funcion Javascript de calendario -->
-<script src="{% static "js/fancybox/fancybox-afiliado.js" %}"></script>
+<!-- Fancybox del logo -->
+<script type="text/javascript">
+  $(document).ready(function () {
+      $(".fancybox-logo").fancybox({
+          helpers: {
+              title : {
+                  type : 'float'
+              }
+          }
+      });
+    });  
+</script>
 {% endblock scripts_tags %}

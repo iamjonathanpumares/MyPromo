@@ -66,20 +66,18 @@ urlpatterns = patterns('',
     url(r'^modificar-status/(?P<pk>[\w\-]+)/$', StatusUpdateView.as_view(), name='status_modificar'), # URL para modificar el cupon seleccionado
 
     # App cupones -------------------------------------------------------------------------------------------------------------
-    url(r'^cupones/$', AfiliadoCuponListView.as_view(), name='cupones'), # URL para ver lista de usuarios afiliados y ver sus cupones
-    url(r'^cupones/(?P<afiliado>[\w\-]+)/$', 'cupones.views.CuponView', name='cupones_afiliado'), # URL para ver lista de cupones de cada afiliado
-    url(r'^cupones/(?P<pk>[\w\-]+)/modificar/$', CuponUpdateView.as_view(), name='cupon_modificar'), # URL para modificar el cupon seleccionado
+    url(r'^cupones/', include('cupones.urls')), # URL para ver lista de usuarios afiliados y ver sus cupones
 
     # App promociones -------------------------------------------------------------------------------------------------------------
-    url(r'^promociones/$', AfiliadoPromocionListView.as_view(), name='promociones'), # URL para ver lista de usuarios afiliados y ver sus promociones
-    url(r'^promociones/(?P<afiliado>[\w\-]+)/$', 'promociones.views.PromocionView', name='promociones_afiliado'), # URL para ver lista de promociones de cada afiliado
-    url(r'^promociones/(?P<pk>[\w\-]+)/modificar/$', PromocionUpdateView.as_view(), name='promocion_modificar'), # URL para modificar la promocion seleccionada
+    url(r'^promociones/', include('promociones.urls')), # URL para ver lista de usuarios afiliados y ver sus promociones
 
     url(r'^(?P<usuario>[\w\-]+)/$', 'userprofiles.views.home_afiliado', name='home_afiliado'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/cupones/$', 'cupones.views.AfiliadoCuponView', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/cupones/agregar/$', 'cupones.views.agregar_cupon_afiliado', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/cupones/(?P<pk>[\w\-]+)/modificar/$', 'cupones.views.AfiliadoCuponView', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/promociones/$', 'promociones.views.AfiliadoPromocionView', name='afiliado_promociones'), # URL del home de MyPromo para afiliados
-    url(r'^(?P<usuario>[\w\-]+)/administrar/$', 'userprofiles.views.AdministrarAfiliadoView', name='afiliado_administrar'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/promociones/agregar/$', 'promociones.views.agregar_promocion_afiliado', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/administrar/$', 'userprofiles.views.AdministrarPerfilAfiliadoView', name='afiliado_administrar'), # URL del home de MyPromo para afiliados
 
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

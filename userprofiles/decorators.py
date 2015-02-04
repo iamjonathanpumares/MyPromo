@@ -1,8 +1,10 @@
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group
 from django.http import Http404
 from django.shortcuts import redirect
 
 def redirect_home(home):
+	@login_required(login_url='/login/')
 	def wrapper(request):
 		if request.user.is_superuser == True:
 			return home(request)

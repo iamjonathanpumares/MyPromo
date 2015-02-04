@@ -73,84 +73,30 @@
     {% endfor %}
 {% endif %}
 
-<!-- Modal eliminar cupón -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h3 id="myModalLabel">Eliminar Cupón</h3>
-      </div>
-      <div class="modal-body">
-        <p>Realmente desea eliminar el cupón <span id="modal_name"></span>?</p>
-      </div>
-      <div class="modal-footer">
-        
-        <form method="post" id="frmEliminar">
-          {% csrf_token %}
-          <input type="hidden" id="modal_idProducto" name="cupon_id" />
-          <button class="btn" data-dismiss="modal" aria-hidden="true">Cerrar</button>
-          <button type="submit" class="btn btn-danger">Eliminar</button>
-        </form>
+  <!-- Modal eliminar cupón -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h3 id="myModalLabel">Eliminar Cupón</h3>
+        </div>
+        <div class="modal-body">
+          <p>Realmente desea eliminar el cupón <span id="modal_name"></span>?</p>
+        </div>
+        <div class="modal-footer">
+          
+          <form method="post" id="frmEliminar">
+            {% csrf_token %}
+            <input type="hidden" id="modal_idProducto" name="cupon_id" />
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cerrar</button>
+            <button type="submit" class="btn btn-danger">Eliminar</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<!-- EndModal -->
-
-  <!-- Cabecera -->
-	   <h3><i class="fa fa-angle-right"></i>Agregar Cupón</h3>
-      <div class="row mt">
-        <div class="col-lg-12">
-          <!-- Formulario -->
-          <div class="form-panel">
-            <h4 class="mb"><i class="fa fa-angle-right"></i> Información General</h4>
-            <form enctype="multipart/form-data" class="form-horizontal style-form" method="post">
-              {% csrf_token %}
-              <div class="form-group">
-                {{ form.non_field.errors }}
-                {{ form.titulo.errors }}
-                <label class="col-sm-2 col-sm-2 control-label">Titulo:</label>
-                <div class="col-sm-10">
-                  {{ form.titulo }}
-                </div>
-              </div>
-
-              <div class="form-group">
-                {{ form.vigencia.errors }}
-                <label class="col-sm-2 col-sm-2 control-label">Vigencia:</label>
-                <div class="col-sm-10">
-                  {{ form.vigencia }}                              
-                </div>
-              </div>
-
-              <div class="form-group">
-                {{ form.descripcion.errors }}
-                <label class="col-sm-2 col-sm-2 control-label">Descripcción:</label>
-                <div class="col-sm-10">
-                  {{ form.descripcion }}
-                </div>
-              </div>
-
-              <!-- ++++++++++ Cuadro de imagenes ++++++++ -->
-              <h4 class="mb"><i class="fa fa-angle-right"></i> Imágenes</h4>
-              <div class="form-group">
-                {{ form.imagen.errors }}
-                <label class="col-sm-2 col-sm-2 control-label">Archivo:</label>
-                <div class="col-sm-10">
-                  {{ form.imagen }}
-                </div>
-              </div>
-  
-              <button type="reset" class="btn btn-primary goright ml">Limpiar</button>&nbsp;
-              <button type="submit" id="agregar-cupon" class="btn btn-info  btn-sm">Agregar Cupón</button>
-          </form>
-        </div>
-        <br>
-      </div>
-    </div>
-
-      
+  <!-- EndModal -->
 
   <!--  Modificacion de cupones -->
   <h3><i class="fa fa-angle-right"></i>Modificar Cupón</h3>
@@ -159,6 +105,7 @@
       <div class="form-panel">
         <table class="table table-striped table-advance table-hover" id="tabla">
           <h4><i class="fa fa-angle-right"></i> Tabla de cupones</h4>
+          <a class="btn btn-primary btn-agregar" href="/cupones/agregar/{{ cupon_afiliado.user.username }}/">Agregar cupón</a>
           <div class="col-md-4">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Buscar...">
@@ -171,7 +118,8 @@
               <th><i class="fa fa-picture-o"></i> Logo</th>
               <th class="hidden-phone"><i class="fa fa-font"></i> Titulo</th>
               <th><i class="fa fa-calendar-o"></i> Vigencia</th>
-              <th></th>
+              <th><i class="fa fa-pencil"></i>Modificar</th>
+              <th><i class="fa fa-trash-o "></i>Eliminar</th>
             </tr>
           </thead>
           <tbody>
@@ -191,12 +139,15 @@
                 </button>
               </td>
             </tr>
+            {% empty %}
+              <p>Sin cupones!!!</p>
             {% endfor %}
           </tbody>
         </table>
       </div>
     </div>
   </div>
+  <!-- EndModificación cupones -->
 
   
 {% endblock section %}
@@ -210,9 +161,6 @@
   var nombre_formulario_modal = "#frmEliminar"; //id
   var nombre_ventana_modal = "#myModal"; // id
   $(document).ready(function () {
-      $('#fecha').datepicker({
-          format: "dd/mm/yyyy"
-      });
       $(".fancybox").fancybox({
         'autoScale'         : false,
         'transitionIn'      : 'none',
@@ -248,11 +196,12 @@
             alert("Eliminado!");
             var idProd = response.cupon_id;
             var elementos= $(nombre_tabla+' >tbody >tr').length;
-            if(elementos==1){
-            location.reload();
-            }else{
-            $('#tr'+idProd).remove();
-            $(nombre_ventana_modal).modal('hide');
+            if(elementos==1) {
+              location.reload();
+            }
+            else {
+              $('#tr'+idProd).remove();
+              $(nombre_ventana_modal).modal('hide');
             }
           }
           else

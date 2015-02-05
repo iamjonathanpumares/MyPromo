@@ -9,7 +9,7 @@ from django.template import RequestContext
 from django.views.generic import ListView, FormView, UpdateView
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login, logout
 from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm
@@ -250,6 +250,37 @@ def AdministrarPerfilAfiliadoView(request, usuario):
 		form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
 		form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
 	return render(request, 'modificar_perfil.html', { 'form_user': form_user, 'form_afiliado': form_afiliado })
+
+@permission_required('userprofiles.delete_local', login_url='/login/')
+@login_required(login_url='/login/')
+def AfiliadoLocalUpdateView(request, usuario):
+	afiliado = get_object_or_404(Afiliado, user__username=request.user.username)
+	locales = afiliado.locales.all()
+	if request.method == 'POST':
+		if 'local_id' in request.POST:
+			try:
+				id_local = request.POST['local_id']
+				local = Local.objects.get(pk=id_local)
+				mensaje = { "status": "True", "local_id": local.id }
+				local.delete()
+				return HttpResponse(json.dumps(mensaje))
+			except:
+				mensaje = { "status": "False" }
+				return HttpResponse(json.dumps(mensaje))
+	return render_to_response('afiliado_locales.html', { 'locales': locales }, context_instance=RequestContext(request))
+
+@permission_required('userprofiles.change_afiliado', login_url='/login/')
+@login_required(login_url='/login/')
+def AfiliadoPasswordChangeView(request, usuario):
+	if request.method == 'POST':
+		form = PasswordChangeForm(request.user, request.POST)
+		if form.is_valid():
+			form.save()
+			messages.info(request, 'Contraseña actualizada. Introduzca su nueva contraseña.') # Creamos un mensaje de exito para mostrarlo en la otra vista
+			return redirect('/login/')
+	else:
+		form = PasswordChangeForm(request.user)
+	return render(request, 'modificar_password.html', { 'form': form })
 
 from django.core.mail.message import EmailMultiAlternatives
 from django.http.response import HttpResponseRedirect

@@ -42,8 +42,9 @@
         <span>Administrar</span>
     </a>
     <ul class="sub">
-        <li class="active"><a href ="/administrar-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user"></i>Perfil</a></li>
-        <li><a href ="/administrar-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-location-arrow"></i>Locales</a></li>
+        <li class="active"><a href ="/{{ user.username }}/administrar/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user"></i>Perfil</a></li>
+        <li><a href ="/{{ user.username }}/locales/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-location-arrow"></i>Locales</a></li>
+        <li><a href ="/{{ user.username }}/password/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-lock"></i>Contraseña</a></li>
     </ul>
 </li>
 {% endblock menu_administrar %}
@@ -69,6 +70,7 @@
                                   {{ form_user.username }}
                               </div>
                           </div>
+                          <div class="alert alert-warning"><b>Nota: </b>Si cambia su nombre de usuario se cerrará su sesión para iniciar con su nuevo usuario.</div>
 
                           <div class="form-group">
                               {{ form_afiliado.nombreEmpresa.errors }}
@@ -165,9 +167,8 @@
                               </div>
                           </div>
 
-                          <button type="reset" class="btn btn-primary goright ml">Limpiar</button>
-                          &nbsp;
-                          <button type="submit" class="btn btn-theme goright btn btn-default">Guardar y salir</button>
+                          
+                          <button type="submit" class="btn btn-theme goright btn btn-default">Actualizar</button>
                           
                         </form>
                        </div> 

@@ -78,6 +78,8 @@ urlpatterns = patterns('',
     url(r'^(?P<usuario>[\w\-]+)/promociones/$', 'promociones.views.AfiliadoPromocionView', name='afiliado_promociones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/promociones/agregar/$', 'promociones.views.agregar_promocion_afiliado', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/administrar/$', 'userprofiles.views.AdministrarPerfilAfiliadoView', name='afiliado_administrar'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/locales/$', 'userprofiles.views.AfiliadoLocalUpdateView', name='afiliado_locales'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/password/$', 'userprofiles.views.AfiliadoPasswordChangeView', name='afiliado_password'), # URL del home de MyPromo para afiliados
 
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -5,7 +5,7 @@ class PromocionForm(forms.ModelForm):
 	titulo = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	vigencia = forms.DateField(widget=forms.TextInput(attrs={ 'id': 'fecha'}))
 	descripcion = forms.CharField(widget=forms.Textarea(attrs={ 'class': 'form-control'}))
-	imagen = forms.ImageField(widget=forms.ClearableFileInput(attrs={ 'class': 'file', 'multiple': 'true', 'data-preview-file-type': 'any'}))
+	imagen = forms.ImageField(required=False, widget=forms.ClearableFileInput(attrs={ 'class': 'file', 'multiple': 'true', 'data-preview-file-type': 'any'}))
 
 	class Meta:
 		model = Promocion

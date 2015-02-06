@@ -9,7 +9,7 @@ class Promocion(models.Model):
 	vigencia = models.DateField()
 	descripcion = models.TextField()
 	status = models.CharField(max_length=10, default='Activo')
-	imagen = models.ImageField(upload_to='promociones/imagenes')
+	imagen = models.ImageField(upload_to='promociones/imagenes', blank=True)
 	promocion_afiliado = models.ForeignKey(Afiliado, related_name='promociones')
 
 	def __unicode__(self):

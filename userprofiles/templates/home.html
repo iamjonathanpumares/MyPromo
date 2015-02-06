@@ -43,9 +43,13 @@
               <div class="content-panel pn text-center">
                 <div id="blog-bg">
                   <p>
-                    {% thumbnail r.imagen "400x400" as im %}
-                      <img src="{{ im.url }}" class="img-rounded" width="200" height="200">
-                    {% endthumbnail %}
+                    {% if r.imagen %}
+                      {% thumbnail r.imagen "400x400" as im %}
+                        <img src="{{ im.url }}" class="img-rounded" width="200" height="200">
+                      {% endthumbnail %}
+                    {% else %}
+                      <img src="{% static "img/default-promo.png" %}" alt="Promoción" class="img-rounded " width="200">
+                    {% endif %}
                   </p>
 
                   <div class="badge badge-popular">POPULAR</div>
@@ -61,7 +65,7 @@
               <div class="content-panel pn text-center">
                 <div id="blog-bg">
                   <p>
-                    <img src="{% static "img/ui-danro.jpg" %}" class="img-rounded " width="200">
+                    <img src="{% static "img/default-promo.png" %}" alt="Promoción" class="img-rounded " width="200">
                   </p>
 
                   <div class="badge badge-popular">POPULAR</div>
@@ -73,6 +77,22 @@
               </div>
             </div><!-- /col-md-4-->
             {% endif %}
+            {% empty %}
+            <div class="col-lg-4 col-md-4 col-sm-4 mb">
+              <div class="content-panel pn text-center">
+                <div id="blog-bg">
+                  <p>
+                    <img src="{% static "img/default-promo.png" %}" alt="Promoción" class="img-rounded " width="200">
+                  </p>
+
+                  
+                  <div class="blog-title">Promociones</div>
+                </div>
+                <div class="blog-text">
+                  <p><a class="btn btn-primary text-center" href="/promociones/">Agrega tu primera promoción</a></p>
+                </div>
+              </div>
+            </div><!-- /col-md-4-->
             {% endfor %}
 
             {% for r in cupon_popular %}
@@ -81,9 +101,13 @@
               <div class="content-panel pn text-center">
                 <div id="blog-bg">
                   <p>
-                    {% thumbnail r.imagen "400x400" as im %}
-                      <img src="{{ im.url }}" class="img-rounded" width="200" height="200">
-                    {% endthumbnail %}
+                    {% if r.imagen %}
+                      {% thumbnail r.imagen "400x400" as im %}
+                        <img src="{{ im.url }}" class="img-rounded" width="200" height="200">
+                      {% endthumbnail %}
+                    {% else %}
+                      <img src="{% static "img/default-cupon.png" %}" alt="Cupón" class="img-rounded " width="200">
+                    {% endif %}
                   </p>
 
                   <div class="badge badge-cupon">POPULAR</div>
@@ -98,7 +122,7 @@
             <div class="col-lg-4 col-md-4 col-sm-4 mb">
               <div class="content-panel pn text-center">
                 <div id="blog-bg">
-                  <p><img src="{% static "img/ui-sam.jpg" %}" class="img-rounded " width="200"></p>
+                  <p><img src="{% static "img/default-cupon.png" %}" alt="Cupón" class="img-rounded " width="200"></p>
 
                   <div class="badge badge-cupon">POPULAR</div>
                   <div class="blog-title">Cupones</div>
@@ -109,6 +133,22 @@
               </div>
             </div><!-- /col-md-4-->
             {% endif %}
+            {% empty %}
+            <div class="col-lg-4 col-md-4 col-sm-4 mb">
+              <div class="content-panel pn text-center">
+                <div id="blog-bg">
+                  <p><img src="{% static "img/default-cupon.png" %}" alt="Cupón" class="img-rounded " width="200"></p>
+
+                  
+                  <div class="blog-title">Cupones</div>
+                </div>
+                <div class="blog-text">
+                  <p>
+                    <a class="btn btn-primary text-center" href="/cupones/">Agrega tu primer cupón</a>
+                  </p>
+                </div>
+              </div>
+            </div><!-- /col-md-4-->
             {% endfor %}
             
             

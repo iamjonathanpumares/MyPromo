@@ -179,6 +179,19 @@ class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView
 		    self.paginate_by = 15
 		return object_list
 
+	def post(self, request, *args, **kwargs):
+		if 'usuario_id' in request.POST:
+			try:
+				id_usuario = request.POST['usuario_id']
+				usuario = UsuarioFinal.objects.get(pk=id_usuario)
+				mensaje = { "status": "True", "usuario_id": usuario.id }
+				usuario.delete()
+				usuario.user.delete()
+				return HttpResponse(json.dumps(mensaje))
+			except:
+				mensaje = { "status": "False" }
+				return HttpResponse(json.dumps(mensaje))
+
 @permission_required('auth.add_user', login_url='/login/')
 @login_required(login_url='/login/')
 def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulario de registro

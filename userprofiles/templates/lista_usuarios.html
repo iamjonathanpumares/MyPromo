@@ -18,6 +18,10 @@
     <script type="text/javascript" src="{% static "js/jquery.form.min.js" %}"></script>
     <script src="{% static "js/fileinput.js" %}" type="text/javascript"></script>
     <link rel="stylesheet" type="text/css" href="{% static "js/gritter/css/jquery.gritter.css" %}" />
+    <!-- FANCY BOX -->
+    <script type="text/javascript" src="stactic/js/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+    <link rel="stylesheet" href="{% static "js/fancybox/jquery.fancybox.css" %}" type="text/css" media="screen" />
+    <script type="text/javascript" src="{% static "js/fancybox/jquery.fancybox.js" %}"></script>
         
     <!-- Custom styles for this template -->
     <link href="{% static "css/style.css" %}" rel="stylesheet">
@@ -94,8 +98,10 @@
               <a class="btn btn-primary btn-agregar" href="/agregar-usuarios/">Agregar nuevo</a>
               <div class="col-md-4">
                 <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Buscar..." id="buscar">
-                  <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                  <form action="" method="get">
+                    <input id="searchbar" type="text" class="form-control" placeholder="Buscar..." name="q" value="{{ q }}"></input>
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                  </form> 
                 </div>
               </div>
               <br />
@@ -118,7 +124,7 @@
                     <td>{{ usuario.user.last_name }}</td>
                     <td>{{ usuario.user.first_name }}</td>
                     <td>
-                        <button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button>
+                        <a href="/modificar/{{ usuario.user.id }}/" class="fancybox"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button></a>
                         <!-- Button delete modal -->
                         <button type="button" class="btn btn-danger btn-xs delete" data-toggle="modal" data-target="#myModal" id="{{ usuario.id }}" data-name="{{ usuario.user.username }}" title="Eliminar usuario">
                           <i class="fa fa-trash-o "></i>
@@ -179,18 +185,19 @@
   var nombre_formulario_modal = "#frmEliminar"; //id
   var nombre_ventana_modal = "#myModal"; // id
   $(document).ready(function (){
-    $('.input-group-btn .btn-default[type="submit"]').hide();
-    $('#buscar').keypress(function( event ) {
-      if (event.which == 13)
-      {
-        event.preventDefault();
-        //alert("Hola");
-        $.get("/lista-usuarios?q=" + $('#buscar').val(), function(respuestaSolicitud){
-          $('html').html(respuestaSolicitud);
-        });
-
-      }
+    $(".fancybox").fancybox({
+        'autoScale'         : false,
+        'transitionIn'      : 'none',
+        'transitionOut'     : 'none',
+        'width'             : 900,
+        'height'            : 580,
+        'type'              : 'iframe',
+        'afterClose'        : function() {
+          location.reload();
+      },
     });
+    $('#searchbar').focus();
+    $('.input-group-btn .btn-default[type="submit"]').hide();
 
     $(nombre_boton_eliminar).on('click',function(e){
         e.preventDefault();

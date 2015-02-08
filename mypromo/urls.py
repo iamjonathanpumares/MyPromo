@@ -3,7 +3,7 @@ from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import RedirectView
-from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView, StatusUpdateView
+from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView, StatusUpdateView, UsuarioFinalUpdateView
 from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
@@ -56,6 +56,7 @@ urlpatterns = patterns('',
     # App userprofiles ----------------------------------------------------------------------------------------------------
     url(r'^home/$', 'userprofiles.views.home', name='home'), # URL del home de MyPromo
     url(r'^agregar-usuarios/$', 'userprofiles.views.RegisterUsuarioFinalView', name='agregar'), # URL para agregar usuarios finales
+    url(r'^modificar/(?P<pk>[0-9]+)/$', UsuarioFinalUpdateView.as_view(), name='usuario_modificar'), # URL para modificar el cupon seleccionado
     url(r'^agregar-afiliados/$', 'userprofiles.views.AfiliadoView', name='agregar_afiliados'), # URL para agregar afiliados
     url(r'^modificar-afiliado/(?P<usuario>[\w\-]+)/(?P<id>[0-9]+)/$', 'userprofiles.views.AfiliadoUpdateView', name='agregar_afiliados'), # URL para agregar afiliados
     url(r'^agregar-locales/(?P<usuario>[\w\-]+)/(?P<id_usuario>\d+)/$', 'userprofiles.views.LocalView', name='agregar_locales'), # URL para agregar locales

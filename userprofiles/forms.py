@@ -54,6 +54,7 @@ class RegistrationUsuarioFinalForm(forms.ModelForm):
 	class Meta:
 		model = User
 		fields = ['username', 'first_name', 'last_name', 'email']
+
 	def save(self, commit=True):
 		user = super(RegistrationUsuarioFinalForm, self).save(commit=False)
 		user.set_password(self.cleaned_data['username'])

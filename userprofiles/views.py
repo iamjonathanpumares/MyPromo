@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response, redirect, render, get_object_or
 from django.http import HttpResponse, Http404
 from django.template import RequestContext
 from django.views.generic import ListView, FormView, UpdateView
+from django.views.generic.edit import BaseUpdateView
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
@@ -192,6 +193,11 @@ class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView
 				mensaje = { "status": "False" }
 				return HttpResponse(json.dumps(mensaje))
 
+	def get_context_data(self, **kwargs):
+		context = super(UsuarioFinalListView, self).get_context_data(**kwargs)
+		context['q'] = self.request.GET.get('q', '')
+		return context
+
 @permission_required('auth.add_user', login_url='/login/')
 @login_required(login_url='/login/')
 def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulario de registro
@@ -214,6 +220,18 @@ def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulari
 		form = RegistrationUsuarioFinalForm() # En caso de no ser una peticion POST se crea la instancia del formulario
 		form_csv = UsuarioCSVForm()
 	return render_to_response('usuarios_agregar.html', { 'form': form, 'form_csv': form_csv }, context_instance=RequestContext(request)) # Renderizamos el formulario para que se muestra en el template
+
+class UsuarioFinalUpdateView(UpdateView): # Vista que hereda de UpdateView para actualizar un objeto ya creado
+	#form_class = UsuarioFinalChangeForm # Especificamos el formulario a usar
+	template_name = 'modificar_usuario.html' # Especificamos la plantilla a renderizar
+	model = User # Especificamos el modelo en donde buscara el objeto a actualizar
+	fields = ['first_name', 'last_name', 'email']
+
+	def form_valid(self, form): # Sobreescribimos el metodo form_valid para cambiar su comportamiento
+		self.object = form.save() # Actualizamos el objeto con sus cambios y retorna ese mismo objeto
+		request = self.request # Asignamos a una variable local el self.request
+		messages.info(request, 'Usuario actualizado') # Mandamos un mensaje de informacion especificando que se ha modificado el cupon
+		return super(BaseUpdateView, self).get(request) # Mandamos a llamar al padre de get para que renderize de vuelta el formulario
 
 def PromotorView(request):
 	promotores = Promotor.objects.all()

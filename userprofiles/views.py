@@ -2,7 +2,7 @@
 import json
 from cupones.models import Cupon
 from promociones.models import Promocion
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.shortcuts import render_to_response, redirect, render, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.template import RequestContext
@@ -63,6 +63,24 @@ def home_afiliado(request, usuario):
 class AfiliadoListView(LoginRequiredMixin, ListView):
 	queryset = Afiliado.objects.all()
 	template_name = 'lista_empresas.html'
+
+	def get_queryset(self):
+		try:
+		    name = self.request.GET.get('q', '')
+		except:
+		    name = ''
+		if (name != ''):
+		    object_list = Afiliado.objects.filter(nombreEmpresa__icontains=name)
+		    self.paginate_by = None
+		else:
+		    object_list = Afiliado.objects.all().order_by('nombreEmpresa')
+		    self.paginate_by = 15
+		return object_list
+
+	def get_context_data(self, **kwargs):
+		context = super(AfiliadoListView, self).get_context_data(**kwargs)
+		context['q'] = self.request.GET.get('q', '')
+		return context
 
 @permission_required('userprofiles.add_afiliado', login_url='/login/')
 @login_required(login_url='/login/')
@@ -173,7 +191,7 @@ class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView
 		except:
 		    name = ''
 		if (name != ''):
-		    object_list = UsuarioFinal.objects.filter(user__last_name__icontains=name)
+		    object_list = UsuarioFinal.objects.filter(Q(user__username__icontains=name) | Q(user__last_name__icontains=name) | Q(user__first_name__icontains=name) | Q(user__email__icontains=name))
 		    self.paginate_by = None
 		else:
 		    object_list = UsuarioFinal.objects.all().order_by('user__last_name')

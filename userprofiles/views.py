@@ -6,7 +6,7 @@ from django.db.models import Count, Q
 from django.shortcuts import render_to_response, redirect, render, get_object_or_404
 from django.http import HttpResponse, Http404
 from django.template import RequestContext
-from django.views.generic import ListView, FormView, UpdateView
+from django.views.generic import ListView, FormView, UpdateView, TemplateView
 from django.views.generic.edit import BaseUpdateView
 from django.contrib import messages
 from django.contrib.auth.models import Group, User
@@ -348,6 +348,10 @@ def AfiliadoPasswordChangeView(request, usuario):
 	else:
 		form = PasswordChangeForm(request.user)
 	return render(request, 'modificar_password.html', { 'form': form })
+
+class ScanCardTemplateView(TemplateView):
+	template_name = 'scancard.html'
+
 
 from django.core.mail.message import EmailMultiAlternatives
 from django.http.response import HttpResponseRedirect

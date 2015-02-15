@@ -72,7 +72,7 @@
               <ul class="sidebar-menu" id="nav-accordion">
               
               	  <p class="centered">
-                    <a href="profile.html">
+                    <a href="/home/">
                       {% thumbnail afiliado.logo "150x150" crop="center" as im %}
                         <img src="{{ im.url }}" class="img-circle" width="60">
                       {% endthumbnail %}
@@ -106,6 +106,15 @@
                       </a>
                   </li>
                   {% endblock menu_promociones %}
+
+                  {% block menu_scan_card %}
+                  <li class="sub-menu">
+                      <a href="/{{ user.username }}/scancard/" >
+                          <i class="fa fa-qrcode"></i>
+                          <span>ScanCard</span>
+                      </a>
+                  </li>
+                  {% endblock menu_scan_card %}
 
                   {% block menu_administrar %}
                   <li class="sub-menu">

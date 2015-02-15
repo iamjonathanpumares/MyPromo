@@ -2,7 +2,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-from django.views.generic import RedirectView
+from django.views.generic import RedirectView, TemplateView
 from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView, StatusUpdateView, UsuarioFinalUpdateView
 from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
@@ -78,6 +78,7 @@ urlpatterns = patterns('',
     url(r'^(?P<usuario>[\w\-]+)/cupones/(?P<pk>[\w\-]+)/modificar/$', 'cupones.views.AfiliadoCuponView', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/promociones/$', 'promociones.views.AfiliadoPromocionView', name='afiliado_promociones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/promociones/agregar/$', 'promociones.views.agregar_promocion_afiliado', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/scancard/$', TemplateView.as_view(template_name='scancard.html'), name='scancard_afiliado'), # URL para modificar el cupon seleccionado
     url(r'^(?P<usuario>[\w\-]+)/administrar/$', 'userprofiles.views.AdministrarPerfilAfiliadoView', name='afiliado_administrar'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/locales/$', 'userprofiles.views.AfiliadoLocalDeleteView', name='afiliado_locales'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/locales/agregar/$', 'userprofiles.views.AfiliadoLocalUpdateView', name='afiliado_locales'), # URL del home de MyPromo para afiliados

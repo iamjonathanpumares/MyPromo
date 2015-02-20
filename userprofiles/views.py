@@ -1,23 +1,23 @@
 # -*- encoding: utf-8 -*-
 import json
 from cupones.models import Cupon
-from promociones.models import Promocion
+from django.contrib import messages
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
+from django.contrib.auth.models import Group, User
 from django.db.models import Count, Q
-from django.shortcuts import render_to_response, redirect, render, get_object_or_404
 from django.http import HttpResponse, Http404
+from django.shortcuts import render_to_response, redirect, render, get_object_or_404
 from django.template import RequestContext
 from django.views.generic import ListView, FormView, UpdateView, TemplateView
 from django.views.generic.edit import BaseUpdateView
-from django.contrib import messages
-from django.contrib.auth.models import Group, User
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm, PasswordChangeForm
-from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth import login, logout
-from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm
+from promociones.models import Promocion
 from .decorators import redirect_home
+from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Afiliado, Local, UsuarioFinal, Promotor
-from .load_data import importarCSV
+from .tasks import importarCSV, convertirCSV
 
 # Login ----------------------------------------------------------------------------------------------------
 class LoginUserPromotorView(FormView):
@@ -232,8 +232,9 @@ def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulari
 			form = RegistrationUsuarioFinalForm()
 			form_csv = UsuarioCSVForm(request.POST, request.FILES)
 			if form_csv.is_valid():
-				importarCSV(request.FILES['archivoCSV'])
-				return redirect('/lista-usuarios/') # Nos redirijimos a la vista lista_usuarios
+				lista_usuarios = convertirCSV(request.FILES['archivoCSV'])
+				if importarCSV(request.FILES['archivoCSV']):	
+					return redirect('/lista-usuarios/') # Nos redirijimos a la vista lista_usuarios
 	else:
 		form = RegistrationUsuarioFinalForm() # En caso de no ser una peticion POST se crea la instancia del formulario
 		form_csv = UsuarioCSVForm()

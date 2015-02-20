@@ -56,11 +56,11 @@ class RegistrationUsuarioFinalForm(forms.ModelForm):
 		fields = ['username', 'first_name', 'last_name', 'email']
 
 	def save(self, commit=True):
-		user = super(RegistrationUsuarioFinalForm, self).save(commit=False)
+		user = super(RegistrationUsuarioFinalForm, self).save(commit=True)
 		user.set_password(self.cleaned_data['username'])
 		
-		#usuario_group = Group.objects.get(name='Usuario')
-		#user.groups.add(usuario_group)
+		group = Group.objects.get(name='UsuarioFinal')
+		user.groups.add(group)
 		if commit:
 			user.save()
 			usuario_final = UsuarioFinal(user=user)

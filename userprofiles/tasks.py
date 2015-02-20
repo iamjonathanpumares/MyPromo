@@ -8,7 +8,6 @@ from django.contrib.auth.models import User, Group
 from django.db import IntegrityError, transaction
 from .models import UsuarioFinal
 
-
 @shared_task
 def add(x, y):
     return x + y
@@ -30,17 +29,16 @@ def importarCSV(dataReader):
 		if row[0] != 'ID': # ignoramos la primera línea del archivo CSV
 			commit = True
 			usuario = User()
-			usuario.save()
 			usuario.username = row[0]
 			usuario.set_password(row[0])
 			usuario.first_name = row[1]
 			usuario.last_name = row[2]
 			usuario.email = row[3]
-			usuario.groups = group
 			if commit:
 				try:
 					with transaction.atomic():
 						usuario.save()
+						usuario.groups.add(group)		
 				except IntegrityError:
 					pass
 				else:
@@ -48,6 +46,7 @@ def importarCSV(dataReader):
 					usuario_final.save()
 	return True
 
+@shared_task
 def convertirCSV(data):
 	dataReader = csv.reader(data, delimiter=',', quotechar='"')
 	lista_externa = []

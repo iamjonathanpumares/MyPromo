@@ -233,7 +233,7 @@ def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulari
 			form_csv = UsuarioCSVForm(request.POST, request.FILES)
 			if form_csv.is_valid():
 				lista_usuarios = convertirCSV(request.FILES['archivoCSV'])
-				if importarCSV(request.FILES['archivoCSV']):	
+				if importarCSV.delay(lista_usuarios):	
 					return redirect('/lista-usuarios/') # Nos redirijimos a la vista lista_usuarios
 	else:
 		form = RegistrationUsuarioFinalForm() # En caso de no ser una peticion POST se crea la instancia del formulario

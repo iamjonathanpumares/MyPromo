@@ -122,3 +122,10 @@ EMAIL_HOST_USER = 'veltiumdevelopment@gmail.com'
 EMAIL_HOST_PASSWORD = 'ingenierosdesoftware'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+
+# CELERY SETTINGS
+BROKER_URL = 'amqp://jepumares:12345@jonathan-P43G:5672/mypromovhost'
+BROKER_VHOST = '/mypromovhost'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

@@ -43,6 +43,11 @@
 {% endblock menu_cupones %}
 
 {% block section %}
+  {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-success"><b>{{ message }}</b></div>
+      {% endfor %}
+  {% endif %}
 	<h3><i class="fa fa-angle-right"></i>Empresas</h3>
   <div class="row mt">
     <div class="col-md-12">

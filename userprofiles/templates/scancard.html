@@ -69,6 +69,11 @@
     {% endblock menu_scan_card %}
 
     {% block section %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success"><b>{{ message }}</b></div>
+        {% endfor %}
+    {% endif %}
         <!--header start-->
         <div class="row visible-print">
           <header class="black-bg">

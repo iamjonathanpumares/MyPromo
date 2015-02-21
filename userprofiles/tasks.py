@@ -7,6 +7,7 @@ import csv
 from django.contrib.auth.models import User, Group
 from django.db import IntegrityError, transaction
 from .models import UsuarioFinal
+from async_messages import messages
 
 @shared_task
 def add(x, y):
@@ -23,8 +24,9 @@ def xsum(numbers):
     return sum(numbers)
 
 @shared_task
-def importarCSV(dataReader):
+def importarCSV(dataReader, usuario_actual):
 	group = Group.objects.get(name='UsuarioFinal')
+	user_current = User.objects.get(username=usuario_actual)
 	for row in dataReader:
 		if row[0] != 'ID': # ignoramos la primera línea del archivo CSV
 			commit = True
@@ -44,6 +46,7 @@ def importarCSV(dataReader):
 				else:
 					usuario_final = UsuarioFinal(user=usuario)
 					usuario_final.save()
+	messages.info(user_current, "La base de datos ha sido cargada completamente")
 	return True
 
 @shared_task

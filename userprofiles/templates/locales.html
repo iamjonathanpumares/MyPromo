@@ -90,6 +90,11 @@
 {% endblock styles_tags %}
 
 {% block section %}
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-success"><b>{{ message }}</b></div>
+    {% endfor %}
+{% endif %}
 <h3><i class="fa fa-angle-right"></i> Mapa de ubicación</h3>
     <div id="myMap"></div><br/>
 

@@ -113,6 +113,11 @@
 {% endblock menu_afiliados %}
 
 {% block section %}
+    {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-success"><b>{{ message }}</b></div>
+        {% endfor %}
+    {% endif %}
     <h3><i class="fa fa-angle-right"></i> Locales actuales</h3>
     <div class="form-panel">
       <table class="table table-striped table-advance table-hover">

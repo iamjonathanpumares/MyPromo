@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from __future__ import absolute_import
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
@@ -126,7 +127,6 @@ EMAIL_USE_TLS = True
 
 # CELERY SETTINGS
 BROKER_URL = 'amqp://jepumares:12345@jonathan-P43G:5672/mypromovhost'
-BROKER_VHOST = '/mypromovhost'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -138,3 +138,17 @@ CACHES = {
         'LOCATION': '127.0.0.1:11211',
     }
 }
+
+# Periodic Tasks
+#from datetime import timedelta
+from celery.schedules import crontab
+
+CELERYBEAT_SCHEDULE = {
+    'add-every-monday-morning': {
+        'task': 'userprofiles.tasks.add',
+        'schedule': crontab(minute=37, hour=1),
+        'args': (16, 16)
+    },
+}
+
+#CELERY_TIMEZONE = 'UTC'

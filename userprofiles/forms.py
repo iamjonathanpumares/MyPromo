@@ -118,24 +118,6 @@ class PerfilAfiliadoForm(forms.ModelForm):
 		model = Afiliado
 		fields = ['nombreEmpresa', 'representante', 'descripcion', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'giro', 'cartel']
 
-	def save(self, commit=True, *args, **kwargs):
-		nombreEmpresa = self.cleaned_data['nombreEmpresa']
-		representante = self.cleaned_data['representante']
-		descripcion = self.cleaned_data['descripcion']
-		direccion = self.cleaned_data['direccion']
-		telefono = self.cleaned_data['telefono']
-		email = self.cleaned_data['email']
-		facebook = self.cleaned_data['facebook']
-		twitter = self.cleaned_data['twitter']
-		codigoValidacion = User.objects.make_random_password(length=200)
-		logo = self.cleaned_data['logo']
-		giro = self.cleaned_data['giro']
-		cartel = self.cleaned_data['cartel']
-		afiliado = Afiliado(user=kwargs['afiliado'], nombreEmpresa=nombreEmpresa, representante=representante, descripcion=descripcion, direccion=direccion, telefono=telefono, email=email, facebook=facebook, twitter=twitter, codigoValidacion=codigoValidacion, logo=logo, giro=giro, cartel=cartel)
-		if commit:
-			afiliado.save()
-		return afiliado
-
 	def clean_facebook(self):
 		facebook = self.cleaned_data.get('facebook', '')
 		if facebook != '':

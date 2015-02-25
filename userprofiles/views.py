@@ -90,7 +90,12 @@ def AfiliadoView(request):
 		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario PerfilAfiliadoForm y le pasamos los datos junto con los archivo subidos
 		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
 			usuario = form_user.save() # Se crea el usuario
-			afiliado = form_afiliado.save(commit=True, afiliado=usuario) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
+			afiliado = form_afiliado.save(commit=False) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
+			afiliado.codigoValidacion = User.objects.make_random_password(length=200)
+			afiliado.user = usuario
+			afiliado.save()
+
+
 			if 'submit-guardar-salir' in request.POST:
 				messages.info(request, 'Afiliado %s agregado' % form_afiliado.cleaned_data['nombreEmpresa'])
 				return redirect('/lista-afiliados/')

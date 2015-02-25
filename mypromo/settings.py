@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'sorl.thumbnail',
     'rest_framework',
     'password_reset',
+    'djcelery',
 )
 
 REST_FRAMEWORK = {
@@ -104,7 +105,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-MEDIA_ROOT = '/Users/jonathan/www/mypromo.com/media'
+MEDIA_ROOT = '/home/jonathan/www/mypromo.com/media'
 
 MEDIA_URL = '/media/'
 
@@ -131,6 +132,9 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 
+# Usar la base de datos Django ORM para guardar los resultados de las tareas de Celery (Backend de resultados)
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+
 # CACHE SETTINGS
 CACHES = {
     'default': {
@@ -145,9 +149,8 @@ from celery.schedules import crontab
 
 CELERYBEAT_SCHEDULE = {
     'add-every-monday-morning': {
-        'task': 'userprofiles.tasks.add',
-        'schedule': crontab(minute=37, hour=1),
-        'args': (16, 16)
+        'task': 'userprofiles.tasks.cambiarStatus',
+        'schedule': crontab(minute=42, hour=18)
     },
 }
 

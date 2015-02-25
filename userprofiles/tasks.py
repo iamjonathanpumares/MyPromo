@@ -9,6 +9,10 @@ from django.db import IntegrityError, transaction
 from .models import UsuarioFinal
 from async_messages import messages
 
+from datetime import date
+from cupones.models import Cupon
+from promociones.models import Promocion
+
 @shared_task
 def add(x, y):
     return x + y
@@ -61,3 +65,10 @@ def convertirCSV(data):
 		lista_interna.append(row[3])
 		lista_externa.append(lista_interna)
 	return lista_externa
+
+@shared_task
+def cambiarStatus():
+	hoy = date.today()
+	fecha_actual = str(hoy.year) + "-" + str(hoy.month) + "-" + str(hoy.day)
+	Cupon.objects.filter(vigencia__lt=fecha_actual).update(status='Inactivo')
+	Promocion.objects.filter(vigencia__lt=fecha_actual).update(status='Inactivo')

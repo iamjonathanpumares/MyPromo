@@ -105,7 +105,7 @@ USE_L10N = True
 
 USE_TZ = True
 
-MEDIA_ROOT = '/home/jonathan/www/mypromo.com/media'
+MEDIA_ROOT = '/Users/jonathan/www/mypromo.com/media'
 
 MEDIA_URL = '/media/'
 
@@ -136,19 +136,19 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
 
 # CACHE SETTINGS
-CACHES = {
+"""CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': '127.0.0.1:11211',
     }
-}
+}"""
 
 # Periodic Tasks
 #from datetime import timedelta
 from celery.schedules import crontab
 
 CELERYBEAT_SCHEDULE = {
-    'add-every-monday-morning': {
+    'cambiar-status': {
         'task': 'userprofiles.tasks.cambiarStatus',
         'schedule': crontab(minute=42, hour=18)
     },

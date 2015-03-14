@@ -234,11 +234,12 @@ def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulari
 				messages.info(request, 'Usuario %s agregado correctamente' % usuario) # Creamos un mensaje de exito para mostrarlo en la otra vista
 				return redirect('/lista-usuarios/') # Nos redirijimos a la vista lista_usuarios
 		elif 'submit-csv' in request.POST:
+			checked = True if 'checkcsv' in request.POST else False # Preguntamos si en el formulario le dieron checked a nuestro checkbox. True si fue checked, False si no le dieron checked
 			form = RegistrationUsuarioFinalForm()
 			form_csv = UsuarioCSVForm(request.POST, request.FILES)
 			if form_csv.is_valid():
 				lista_usuarios = convertirCSV(request.FILES['archivoCSV'])
-				if importarCSV.delay(lista_usuarios, request.user.username):
+				if importarCSV.delay(lista_usuarios, request.user.username, checked):
 					messages.info(request, 'Su base de datos se cargara en breve. Le avisaremos cuando este lista. Puede seguir trabajando.')	
 					return redirect('/home/') # Nos redirijimos a la vista lista_usuarios
 	else:

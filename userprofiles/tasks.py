@@ -28,11 +28,11 @@ def xsum(numbers):
     return sum(numbers)
 
 @shared_task
-def importarCSV(dataReader, usuario_actual):
+def importarCSV(dataReader, usuario_actual, checked):
 	group = Group.objects.get(name='UsuarioFinal')
 	user_current = User.objects.get(username=usuario_actual)
 	for row in dataReader:
-		if row[0] != 'ID': # ignoramos la primera línea del archivo CSV
+		if not checked: # ignoramos la primera línea del archivo CSV
 			commit = True
 			usuario = User()
 			usuario.username = row[0]
@@ -50,6 +50,7 @@ def importarCSV(dataReader, usuario_actual):
 				else:
 					usuario_final = UsuarioFinal(user=usuario)
 					usuario_final.save()
+		checked = False
 	messages.info(user_current, "La base de datos ha sido cargada completamente")
 	return True
 

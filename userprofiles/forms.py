@@ -4,10 +4,12 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User, Group
 from .models import Afiliado, Local, UsuarioFinal, Promotor
 
+# Formulario de Login ---------------------------------------------------------------------------------------------
 class LoginForm(AuthenticationForm):
 	username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'ID' }))
 	password = forms.CharField(max_length=100, widget=forms.PasswordInput(attrs={ 'class': 'form-control', 'placeholder': 'Contraseña' }))
 
+# Formulario del Modelo Promotor ----------------------------------------------------------------------------------
 """ Gracias a la herencia en Python podemos aprovecharla para utilizar clases ya definidas y sin escribir tanto codigo, 
 	Django ya trae clases para la autenticacion del usuario.
 	En este caso heredamos de la clase UserCreationForm que se encuentra en django.contrib.auth.forms.UserCreationForm y
@@ -41,6 +43,7 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 			usuario_promotor.save()
 		return user
 
+# Formulario del Modelo User ----------------------------------------------------------------------------------
 """ Eres genial Python, gracias a tu herencia no tengo que repetir codigo y herede de mi formulario
 	de arriba y solo sobreescribe el metodo save para que me asigne el grupo Usuario """
 class RegistrationUsuarioFinalForm(forms.ModelForm):
@@ -48,12 +51,10 @@ class RegistrationUsuarioFinalForm(forms.ModelForm):
         regex=r'^[0-9]+$',
         error_messages={
             'invalid': ("Este campo solo puede contener numeros.")}, widget=forms.TextInput(attrs={ 'class': 'form-control'}))
-	first_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={ 'class': 'form-control'}))
-	last_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	email = forms.CharField(required=True, widget=forms.EmailInput(attrs={ 'class': 'form-control'}))
 	class Meta:
 		model = User
-		fields = ['username', 'first_name', 'last_name', 'email']
+		fields = ['username', 'email']
 
 	def save(self, commit=True):
 		user = super(RegistrationUsuarioFinalForm, self).save(commit=True)
@@ -63,9 +64,13 @@ class RegistrationUsuarioFinalForm(forms.ModelForm):
 		user.groups.add(group)
 		if commit:
 			user.save()
-			usuario_final = UsuarioFinal(user=user)
-			usuario_final.save()
 		return user
+
+# Formulario de actualización del Modelo User para los usuarios finales -----------------------------------------
+class UserUpdateForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = ('email',)
 
 class UserAfiliadoForm(UserCreationForm):
 	username = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
@@ -88,6 +93,11 @@ class UserAfiliadoForm(UserCreationForm):
 		if commit:
 			user.save()
 		return user
+
+class UsuarioFinalForm(forms.ModelForm):
+	class Meta:
+		model = UsuarioFinal
+		fields = ('full_name',)
 
 class UserAfiliadoUpdateForm(forms.ModelForm):
 	username = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))

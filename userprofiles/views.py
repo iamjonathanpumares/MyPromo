@@ -14,7 +14,7 @@ from django.views.generic import ListView, FormView, UpdateView, TemplateView
 from django.views.generic.edit import BaseUpdateView
 from promociones.models import Promocion
 from .decorators import redirect_home
-from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm
+from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm, UsuarioFinalForm, UserUpdateForm
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Afiliado, Local, UsuarioFinal, Promotor
 from .tasks import importarCSV, convertirCSV
@@ -196,10 +196,10 @@ class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView
 		except:
 		    name = ''
 		if (name != ''):
-		    object_list = UsuarioFinal.objects.filter(Q(user__username__icontains=name) | Q(user__last_name__icontains=name) | Q(user__first_name__icontains=name) | Q(user__email__icontains=name))
+		    object_list = UsuarioFinal.objects.filter(full_name__icontains=name)
 		    self.paginate_by = None
 		else:
-		    object_list = UsuarioFinal.objects.all().order_by('user__last_name')
+		    object_list = UsuarioFinal.objects.all().order_by('full_name')
 		    self.paginate_by = 15
 		return object_list
 
@@ -227,15 +227,19 @@ def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulari
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
 		if 'submit-agregar' in request.POST:
 			form_csv = UsuarioCSVForm()
-			form = RegistrationUsuarioFinalForm(data=request.POST) # Creamos una instancia y le pasamos los datos del formulario
-			if form.is_valid(): # Verificar si los campos fueron validados correctamente
-				user = form.save() # Guarda un usuario con los datos dados en el formulario
-				usuario = form.cleaned_data['username'] # Guardamos el nombre del usuario con ayuda de la variable cleaned_data
-				messages.info(request, 'Usuario %s agregado correctamente' % usuario) # Creamos un mensaje de exito para mostrarlo en la otra vista
+			form_user = RegistrationUsuarioFinalForm(data=request.POST) # Creamos una instancia y le pasamos los datos del formulario
+			form = UsuarioFinalForm(request.POST)
+			if form_user.is_valid() and form.is_valid(): # Verificar si los campos fueron validados correctamente
+				user = form_user.save() # Guarda un usuario con los datos dados en el formulario
+				usuario_final = form.save(commit=False)
+				usuario_final.user = user
+				usuario_final.save()
+				messages.info(request, 'Usuario %s agregado correctamente' % form_user.cleaned_data['username']) # Creamos un mensaje de exito para mostrarlo en la otra vista
 				return redirect('/lista-usuarios/') # Nos redirijimos a la vista lista_usuarios
 		elif 'submit-csv' in request.POST:
 			checked = True if 'checkcsv' in request.POST else False # Preguntamos si en el formulario le dieron checked a nuestro checkbox. True si fue checked, False si no le dieron checked
-			form = RegistrationUsuarioFinalForm()
+			form_user = RegistrationUsuarioFinalForm()
+			form = UsuarioFinalForm()
 			form_csv = UsuarioCSVForm(request.POST, request.FILES)
 			if form_csv.is_valid():
 				lista_usuarios = convertirCSV(request.FILES['archivoCSV'])
@@ -243,21 +247,26 @@ def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulari
 					messages.info(request, 'Su base de datos se cargara en breve. Le avisaremos cuando este lista. Puede seguir trabajando.')	
 					return redirect('/home/') # Nos redirijimos a la vista lista_usuarios
 	else:
-		form = RegistrationUsuarioFinalForm() # En caso de no ser una peticion POST se crea la instancia del formulario
+		form_user = RegistrationUsuarioFinalForm() # En caso de no ser una peticion POST se crea la instancia del formulario
+		form = UsuarioFinalForm()
 		form_csv = UsuarioCSVForm()
-	return render_to_response('usuarios_agregar.html', { 'form': form, 'form_csv': form_csv }, context_instance=RequestContext(request)) # Renderizamos el formulario para que se muestra en el template
+	return render_to_response('usuarios_agregar.html', { 'form_user': form_user, 'form': form, 'form_csv': form_csv }, context_instance=RequestContext(request)) # Renderizamos el formulario para que se muestra en el template
 
-class UsuarioFinalUpdateView(UpdateView): # Vista que hereda de UpdateView para actualizar un objeto ya creado
-	#form_class = UsuarioFinalChangeForm # Especificamos el formulario a usar
-	template_name = 'modificar_usuario.html' # Especificamos la plantilla a renderizar
-	model = User # Especificamos el modelo en donde buscara el objeto a actualizar
-	fields = ['first_name', 'last_name', 'email']
-
-	def form_valid(self, form): # Sobreescribimos el metodo form_valid para cambiar su comportamiento
-		self.object = form.save() # Actualizamos el objeto con sus cambios y retorna ese mismo objeto
-		request = self.request # Asignamos a una variable local el self.request
-		messages.info(request, 'Usuario actualizado') # Mandamos un mensaje de informacion especificando que se ha modificado el cupon
-		return super(BaseUpdateView, self).get(request) # Mandamos a llamar al padre de get para que renderize de vuelta el formulario
+def UsuarioFinalUpdateView(request, pk): # Vista que hereda de UpdateView para actualizar un objeto ya creado
+	usuario_user = get_object_or_404(User, id=pk)
+	usuario_final = get_object_or_404(UsuarioFinal, user__id=pk)
+	if request.method == 'POST':
+		form_user = UserUpdateForm(request.POST, instance=usuario_final)
+		form = UsuarioFinalForm(request.POST, instance=usuario_final)
+		if form_user.is_valid() and form.is_valid():
+			form_user.save()
+			form.save()
+			messages.info(request, 'Usuario actualizado')
+			return render(request, 'modificar_usuario.html', { 'form_user': form_user, 'form': form })
+	else:
+		form_user = UserUpdateForm(instance=usuario_user)
+		form = UsuarioFinalForm(instance=usuario_final)
+	return render(request, 'modificar_usuario.html', { 'form_user': form_user, 'form': form })
 
 def PromotorView(request):
 	promotores = Promotor.objects.all()

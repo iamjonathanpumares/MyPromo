@@ -29,6 +29,7 @@ class Promotor(models.Model):
 
 class UsuarioFinal(models.Model):
 	user = models.OneToOneField(User, related_name='perfil_usuariofinal')
+	full_name = models.CharField('Nombre Completo', max_length=250)
 
 	def __unicode__(self):
 		return self.user.username

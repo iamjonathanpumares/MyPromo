@@ -111,7 +111,6 @@
                   <tr>
                       <th><i class="fa fa-barcode"></i> ID</th>
                       <!-- <th class="hidden-phone"><i class="fa fa-question-circle"></i> Contraseña</th> -->
-                      <th><i class="fa fa-user"></i> Apellidos</th>
                       <th><i class=" fa fa-user"></i> Nombre</th>
                       <th><i class="fa fa-send"></i> Email</th>
                       <th></th>
@@ -122,8 +121,7 @@
                 <tr id="tr{{usuario.id}}">
                     <td>{{ usuario.user.username }}</td>
                     <!-- <td class="hidden-phone">{{ usuario.password }}</td> -->
-                    <td>{{ usuario.user.last_name }}</td>
-                    <td>{{ usuario.user.first_name }}</td>
+                    <td>{{ usuario.full_name }}</td>
                     <td>{{ usuario.user.email }}</td>
                     <td>
                         <a href="/modificar/{{ usuario.user.id }}/" class="fancybox"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button></a>

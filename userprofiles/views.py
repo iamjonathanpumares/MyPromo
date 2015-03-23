@@ -10,7 +10,7 @@ from django.db.models import Count, Q
 from django.http import HttpResponse, Http404
 from django.shortcuts import render_to_response, redirect, render, get_object_or_404
 from django.template import RequestContext
-from django.views.generic import ListView, FormView, UpdateView, TemplateView
+from django.views.generic import ListView, FormView, UpdateView, TemplateView, DetailView
 from django.views.generic.edit import BaseUpdateView
 from promociones.models import Promocion
 from .decorators import redirect_home
@@ -18,6 +18,12 @@ from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAf
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Afiliado, Local, UsuarioFinal, Promotor
 from .tasks import importarCSV, convertirCSV
+
+# Imports para enviar correo
+from django.core.mail.message import EmailMultiAlternatives
+from django.http.response import HttpResponseRedirect
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 # Login ----------------------------------------------------------------------------------------------------
 class LoginUserPromotorView(FormView):
@@ -35,7 +41,7 @@ def logout_view(request):
 	logout(request)
 	return redirect('/login/')
 
-# Home -------------------------------------------------------------------------------------------------------
+# Inicio del Promotor -------------------------------------------------------------------------------------------------------
 @redirect_home
 def home(request):
 	promocion_popular = Promocion.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
@@ -57,170 +63,7 @@ def home_afiliado(request, usuario):
 	num_usuarios = UsuarioFinal.objects.all().count()
 	return render(request, 'home_afiliado.html', { 'promocion_popular': promocion_popular, 'cupon_popular': cupon_popular, 'cupones_totales': cupones_totales, 'promociones_totales': promociones_totales, 'num_afiliados': num_afiliados, 'num_usuarios': num_usuarios })
 
-
-
-# Views Afiliado ---------------------------------------------------------------------------------------------
-class AfiliadoListView(LoginRequiredMixin, ListView):
-	queryset = Afiliado.objects.all()
-	template_name = 'lista_empresas.html'
-
-	def get_queryset(self):
-		try:
-		    name = self.request.GET.get('q', '')
-		except:
-		    name = ''
-		if (name != ''):
-		    object_list = Afiliado.objects.filter(nombreEmpresa__icontains=name)
-		    self.paginate_by = None
-		else:
-		    object_list = Afiliado.objects.all().order_by('nombreEmpresa')
-		    self.paginate_by = 15
-		return object_list
-
-	def get_context_data(self, **kwargs):
-		context = super(AfiliadoListView, self).get_context_data(**kwargs)
-		context['q'] = self.request.GET.get('q', '')
-		return context
-
-@permission_required('userprofiles.add_afiliado', login_url='/login/')
-@login_required(login_url='/login/')
-def AfiliadoView(request):
-	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
-		form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserAfiliadoForm y le pasamos los datos del formulario
-		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario PerfilAfiliadoForm y le pasamos los datos junto con los archivo subidos
-		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
-			usuario = form_user.save() # Se crea el usuario
-			afiliado = form_afiliado.save(commit=False) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
-			afiliado.codigoValidacion = User.objects.make_random_password(length=200)
-			afiliado.user = usuario
-			afiliado.save()
-
-
-			if 'submit-guardar-salir' in request.POST:
-				messages.info(request, 'Afiliado %s agregado' % form_afiliado.cleaned_data['nombreEmpresa'])
-				return redirect('/lista-afiliados/')
-			elif 'submit-guardar-locales' in request.POST:
-				return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + str(usuario.id) + '/')
-	else:
-		form_user = UserAfiliadoForm()
-		form_afiliado = PerfilAfiliadoForm()
-	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
-
-def AfiliadoUpdateView(request, usuario, id): # Vista que hereda de UpdateView para actualizar un objeto ya creado
-	user_afiliado = get_object_or_404(User, username=usuario)
-	afiliado = get_object_or_404(Afiliado, id=id)
-	if request.method == 'POST':
-		form_user = UserAfiliadoUpdateForm(request.POST, instance=user_afiliado)
-		form_afiliado = PerfilAfiliadoUpdateForm(request.POST, request.FILES, instance=afiliado)
-		if form_user.is_valid() and form_afiliado.is_valid():
-			form_user.save()
-			form_afiliado.save()
-			messages.info(request, 'Afiliado %s modificado' % afiliado) # Creamos un mensaje de exito para mostrarlo en la otra vista
-			return redirect('/lista-afiliados/')
-
-	else:
-		if afiliado.facebook != '':
-			datos = afiliado.facebook.split('.com/')
-			afiliado.facebook = datos[1]
-		if afiliado.twitter != '':
-			datos = afiliado.twitter.split('.com/')
-			afiliado.twitter = datos[1]
-		form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
-		form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
-	return render(request, 'modificar_afiliado.html', { 'form_user': form_user, 'form_afiliado': form_afiliado })
-
-@permission_required('userprofiles.add_local', login_url='/login/')
-@login_required(login_url='/login/')
-def LocalView(request, usuario, id_usuario):
-	if request.method == 'POST':
-		json_locales = request.read()
-		locales = json.loads(json_locales)
-		usuario_afiliado = Afiliado.objects.get(user=id_usuario)
-		if usuario_afiliado.user.username == usuario:
-			i = 0
-			num_locales = len(locales['direcciones'])
-			while i < num_locales:
-				local_afiliado = Local(direccion=locales['direcciones'][i], latitud=locales['latitudes'][i], longitud=locales['longitudes'][i], local_afiliado=usuario_afiliado)
-				local_afiliado.save()
-				i += 1
-			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
-			return HttpResponse('/lista-afiliados/')
-	else:
-		usuario_afiliado = get_object_or_404(Afiliado, user__username=usuario, user__id=id_usuario)
-	return render_to_response('locales.html', {}, context_instance=RequestContext(request))
-
-@permission_required('userprofiles.add_local', login_url='/login/')
-@login_required(login_url='/login/')
-def LocalUpdateView(request, usuario, id):
-	afiliado = get_object_or_404(Afiliado, user__username=usuario, id=id)
-	locales = afiliado.locales.all()
-	if request.method == 'POST':
-		json_locales = request.read()
-		locales = json.loads(json_locales)
-		if afiliado.user.username == usuario:
-			i = 0
-			num_locales = len(locales['direcciones'])
-			while i < num_locales:
-				local_afiliado = Local(direccion=locales['direcciones'][i], latitud=locales['latitudes'][i], longitud=locales['longitudes'][i], local_afiliado=afiliado)
-				local_afiliado.save()
-				i += 1
-			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
-			return HttpResponse('/lista-afiliados/')
-	return render_to_response('modificar_locales.html', { 'locales': locales }, context_instance=RequestContext(request))
-
-class StatusUpdateView(UpdateView): # Vista que hereda de UpdateView para actualizar un objeto ya creado
-	form_class = StatusUpdateForm # Especificamos el formulario a usar
-	template_name = 'modificar_status.html' # Especificamos la plantilla a renderizar
-	model = User # Especificamos el modelo en donde buscara el objeto a actualizar
-	#success_url = '/lista-afiliados/'
-
-	def form_valid(self, form): # Sobreescribimos el metodo form_valid para cambiar su comportamiento
-		self.object = form.save() # Actualizamos el objeto con sus cambios y retorna ese mismo objeto
-		request = self.request # Asignamos a una variable local el self.request
-		messages.info(request, 'Status modificado') # Mandamos un mensaje de informacion especificando que se ha modificado el cupon
-		return super(StatusUpdateView, self).get(request) # Mandamos a llamar al padre de get para que renderize de vuelta el formulario
-
-class UsuarioPromotorListView(ListView):
-	model = User
-	template_name = 'lista_usuarios.html'
-
-class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
-	permission = 'auth.change_user'
-	#queryset = UsuarioFinal.objects.order_by('user__last_name')
-	template_name = 'lista_usuarios.html'
-	#paginate_by = 5
-
-	def get_queryset(self):
-		try:
-		    name = self.request.GET.get('q', '')
-		except:
-		    name = ''
-		if (name != ''):
-		    object_list = UsuarioFinal.objects.filter(full_name__icontains=name)
-		    self.paginate_by = None
-		else:
-		    object_list = UsuarioFinal.objects.all().order_by('full_name')
-		    self.paginate_by = 15
-		return object_list
-
-	def post(self, request, *args, **kwargs):
-		if 'usuario_id' in request.POST:
-			try:
-				id_usuario = request.POST['usuario_id']
-				usuario = UsuarioFinal.objects.get(pk=id_usuario)
-				mensaje = { "status": "True", "usuario_id": usuario.id }
-				usuario.delete()
-				usuario.user.delete()
-				return HttpResponse(json.dumps(mensaje))
-			except:
-				mensaje = { "status": "False" }
-				return HttpResponse(json.dumps(mensaje))
-
-	def get_context_data(self, **kwargs):
-		context = super(UsuarioFinalListView, self).get_context_data(**kwargs)
-		context['q'] = self.request.GET.get('q', '')
-		return context
-
+# Familia UNID - Agregar -----------------------------------------------------------------------------------------------
 @permission_required('auth.add_user', login_url='/login/')
 @login_required(login_url='/login/')
 def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulario de registro
@@ -252,11 +95,85 @@ def RegisterUsuarioFinalView(request): # Vista encargada de mostrar el formulari
 		form_csv = UsuarioCSVForm()
 	return render_to_response('usuarios_agregar.html', { 'form_user': form_user, 'form': form, 'form_csv': form_csv }, context_instance=RequestContext(request)) # Renderizamos el formulario para que se muestra en el template
 
+# Familia UNID - Modificar(Lista de usuarios) ----------------------------------------------------------------------------------------------
+class UsuarioFinalListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+	permission = 'auth.change_user'
+	#queryset = UsuarioFinal.objects.order_by('user__last_name')
+	template_name = 'lista_usuarios.html'
+	#paginate_by = 5
+
+	def get_queryset(self):
+		try:
+		    name = self.request.GET.get('q', '')
+		except:
+		    name = ''
+		if (name != ''):
+		    object_list = UsuarioFinal.objects.filter(full_name__icontains=name)
+		    self.paginate_by = None
+		else:
+		    object_list = UsuarioFinal.objects.all().order_by('full_name')
+		    self.paginate_by = 15
+		return object_list
+
+	def post(self, request, *args, **kwargs):
+		# Elimina un usuario en la lista
+		if 'usuario_id' in request.POST:
+			try:
+				id_usuario = request.POST['usuario_id']
+				usuario = UsuarioFinal.objects.get(pk=id_usuario)
+				mensaje = { "status": "True", "usuario_id": usuario.id, "action": "Eliminar" }
+				usuario.delete()
+				usuario.user.delete()
+				return HttpResponse(json.dumps(mensaje))
+			except:
+				mensaje = { "status": "False", "action": "Eliminar" }
+				return HttpResponse(json.dumps(mensaje))
+
+		# Envia un correo a un usuario en la lista		
+		if 'id_usuario' in request.POST:
+			try:
+				id_usuario = request.POST['id_usuario']
+				usuario = UsuarioFinal.objects.get(pk=id_usuario)
+				email_context = {
+					'titulo': 'Bienvenido a MyPromo UNID, la nueva experiencia de ver tus promociones.',
+					'matricula': usuario.user.username,
+					'nombre': usuario.full_name
+				}
+				# Se renderiza el template con el context
+				email_html = render_to_string('email.html', email_context)
+
+				# Se quitan las etiquetas html para que quede en texto plano
+				email_text = strip_tags(email_html)
+
+				correo = EmailMultiAlternatives(
+					'Bienvenido a MyPromo UNID',
+					email_text,
+					'veltiumdevelopment@gmail.com',
+					[usuario.user.email],
+				)
+
+				# Se especifica que el contenido es html
+				correo.attach_alternative(email_html, 'text/html')
+
+				# Se envia el correo
+				correo.send()
+				mensaje = { "status": "True", "action": "Enviar" }
+				return HttpResponse(json.dumps(mensaje))
+			except:
+				mensaje = { "status": "False", "action": "Enviar" }
+				return HttpResponse(json.dumps(mensaje))
+
+	def get_context_data(self, **kwargs):
+		context = super(UsuarioFinalListView, self).get_context_data(**kwargs)
+		context['q'] = self.request.GET.get('q', '')
+		return context
+
+# Familia UNID - Modificar(Actualizar usuario) ------------------------------------------------------------------
 def UsuarioFinalUpdateView(request, pk): # Vista que hereda de UpdateView para actualizar un objeto ya creado
 	usuario_user = get_object_or_404(User, id=pk)
 	usuario_final = get_object_or_404(UsuarioFinal, user__id=pk)
 	if request.method == 'POST':
-		form_user = UserUpdateForm(request.POST, instance=usuario_final)
+		form_user = UserUpdateForm(request.POST, instance=usuario_user)
 		form = UsuarioFinalForm(request.POST, instance=usuario_final)
 		if form_user.is_valid() and form.is_valid():
 			form_user.save()
@@ -268,6 +185,133 @@ def UsuarioFinalUpdateView(request, pk): # Vista que hereda de UpdateView para a
 		form = UsuarioFinalForm(instance=usuario_final)
 	return render(request, 'modificar_usuario.html', { 'form_user': form_user, 'form': form })
 
+# Afiliados - Agregar -------------------------------------------------------------------------------------------
+@permission_required('userprofiles.add_afiliado', login_url='/login/')
+@login_required(login_url='/login/')
+def AfiliadoView(request):
+	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
+		form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserAfiliadoForm y le pasamos los datos del formulario
+		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario PerfilAfiliadoForm y le pasamos los datos junto con los archivo subidos
+		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
+			usuario = form_user.save() # Se crea el usuario
+			afiliado = form_afiliado.save(commit=False) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
+			afiliado.codigoValidacion = User.objects.make_random_password(length=200)
+			afiliado.user = usuario
+			afiliado.save()
+
+
+			if 'submit-guardar-salir' in request.POST:
+				messages.info(request, 'Afiliado %s agregado' % form_afiliado.cleaned_data['nombreEmpresa'])
+				return redirect('/lista-afiliados/')
+			elif 'submit-guardar-locales' in request.POST:
+				return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + str(usuario.id) + '/')
+	else:
+		form_user = UserAfiliadoForm()
+		form_afiliado = PerfilAfiliadoForm()
+	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
+
+# Afiliados - Agregar - Guardar y agregar locales -------------------------------------------------------------------
+@permission_required('userprofiles.add_local', login_url='/login/')
+@login_required(login_url='/login/')
+def LocalView(request, usuario, id_usuario):
+	if request.method == 'POST':
+		json_locales = request.read()
+		locales = json.loads(json_locales)
+		usuario_afiliado = Afiliado.objects.get(user=id_usuario)
+		if usuario_afiliado.user.username == usuario:
+			i = 0
+			num_locales = len(locales['direcciones'])
+			while i < num_locales:
+				local_afiliado = Local(direccion=locales['direcciones'][i], latitud=locales['latitudes'][i], longitud=locales['longitudes'][i], local_afiliado=usuario_afiliado)
+				local_afiliado.save()
+				i += 1
+			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
+			return HttpResponse('/lista-afiliados/')
+	else:
+		usuario_afiliado = get_object_or_404(Afiliado, user__username=usuario, user__id=id_usuario)
+	return render_to_response('locales.html', {}, context_instance=RequestContext(request))
+
+# Afiliados - Modificar ---------------------------------------------------------------------------------------------
+class AfiliadoListView(LoginRequiredMixin, ListView):
+	queryset = Afiliado.objects.all()
+	template_name = 'lista_empresas.html'
+
+	def get_queryset(self):
+		try:
+		    name = self.request.GET.get('q', '')
+		except:
+		    name = ''
+		if (name != ''):
+		    object_list = Afiliado.objects.filter(nombreEmpresa__icontains=name)
+		    self.paginate_by = None
+		else:
+		    object_list = Afiliado.objects.all().order_by('nombreEmpresa')
+		    self.paginate_by = 15
+		return object_list
+
+	def get_context_data(self, **kwargs):
+		context = super(AfiliadoListView, self).get_context_data(**kwargs)
+		context['q'] = self.request.GET.get('q', '')
+		return context
+
+# Afiliados - Modificar - Status ------------------------------------------------------------------------------------
+class StatusUpdateView(UpdateView): # Vista que hereda de UpdateView para actualizar un objeto ya creado
+	form_class = StatusUpdateForm # Especificamos el formulario a usar
+	template_name = 'modificar_status.html' # Especificamos la plantilla a renderizar
+	model = User # Especificamos el modelo en donde buscara el objeto a actualizar
+	#success_url = '/lista-afiliados/'
+
+	def form_valid(self, form): # Sobreescribimos el metodo form_valid para cambiar su comportamiento
+		self.object = form.save() # Actualizamos el objeto con sus cambios y retorna ese mismo objeto
+		request = self.request # Asignamos a una variable local el self.request
+		messages.info(request, 'Status modificado') # Mandamos un mensaje de informacion especificando que se ha modificado el cupon
+		return super(StatusUpdateView, self).get(request) # Mandamos a llamar al padre de get para que renderize de vuelta el formulario
+
+# Afiliados - Modificar - Update -------------------------------------------------------------------------------------
+def AfiliadoUpdateView(request, usuario, id): # Vista que hereda de UpdateView para actualizar un objeto ya creado
+	user_afiliado = get_object_or_404(User, username=usuario)
+	afiliado = get_object_or_404(Afiliado, id=id)
+	if request.method == 'POST':
+		form_user = UserAfiliadoUpdateForm(request.POST, instance=user_afiliado)
+		form_afiliado = PerfilAfiliadoUpdateForm(request.POST, request.FILES, instance=afiliado)
+		if form_user.is_valid() and form_afiliado.is_valid():
+			form_user.save()
+			form_afiliado.save()
+			messages.info(request, 'Afiliado %s modificado' % afiliado) # Creamos un mensaje de exito para mostrarlo en la otra vista
+			return redirect('/lista-afiliados/')
+
+	else:
+		if afiliado.facebook != '':
+			datos = afiliado.facebook.split('.com/')
+			afiliado.facebook = datos[1]
+		if afiliado.twitter != '':
+			datos = afiliado.twitter.split('.com/')
+			afiliado.twitter = datos[1]
+		form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
+		form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
+	return render(request, 'modificar_afiliado.html', { 'form_user': form_user, 'form_afiliado': form_afiliado })
+
+# Afiliados - Modificar - Locales --------------------------------------------------------------------------------------
+@permission_required('userprofiles.add_local', login_url='/login/')
+@login_required(login_url='/login/')
+def LocalUpdateView(request, usuario, id):
+	afiliado = get_object_or_404(Afiliado, user__username=usuario, id=id)
+	locales = afiliado.locales.all()
+	if request.method == 'POST':
+		json_locales = request.read()
+		locales = json.loads(json_locales)
+		if afiliado.user.username == usuario:
+			i = 0
+			num_locales = len(locales['direcciones'])
+			while i < num_locales:
+				local_afiliado = Local(direccion=locales['direcciones'][i], latitud=locales['latitudes'][i], longitud=locales['longitudes'][i], local_afiliado=afiliado)
+				local_afiliado.save()
+				i += 1
+			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
+			return HttpResponse('/lista-afiliados/')
+	return render_to_response('modificar_locales.html', { 'locales': locales }, context_instance=RequestContext(request))
+
+# Administrar - Usuarios promotor ----------------------------------------------------------------------------------
 def PromotorView(request):
 	promotores = Promotor.objects.all()
 	if request.method == 'POST':
@@ -280,6 +324,20 @@ def PromotorView(request):
 	else:
 		form = RegistrationUsuarioPromotorForm()
 	return render(request, 'promotores.html', { 'promotores': promotores, 'form': form })
+
+# ScanCard --------------------------------------------------------------------------------------------------------
+class ScanCardListView(LoginRequiredMixin, ListView): # Vista que hereda de ListView para mostrar la lista de afiliados
+	model = Afiliado # Especificamos el modelo para traernos todos los objetos y mostrar la lista
+	template_name = 'scancards_afiliados.html' # Template que sera renderizado para mostrar la lista de afiliados
+
+# ScanCard - Ver ScanCard -----------------------------------------------------------------------------------------
+class ScanCardView(DetailView):
+	model = Afiliado
+	template_name = 'afiliado_scancard.html'
+
+class UsuarioPromotorListView(ListView):
+	model = User
+	template_name = 'lista_usuarios.html'
 
 @permission_required('userprofiles.change_afiliado', login_url='/login/')
 @login_required(login_url='/login/')
@@ -366,26 +424,30 @@ def AfiliadoPasswordChangeView(request, usuario):
 		form = PasswordChangeForm(request.user)
 	return render(request, 'modificar_password.html', { 'form': form })
 
-class ScanCardTemplateView(TemplateView):
-	template_name = 'scancard.html'
-
-
-from django.core.mail.message import EmailMultiAlternatives
-from django.http.response import HttpResponseRedirect
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.core.mail import send_mail
- 
- 
 def enviar_correo(request):
-	if request.method == 'POST':
-		form = PasswordResetForm(request.POST)
-		if form.is_valid():
-			form.save()
-			return HttpResponse("Correo enviado")
-	else:
-		form = PasswordResetForm()
-	return render(request, 'email.html', { 'form': form })
+    email_context = {
+        'titulo': 'Titulo correo',
+        'usuario': 'Jonathan Pumares',
+        'mensaje': 'mensaje del correo',
+    }
+    # se renderiza el template con el context
+    email_html = render_to_string('email.html', email_context)
+ 
+    # se quitan las etiquetas html para que quede en texto plano
+    email_text = strip_tags(email_html)
+ 
+    correo = EmailMultiAlternatives(
+        'Asunto del correo',  # Asunto
+        email_text,  # contenido del correo
+        'origen@ejemplo.com',  # quien lo envía
+        ['jepc1491@gmail.com'],  # a quien se envía
+    )
+ 
+    # se especifica que el contenido es html
+    correo.attach_alternative(email_html, 'text/html')
+    # se envía el correo
+    correo.send()
+    return HttpResponseRedirect('/')
 
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 

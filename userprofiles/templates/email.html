@@ -4,25 +4,24 @@
         <title>Prueba email</title>
     </head>
     <body>
-        <form method="post">
-            {% csrf_token %}
-            <label>Email: </label>
-            {{ form.email.errors }}
-            {{ form.email }}
-            <button type="submit">Enviar</button>     
-        </form>
         <table>
             <thead>
                 <tr>
-                    <th>Titulo</th>
+                    <th>{{ titulo }}</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Hola usuario</td>
+                    <td>Hola {{ nombre }}</td>
                 </tr>
                 <tr>
-                    <td>Mensaje</td>
+                    <td>Ya eres parte de esta gran experiencia, tan solo con formar parte de la Familia UNID tienes todos los beneficios, solo descarga la app en el Play Store: <a href="https://play.google.com/store/apps/details?id=com.veltium.mypromounidcpe&hl=es-419">MyPromo UNID CPE</a>. Muy pronto estará para iPhone.</td>
+                </tr>
+                <tr>
+                    <td>Tus credenciales de acceso a la app son: Usuario: {{ matricula }} Contraseña: {{ matricula }}</td>
+                </tr>
+                <tr>
+                    <td>En caso de que no puedas tener acceso a la app, por favor da click <a href="http://mypromounid.grupoveltium.com/password-reset/recover/">aquí</a>, te daremos instrucciones para recuperar tu contraseña.</td>
                 </tr>
             </tbody>
         </table>

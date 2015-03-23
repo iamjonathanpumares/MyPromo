@@ -122,7 +122,7 @@ STATICFILES_FINDERS = ('django.contrib.staticfiles.finders.FileSystemFinder',
 # Email
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'veltiumdevelopment@gmail.com'
-EMAIL_HOST_PASSWORD = 'ingenierosdesoftware'
+EMAIL_HOST_PASSWORD = 'm2CxgvBEKt'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 

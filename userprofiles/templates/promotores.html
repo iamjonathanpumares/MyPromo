@@ -59,6 +59,11 @@
     </a>
     <ul class="sub">
         <li class="active"><a href ="/administrar-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user"></i>Usuarios promotor</a></li>
+        <li>
+          <a href="/scancards/" > &nbsp;&nbsp;&nbsp;
+            <i class="fa fa-qrcode"></i>ScanCard
+          </a>
+        </li>
     </ul>
 </li>
 {% endblock menu_administrar %}
@@ -134,7 +139,6 @@
           <div class="form-panel">
               <table class="table table-striped table-advance table-hover">
                 <h4><i class="fa fa-angle-right"></i> Tabla de usuarios</h4>
-                <a class="btn btn-primary btn-agregar" href="/agregar-usuarios/">Agregar nuevo</a>
                 <div class="col-md-4">
                   <div class="input-group">
                     <input type="text" class="form-control" placeholder="Buscar...">
@@ -184,17 +188,6 @@
       $('#fecha').datepicker({
           format: "dd/mm/yyyy"
       });
-      $(".fancybox").fancybox({
-      'autoScale'         : false,
-      'transitionIn'      : 'none',
-      'transitionOut'     : 'none',
-      'width'             : 900,
-      'height'            : 500,
-      'type'              : 'iframe',
-      'afterClose'        : function() {
-        location.reload();
-      },
-    });
     });  
 </script>
 {% endblock scripts_tags %}

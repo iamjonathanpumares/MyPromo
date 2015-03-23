@@ -17,7 +17,9 @@
     <link href="{% static "font-awesome/css/font-awesome.css" %}" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="{% static "css/zabuto_calendar.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "js/gritter/css/jquery.gritter.css" %}" />
-    <link rel="stylesheet" type="text/css" href="{% static "lineicons/style.css" %}">    
+    <link rel="stylesheet" type="text/css" href="{% static "lineicons/style.css" %}">
+
+        
     
     <!-- Custom styles for this template -->
     <link href="{% static "css/style.css" %}" rel="stylesheet">
@@ -32,6 +34,13 @@
       <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
     {% endblock styles_tags %}
+
+    {% block fancybox_tags %}
+    <!-- FANCY BOX -->
+    <script type="text/javascript" src="stactic/js/fancybox/lib/jquery.mousewheel-3.0.6.pack.js"></script>
+    <link rel="stylesheet" href="{% static "js/fancybox/jquery.fancybox.css" %}" type="text/css" media="screen" />
+    <script type="text/javascript" src="{% static "js/fancybox/jquery.fancybox.js" %}"></script>
+    {% endblock fancybox_tags %}
   </head>
 
   <body>
@@ -46,7 +55,7 @@
                   <div class="fa fa-bars tooltips" data-placement="right" data-original-title="Toggle Navigation"></div>
               </div>
             <!--logo start-->
-            <a href="index.html" class="logo"><b>MYPROMO UNID</b></a>
+            <a href="/home/" class="logo"><b>MYPROMO UNID</b></a>
             <!--logo end-->
             <div class="nav notify-row" id="top_menu">
                 <!--  notification start -->
@@ -70,7 +79,7 @@
               <!-- sidebar menu start-->
               <ul class="sidebar-menu" id="nav-accordion">
               
-              	  <p class="centered"><a href="profile.html"><img src="{% static "img/unid.png" %}" class="img-circle" width="60"></a></p>
+              	  <p class="centered"><a href="{% static "img/unid.png" %}" class="fancybox-imageprofile"><img src="{% static "img/unid.png" %}" class="img-circle" width="60"></a></p>
               	  <h5 class="centered">{{ user }}</h5>
               	  {% block menu_inicio %}	
                   <li class="mt">
@@ -140,7 +149,17 @@
                           <span>Administrar</span>
                       </a>
                       <ul class="sub">
-                          <li><a href ="/administrar-usuarios/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user"></i>Usuarios promotor</a></li>
+                          <li>
+                            <a href ="/administrar-usuarios/"> &nbsp;&nbsp;&nbsp;
+                              <i class="fa fa-user"></i>Usuarios promotor
+
+                            </a>
+                          </li>
+                          <li>
+                              <a href="/scancards/" > &nbsp;&nbsp;&nbsp;
+                                  <i class="fa fa-qrcode"></i>ScanCard
+                              </a>
+                          </li>
                       </ul>
                   </li>
                   {% endblock menu_administrar %}
@@ -199,41 +218,23 @@
     <script src="{% static "js/sparkline-chart.js" %}"></script>    
 	<script src="{% static "js/zabuto_calendar.js" %}"></script>	
 	{% block scripts_tags %}
-	<script type="application/javascript">
-        $(document).ready(function () {
-            $("#date-popover").popover({html: true, trigger: "manual"});
-            $("#date-popover").hide();
-            $("#date-popover").click(function (e) {
-                $(this).hide();
-            });
-        
-            $("#my-calendar").zabuto_calendar({
-                action: function () {
-                    return myDateFunction(this.id, false);
-                },
-                action_nav: function () {
-                    return myNavFunction(this.id);
-                },
-                ajax: {
-                    url: "show_data.php?action=1",
-                    modal: true
-                },
-                legend: [
-                    {type: "text", label: "Special event", badge: "00"},
-                    {type: "block", label: "Regular event", }
-                ]
-            });
+  {% endblock scripts_tags %}
+
+  {% block fancybox_imageProfile %}
+  <script type="application/javascript">
+    $(document).ready(function () {
+        $(".fancybox-imageprofile").fancybox({
+            helpers: {
+                title : {
+                    type : 'float'
+                }
+            }
         });
-        
-        
-        function myNavFunction(id) {
-            $("#date-popover").hide();
-            var nav = $("#" + id).data("navigation");
-            var to = $("#" + id).data("to");
-            console.log('nav ' + nav + ' to: ' + to.month + '/' + to.year);
-        }
-    </script>
-    {% endblock scripts_tags %}
+    });
+  </script>
+  {% endblock fancybox_imageProfile %}
+
+
   
 
   </body>

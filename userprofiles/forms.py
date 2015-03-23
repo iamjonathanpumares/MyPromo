@@ -9,6 +9,12 @@ class LoginForm(AuthenticationForm):
 	username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'ID' }))
 	password = forms.CharField(max_length=100, widget=forms.PasswordInput(attrs={ 'class': 'form-control', 'placeholder': 'Contraseña' }))
 
+	error_messages = {
+		'invalid_login': ("Por favor introduce un nombre de usuario o contraseña correcto. "
+							"Nota que ambos campos pueden ser con mayúsculas y minúsculas. "),
+		'inactive': ("Esta cuenta esta inactiva."),
+	}
+
 # Formulario del Modelo Promotor ----------------------------------------------------------------------------------
 """ Gracias a la herencia en Python podemos aprovecharla para utilizar clases ya definidas y sin escribir tanto codigo, 
 	Django ya trae clases para la autenticacion del usuario.

@@ -3,12 +3,12 @@ from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
-from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView, StatusUpdateView, UsuarioFinalUpdateView
+from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView, StatusUpdateView, UsuarioFinalUpdateView, ScanCardView
 from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
 #from rest_framework import routers
-from userprofiles.views import AfiliadoAPIView, AfiliadoDetailAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView, UsuariosCuponesAfiliados
+from userprofiles.views import AfiliadoAPIView, AfiliadoDetailAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView, UsuariosCuponesAfiliados, ScanCardListView
 from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles
 from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -65,6 +65,8 @@ urlpatterns = patterns('',
     url(r'^lista-afiliados/$', AfiliadoListView.as_view(), name='lista_afiliados'), # URL para ver lista de usuarios afiliados
     url(r'^administrar-usuarios/$', 'userprofiles.views.PromotorView', name='promotor_administrar'), # URL para agregar usuarios finales
     url(r'^modificar-status/(?P<pk>[\w\-]+)/$', StatusUpdateView.as_view(), name='status_modificar'), # URL para modificar el cupon seleccionado
+    url(r'^scancards/$', ScanCardListView.as_view(), name='scancards_afiliados'),
+    url(r'^scancards/(?P<pk>[0-9]+)/$', ScanCardView.as_view(), name='afiliado_scancard'),
 
     # App cupones -------------------------------------------------------------------------------------------------------------
     url(r'^cupones/', include('cupones.urls')), # URL para ver lista de usuarios afiliados y ver sus cupones

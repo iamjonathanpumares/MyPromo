@@ -146,11 +146,14 @@
                     <td>{{ usuario.full_name }}</td>
                     <td>{{ usuario.user.email }}</td>
                     <td>
+                        <!-- Button update user final fancybox -->
                         <a href="/modificar/{{ usuario.user.id }}/" class="fancybox"><button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button></a>
+
                         <!-- Button delete modal -->
                         <button type="button" class="btn btn-danger btn-xs delete" data-toggle="modal" data-target="#myModal" id="{{ usuario.id }}" data-name="{{ usuario.user.username }}" title="Eliminar usuario">
                           <i class="fa fa-trash-o "></i>
                         </button>
+
                         <button id="{{ usuario.id }}" class="btn btn-primary btn-xs js-enviarCorreo" title="Enviar correo" data-toggle="modal" data-target="#modalEnviarCorreo" data-name="{{ usuario.full_name }}"><i class="fa fa-send"></i></button>
                     </td>
                 </tr>
@@ -228,7 +231,8 @@
         var name = $(this).data('name');
         $('#modal_idProducto').val(Pid);
         $('#modal_name').text(name);
-      });
+    });
+
     $('.js-enviarCorreo').on('click', function (e) {
       e.preventDefault();
       var id = $(this).attr('id');

@@ -27,6 +27,7 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
             'invalid': ("Este campo solo puede contener numeros.")}, widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	first_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	last_name = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={ 'class': 'form-control'}))
+	email = forms.CharField(required=True, widget=forms.EmailInput(attrs={ 'class': 'form-control'}))
 	password1 = forms.CharField(widget=forms.PasswordInput(attrs={ 'class': 'form-control'}), label="Password", required=True)
 	password2 = forms.CharField(widget=forms.PasswordInput(attrs={ 'class': 'form-control'}), label="Password (again)", required=True)
 
@@ -35,7 +36,7 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 		en este caso de nuestro modelo personalizado de usuario UsuarioPromotor """
 	class Meta:
 		model = User
-		fields = ['username', 'first_name', 'last_name', 'password1', 'password2']
+		fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
 
 	""" En este caso estamos usando un metodo llamado save que ya traen los formularios, 
 		y que se ejecuta para guardar un objeto de tipo Modelo y guardarlo en la base de datos """
@@ -48,6 +49,11 @@ class RegistrationUsuarioPromotorForm(UserCreationForm):
 			user.save()
 			usuario_promotor.save()
 		return user
+
+class PromotorUpdateForm(forms.ModelForm):
+	class Meta:
+		model = User
+		fields = ('first_name', 'last_name', 'email',)
 
 # Formulario del Modelo User ----------------------------------------------------------------------------------
 """ Eres genial Python, gracias a tu herencia no tengo que repetir codigo y herede de mi formulario

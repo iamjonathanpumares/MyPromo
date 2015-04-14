@@ -8,7 +8,7 @@ from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
 #from rest_framework import routers
-from userprofiles.views import AfiliadoAPIView, AfiliadoDetailAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView, UsuariosCuponesAfiliados, ScanCardListView
+from userprofiles.views import AfiliadoAPIView, AfiliadoDetailAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCuponesPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView, UsuariosCuponesAfiliados, ScanCardListView
 from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles
 from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -26,6 +26,7 @@ urlpatterns = patterns('',
     url(r'^api/cambiar-clave/$', 'userprofiles.views.cambiar_clave'),
     url(r'^api/afiliados/$', AfiliadoAPIView.as_view()),
     url(r'^api/afiliados/(?P<pk>[0-9]+)/$', AfiliadoDetailAPIView.as_view()),
+    url(r'^api/afiliados-cupones-promociones/(?P<pk>[0-9]+)/$', AfiliadoCuponesPromocionesAPIView.as_view()),
     url(r'^api/afiliados-cupones/$', AfiliadoCuponesAPIView.as_view()),
     url(r'^api/afiliados-promociones/$', AfiliadoPromocionesAPIView.as_view()),
     url(r'^api/afiliados-carteles/$', AfiliadoCartelAPIView.as_view()),
@@ -64,6 +65,8 @@ urlpatterns = patterns('',
     url(r'^lista-usuarios/$', UsuarioFinalListView.as_view(), name='lista_usuarios'), # URL para ver lista de usuarios finales
     url(r'^lista-afiliados/$', AfiliadoListView.as_view(), name='lista_afiliados'), # URL para ver lista de usuarios afiliados
     url(r'^administrar-usuarios/$', 'userprofiles.views.PromotorView', name='promotor_administrar'), # URL para agregar usuarios finales
+    url(r'^agregar-promotores/$', 'userprofiles.views.PromotorCreateView', name='promotor_agregar'), # URL para agregar usuarios promotores
+    url(r'^modificar-promotor/(?P<pk>[0-9]+)/$', 'userprofiles.views.PromotorUpdateView', name='promotor_modificar'), # URL para modificar el cupon seleccionado
     url(r'^modificar-status/(?P<pk>[\w\-]+)/$', StatusUpdateView.as_view(), name='status_modificar'), # URL para modificar el cupon seleccionado
     url(r'^scancards/$', ScanCardListView.as_view(), name='scancards_afiliados'),
     url(r'^scancards/(?P<pk>[0-9]+)/$', ScanCardView.as_view(), name='afiliado_scancard'),

@@ -14,7 +14,7 @@ from django.views.generic import ListView, FormView, UpdateView, TemplateView, D
 from django.views.generic.edit import BaseUpdateView
 from promociones.models import Promocion
 from .decorators import redirect_home
-from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm, UsuarioFinalForm, UserUpdateForm
+from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm, UsuarioFinalForm, UserUpdateForm, PromotorUpdateForm
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
 from .models import Afiliado, Local, UsuarioFinal, Promotor
 from .tasks import importarCSV, convertirCSV
@@ -311,19 +311,48 @@ def LocalUpdateView(request, usuario, id):
 			return HttpResponse('/lista-afiliados/')
 	return render_to_response('modificar_locales.html', { 'locales': locales }, context_instance=RequestContext(request))
 
-# Administrar - Usuarios promotor ----------------------------------------------------------------------------------
+# Administrar - Usuarios promotor (Lista de usuarios) ----------------------------------------------------------------------------------
 def PromotorView(request):
 	promotores = Promotor.objects.all()
+	if request.method == 'POST':
+		# Elimina un usuario en la lista
+		if 'usuario_id' in request.POST:
+			try:
+				id_usuario = request.POST['usuario_id']
+				promotor = Promotor.objects.get(pk=id_usuario)
+				mensaje = { "status": "True", "usuario_id": promotor.id, "action": "Eliminar" }
+				promotor.delete()
+				promotor.user.delete()
+				return HttpResponse(json.dumps(mensaje))
+			except:
+				mensaje = { "status": "False", "action": "Eliminar" }
+				return HttpResponse(json.dumps(mensaje))
+	return render(request, 'promotores.html', { 'promotores': promotores })
+
+# Administrar - Usuarios promotor (Agregar) ----------------------------------------------------------------------------------
+def PromotorCreateView(request):
 	if request.method == 'POST':
 		form = RegistrationUsuarioPromotorForm(request.POST)
 		if form.is_valid():
 			promotor = form.save()
 			messages.info(request, 'Usuario promotor %s agregado' % promotor)
-			form = RegistrationUsuarioPromotorForm()
-			return render(request, 'promotores.html', { 'promotores': promotores, 'form': form })
+			return redirect('/administrar-usuarios/')
 	else:
 		form = RegistrationUsuarioPromotorForm()
-	return render(request, 'promotores.html', { 'promotores': promotores, 'form': form })
+	return render(request, 'promotor_form.html', { 'form': form })
+
+# Administrar - Usuarios promotor (Actualizar) ----------------------------------------------------------------------------------
+def PromotorUpdateView(request, pk):
+	user_promotor = get_object_or_404(User, id=pk)
+	if request.method == 'POST':
+		form = PromotorUpdateForm(request.POST, instance=user_promotor)
+		if form.is_valid():
+			promotor = form.save()
+			messages.info(request, 'Usuario promotor %s modificado' % promotor)
+			return render(request, 'promotor_update.html', { 'form': form })
+	else:
+		form = PromotorUpdateForm(instance=user_promotor)
+	return render(request, 'promotor_update.html', { 'form': form })
 
 # ScanCard --------------------------------------------------------------------------------------------------------
 class ScanCardListView(LoginRequiredMixin, ListView): # Vista que hereda de ListView para mostrar la lista de afiliados
@@ -451,13 +480,14 @@ def enviar_correo(request):
 
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
+from rest_framework.reverse import reverse
 from rest_framework import viewsets, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
-from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, AfiliadoCartelSerializer, LocalSerializer, UserSerializer
+from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, AfiliadoCuponesPromocionesSerializer, AfiliadoCartelSerializer, LocalSerializer, UserSerializer
 
 class AfiliadoAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
@@ -474,6 +504,15 @@ class AfiliadoCuponesAPIView(generics.ListAPIView):
 class AfiliadoPromocionesAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
 	serializer_class = AfiliadoPromocionesSerializer
+
+class AfiliadoCuponesPromocionesAPIView(generics.RetrieveAPIView):
+	queryset = Afiliado.objects.filter(user__is_active=True)
+	serializer_class = AfiliadoCuponesPromocionesSerializer
+
+def api_root(request, format=None):
+	return Response({
+		''
+	})
 
 class AfiliadoCartelAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.all().order_by('?')[:10]

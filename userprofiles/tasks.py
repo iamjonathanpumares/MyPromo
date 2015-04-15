@@ -36,10 +36,8 @@ def importarCSV(dataReader, usuario_actual, checked):
 			commit = True
 			usuario = User()
 			usuario.username = row[0]
-			usuario.set_password(row[0])
-			usuario.first_name = row[1]
-			usuario.last_name = row[2]
-			usuario.email = row[3]
+			usuario.set_password(row[0])	
+			usuario.email = row[2]
 			if commit:
 				try:
 					with transaction.atomic():
@@ -49,6 +47,7 @@ def importarCSV(dataReader, usuario_actual, checked):
 					pass
 				else:
 					usuario_final = UsuarioFinal(user=usuario)
+					usuario_final.full_name = row[1]
 					usuario_final.save()
 		checked = False
 	messages.info(user_current, "La base de datos ha sido cargada completamente")
@@ -63,7 +62,6 @@ def convertirCSV(data):
 		lista_interna.append(row[0])
 		lista_interna.append(row[1])
 		lista_interna.append(row[2])
-		lista_interna.append(row[3])
 		lista_externa.append(lista_interna)
 	return lista_externa
 

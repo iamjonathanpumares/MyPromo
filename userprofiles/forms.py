@@ -132,13 +132,14 @@ class PerfilAfiliadoForm(forms.ModelForm):
 	email = forms.EmailField(widget=forms.EmailInput(attrs={ 'class': 'form-control'}))
 	facebook = forms.CharField(required=False, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'Nombre de usuario'}))
 	twitter = forms.CharField(required=False, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'Nombre de usuario'}))
+	web = forms.CharField(required=False, widget=forms.TextInput(attrs={ 'class': 'form-control', 'placeholder': 'Ejemplo: http://mipagina.com'}))
 	giro = forms.CharField(widget=forms.TextInput(attrs={ 'class': 'form-control'}))
 	logo = forms.ImageField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))
 	cartel = forms.ImageField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))
 
 	class Meta:
 		model = Afiliado
-		fields = ['nombreEmpresa', 'representante', 'descripcion', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'giro', 'cartel']
+		fields = ['nombreEmpresa', 'representante', 'descripcion', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'logo', 'giro', 'cartel']
 
 	def clean_facebook(self):
 		facebook = self.cleaned_data.get('facebook', '')
@@ -155,7 +156,7 @@ class PerfilAfiliadoForm(forms.ModelForm):
 class PerfilAfiliadoUpdateForm(PerfilAfiliadoForm):
 	class Meta:
 		model = Afiliado
-		fields = fields = ['nombreEmpresa', 'representante', 'descripcion', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'logo', 'giro', 'cartel']
+		fields = fields = ['nombreEmpresa', 'representante', 'descripcion', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'logo', 'giro', 'cartel']
 
 	def save(self, commit=True, *args, **kwargs):
 		super(PerfilAfiliadoForm, self).save()

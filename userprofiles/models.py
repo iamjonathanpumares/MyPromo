@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django_resized import ResizedImageField
@@ -18,6 +19,10 @@ class Afiliado(models.Model):
 	logo = ResizedImageField(max_width=500, max_height=500, upload_to='userprofiles/logos', verbose_name='Logo')
 	giro = models.CharField(max_length=100, verbose_name='Giro')
 	cartel = models.ImageField(upload_to='userprofiles/carteles', verbose_name='Cartel')
+
+	# Campos para el rating de Afiliados
+	num_votos = models.IntegerField('Número de votos', default=0)
+	votos_totales = models.FloatField('Votos totales', default=0)
 
 	def __unicode__(self):
 		return self.nombreEmpresa

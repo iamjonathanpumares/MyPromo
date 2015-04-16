@@ -120,7 +120,16 @@
         <tbody>
           {% for promocion in promociones %}
           <tr id="tr{{promocion.id}}">
-            <td><a href="{{ promocion.imagen.url }}" class="fancybox-promocion"><img src="{{ promocion.imagen.url }}" alt="promocion" width="80px" height="40px" /></a></td>
+            {% if promocion.imagen %}
+              <td><a href="{{ promocion.imagen.url }}" class="fancybox-promocion"><img src="{{ promocion.imagen.url }}" alt="promocion" width="80px" height="40px" /></a></td>
+            {% else %}
+              <td>
+                <a href="{% static "img/default-promo.png" %}" class="fancybox-promocion">
+                  <img src="{% static "img/default-promo.png" %}" alt="cupon" width="40px" height="40px" />
+                </a>
+              </td>
+            {% endif %}
+            
             <td class="hidden-phone">{{ promocion.titulo }}</td>
             <td>{{ promocion.vigencia }}</td>
             <td>

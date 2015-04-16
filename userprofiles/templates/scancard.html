@@ -94,11 +94,8 @@
         <!--header end-->
 
         <div class="row mt">
-                <div class="col-sm-3 col-md-2 visible-print">
-                    {% thumbnail user.perfil_afiliado.logo "300x300" crop="center" as im %}
-                        <img src="{{ im.url }}" class="img-circle img-responsive" width="140">
-                        <h4 class="ScanCard-titleAfiliado">{{ user.perfil_afiliado.nombreEmpresa }}</h4>
-                    {% endthumbnail %}
+                <div class="col-sm-3 col-md-2">
+                    
                 </div>
                 <div class="col-sm-9 col-md-10" id="ImageCode">
                     <img class="ScandCard-imageCard" src="{% static "img/scancard.jpg" %}" width="339" hspace="16" height="525" vspace="16" />
@@ -107,6 +104,9 @@
         </div>
 
         <div class="row">
+            <div class="col-sm-3 col-md-2">
+                    
+            </div>
             <div class="col-md-2 ScandCard-buttonContainer">
                 <button id="js-imprimir" class="btn btn-theme" onclick="window.print();">
                     <i class="fa fa-print"></i>

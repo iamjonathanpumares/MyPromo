@@ -86,7 +86,8 @@ urlpatterns = patterns('',
     url(r'^(?P<usuario>[\w\-]+)/scancard/$', TemplateView.as_view(template_name='scancard.html'), name='scancard_afiliado'), # URL para modificar el cupon seleccionado
     url(r'^(?P<usuario>[\w\-]+)/administrar/$', 'userprofiles.views.AdministrarPerfilAfiliadoView', name='afiliado_administrar'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/locales/$', 'userprofiles.views.AfiliadoLocalDeleteView', name='afiliado_locales'), # URL del home de MyPromo para afiliados
-    url(r'^(?P<usuario>[\w\-]+)/locales/agregar/$', 'userprofiles.views.AfiliadoLocalUpdateView', name='afiliado_locales'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/locales/agregar/$', 'userprofiles.views.AfiliadoLocalUpdateView', name='afiliado_locales_agregar'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<usuario>[\w\-]+)/estadisticas/$', 'userprofiles.views.AfiliadoEstadisticasView', name='afiliado_estadisticas'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/password/$', 'userprofiles.views.AfiliadoPasswordChangeView', name='afiliado_password'), # URL del home de MyPromo para afiliados
 
 

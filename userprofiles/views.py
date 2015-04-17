@@ -453,6 +453,12 @@ def AfiliadoPasswordChangeView(request, usuario):
 		form = PasswordChangeForm(request.user)
 	return render(request, 'modificar_password.html', { 'form': form })
 
+@login_required(login_url='/login/')
+def AfiliadoEstadisticasView(request, usuario):
+	cupones = Cupon.objects.filter(cupon_afiliado__user__username=usuario).annotate(Count('users')).order_by('users__count').reverse()
+	promociones = Promocion.objects.filter(promocion_afiliado__user__username=usuario).annotate(Count('users')).order_by('users__count').reverse()
+	return render(request, 'afiliado_estadisticas.html', { 'cupones': cupones, 'promociones': promociones })
+
 def enviar_correo(request):
     email_context = {
         'titulo': 'Titulo correo',

@@ -1,0 +1,134 @@
+{% extends 'base_afiliado.html' %}
+{% load staticfiles %}
+{% load thumbnail %}
+
+{% block menu_inicio %} 
+<li class="mt">
+    <a href="/home/">
+        <i class="fa fa-home"></i>
+        <span>Inicio</span>
+    </a>
+</li>
+{% endblock menu_inicio %}
+{% block menu_administrar %}
+<li class="sub-menu">
+    <a class="active" href="javascript:;" >
+        <i class="fa fa-gear"></i>
+        <span>Administrar</span>
+    </a>
+    <ul class="sub">
+        <li><a href ="/{{ user.username }}/administrar/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-user"></i>Perfil</a></li>
+        <li><a href ="/{{ user.username }}/locales/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-location-arrow"></i>Locales</a></li>
+        <li class="active"><a href ="/{{ user.username }}/locales/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-bar-chart-o"></i>Estadísticas</a></li>
+        <li><a href ="/{{ user.username }}/password/"> &nbsp;&nbsp;&nbsp;<i class="fa fa-lock"></i>Contraseña</a></li>
+    </ul>
+</li>
+{% endblock menu_administrar %}
+
+{% block section %}
+
+	<h3><i class="fa fa-angle-right"></i>Estadísticas</h3>
+
+	  <!-- Tabla de cupones -->
+	  <div class="row mt">
+	    <div class="col-md-12">
+	      <div class="form-panel">
+	          <table class="table table-striped table-advance table-hover">
+	            <h4><i class="fa fa-angle-right"></i> Tabla de cupones</h4>
+
+	            <hr>
+
+	            <thead>
+	              <tr>
+	                <th><i class="fa fa-picture-o"></i> Logo</th>
+	                <th class="hidden-phone"><i class="fa fa-tag"></i> Título del cupón</th>
+	                <th><i class="fa fa-qrcode"></i> Veces escaneadas</th>
+	                <th><i class="fa fa-calendar"></i> Fecha de creación</th>
+	                <th><i class="fa fa-calendar"></i> Vigencia</th>
+	              </tr>
+	            </thead>
+
+	            <tbody>
+	              {% for cupon in cupones %}
+	              <tr>
+	                  {% if cupon.imagen %}
+		              <td>
+		                <a href="{{ cupon.imagen.url }}" class="fancybox-cupon"><img src="{{ cupon.imagen.url }}" alt="cupon" width="80px" height="40px" /></a>
+		              </td>
+		              {% else %}
+		              <td>
+		                <a href="{% static "img/default-cupon.png" %}" class="fancybox-cupon">
+		                  <img src="{% static "img/default-cupon.png" %}" alt="cupon" width="40px" height="40px" />
+		                </a>
+		              </td>
+		              {% endif %}
+	                  <td class="hidden-phone">{{ cupon.titulo }}</td>
+	                  <td>{{ cupon.users__count }}</td>
+	                  <td>
+	                    {{ cupon.fecha_creacion }}
+	                  </td>
+	                  <td>
+	                    {{ cupon.vigencia }}
+	                  </td>
+	              </tr>
+	              {% endfor %}
+	           
+	            </tbody>
+	          </table>
+	      </div>
+	    </div>
+	  </div>
+	  <!-- ./Tabla de cupones -->
+
+	  <!-- Tabla de promociones -->
+	  <div class="row mt">
+	    <div class="col-md-12">
+	      <div class="form-panel">
+	          <table class="table table-striped table-advance table-hover">
+	            <h4><i class="fa fa-angle-right"></i> Tabla de promociones</h4>
+
+	            <hr>
+
+	            <thead>
+	              <tr>
+	                <th><i class="fa fa-picture-o"></i> Logo</th>
+	                <th class="hidden-phone"><i class="fa fa-tag"></i> Título de la promoción</th>
+	                <th><i class="fa fa-qrcode"></i> Veces escaneadas</th>
+	                <th><i class="fa fa-calendar"></i> Fecha de creación</th>
+	                <th><i class="fa fa-calendar"></i> Vigencia</th>
+	              </tr>
+	            </thead>
+
+	            <tbody>
+	              {% for promocion in promociones %}
+	              <tr>
+	                  {% if promocion.imagen %}
+		              <td>
+		                <a href="{{ promocion.imagen.url }}" class="fancybox-promocion"><img src="{{ promocion.imagen.url }}" alt="promocion" width="80px" height="40px" /></a>
+		              </td>
+		              {% else %}
+		              <td>
+		                <a href="{% static "img/default-promo.png" %}" class="fancybox-promocion">
+		                  <img src="{% static "img/default-promo.png" %}" alt="promocion" width="40px" height="40px" />
+		                </a>
+		              </td>
+		              {% endif %}
+	                  <td class="hidden-phone">{{ promocion.titulo }}</td>
+	                  <td>{{ promocion.users__count }}</td>
+	                  <td>
+	                    {{ promocion.fecha_creacion }}
+	                  </td>
+	                  <td>
+	                    {{ promocion.vigencia }}
+	                  </td>
+	              </tr>
+	              {% endfor %}
+	           
+	            </tbody>
+	          </table>
+	      </div>
+	    </div>
+	  </div>
+	  <!-- ./Tabla de promociones -->
+
+{% endblock section %}

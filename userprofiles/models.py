@@ -20,10 +20,6 @@ class Afiliado(models.Model):
 	giro = models.CharField(max_length=100, verbose_name='Giro')
 	cartel = models.ImageField(upload_to='userprofiles/carteles', verbose_name='Cartel')
 
-	# Campos para el rating de Afiliados
-	num_votos = models.IntegerField('Número de votos', default=0)
-	votos_totales = models.FloatField('Votos totales', default=0)
-
 	def __unicode__(self):
 		return self.nombreEmpresa
 
@@ -35,6 +31,7 @@ class Promotor(models.Model):
 
 class UsuarioFinal(models.Model):
 	user = models.OneToOneField(User, related_name='perfil_usuariofinal')
+	afiliados = models.ManyToManyField(Afiliado, through='Rating', related_name='usuarios_finales')
 	full_name = models.CharField('Nombre Completo', max_length=250)
 
 	def __unicode__(self):
@@ -48,3 +45,8 @@ class Local(models.Model):
 
 	def __unicode__(self):
 		return self.local_afiliado.user.username + " - " + self.direccion
+
+class Rating(models.Model):
+	usuario_final = models.ForeignKey(UsuarioFinal)
+	afiliado = models.ForeignKey(Afiliado)
+	puntuacion = models.FloatField('Puntuación de cada usuario')

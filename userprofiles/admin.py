@@ -2,7 +2,7 @@ from django.contrib import admin
 #from django.contrib.auth.admin import UserAdmin
 #from django.contrib.auth.models import User
 
-from .models import Afiliado, Promotor, UsuarioFinal, Local
+from .models import Afiliado, Promotor, UsuarioFinal, Local, Rating
 
 class LocalAdmin(admin.ModelAdmin):
 	list_filter = ('local_afiliado',)
@@ -20,3 +20,4 @@ admin.site.register(Afiliado)
 admin.site.register(Promotor)
 admin.site.register(UsuarioFinal)
 admin.site.register(Local, LocalAdmin)
+admin.site.register(Rating)

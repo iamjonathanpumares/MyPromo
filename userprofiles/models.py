@@ -50,3 +50,6 @@ class Rating(models.Model):
 	usuario_final = models.ForeignKey(UsuarioFinal)
 	afiliado = models.ForeignKey(Afiliado)
 	puntuacion = models.FloatField('Puntuación de cada usuario')
+
+	def __unicode__(self):
+		return self.usuario_final.user.username + " - " + self.afiliado.nombreEmpresa + ": " + str(self.puntuacion) + " votos"

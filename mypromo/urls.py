@@ -9,7 +9,7 @@ from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
 #from rest_framework import routers
 from userprofiles.views import AfiliadoAPIView, AfiliadoDetailAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCuponesPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView, UsuariosCuponesAfiliados, ScanCardListView
-from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles
+from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles, CuponDetailAPIView
 from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView
 from rest_framework.urlpatterns import format_suffix_patterns
 
@@ -26,13 +26,14 @@ urlpatterns = patterns('',
     url(r'^api/cambiar-clave/$', 'userprofiles.views.cambiar_clave'),
     url(r'^api/afiliados/$', AfiliadoAPIView.as_view()),
     url(r'^api/afiliados/(?P<pk>[0-9]+)/$', AfiliadoDetailAPIView.as_view()),
-    url(r'^api/afiliados-cupones-promociones/(?P<pk>[0-9]+)/$', AfiliadoCuponesPromocionesAPIView.as_view()),
+    url(r'^api/afiliados-cupones-promociones/(?P<usuario>[0-9]+)/$', AfiliadoCuponesPromocionesAPIView),
     url(r'^api/afiliados-cupones/$', AfiliadoCuponesAPIView.as_view()),
     url(r'^api/afiliados-promociones/$', AfiliadoPromocionesAPIView.as_view()),
     url(r'^api/afiliados-carteles/$', AfiliadoCartelAPIView.as_view()),
     url(r'^api/locales/(?P<local_afiliado>[0-9]+)/$', LocalAfiliadoAPIView.as_view()),
     url(r'^api/cupones/$', CuponAPIView.as_view()),
     url(r'^api/cupones/(?P<cupon_afiliado>[0-9]+)/$', CuponAfiliadoAPIView.as_view()),
+    url(r'^api/cupones-detail/(?P<pk>[0-9]+)/$', CuponDetailAPIView.as_view(), name='cupon_detail_api'),
     url(r'^api/cupones-disponibles/(?P<usuario>[0-9]+)/$', UsuariosCuponesDisponibles.as_view()),
     url(r'^api/afiliados-disponibles/(?P<usuario>[0-9]+)/$', UsuariosCuponesAfiliados.as_view()),
     url(r'^api/usuarios-cupones/$', 'cupones.views.UsuariosCuponesAgregar'),

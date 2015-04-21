@@ -486,6 +486,7 @@ def enviar_correo(request):
 
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
+from cupones.serializers import CuponSerializer
 from rest_framework.reverse import reverse
 from rest_framework import viewsets, generics
 from rest_framework.decorators import api_view
@@ -511,9 +512,16 @@ class AfiliadoPromocionesAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
 	serializer_class = AfiliadoPromocionesSerializer
 
-class AfiliadoCuponesPromocionesAPIView(generics.RetrieveAPIView):
-	queryset = Afiliado.objects.filter(user__is_active=True)
-	serializer_class = AfiliadoCuponesPromocionesSerializer
+@api_view(['GET'])
+def AfiliadoCuponesPromocionesAPIView(request, usuario):
+	afiliados_queryset = Afiliado.objects.filter(user__is_active=True)
+	serializer = AfiliadoCuponesPromocionesSerializer(afiliados_queryset, many=True, context={ 'request': request, 'usuario': usuario })
+	#serializer.get_cupones_active(afiliados_queryset, usuario)
+
+	#cupones_queryset = Cupon.objects.filter(status='Activo')
+	#cupones_serializer = CuponSerializer(cupones_queryset, many=True)
+	#serializer.cupones = cupones_serializer
+	return Response(serializer.data)
 
 def api_root(request, format=None):
 	return Response({

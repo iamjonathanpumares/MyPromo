@@ -131,6 +131,10 @@ class CuponAfiliadoAPIView(generics.ListAPIView):
 		cupon_afiliado = self.kwargs['cupon_afiliado'] # Desde la URL por medio de los kwargs le pasamos el id del afiliado
 		return Cupon.objects.filter(cupon_afiliado=cupon_afiliado) # Retorna un tipo de dato queryset para mostrarse en la vista
 
+class CuponDetailAPIView(generics.RetrieveAPIView):
+	queryset = Cupon.objects.all()
+	serializer_class = CuponSerializer
+
 class UsuariosCuponesDisponibles(APIView):
 	def get(self, request, usuario, format=None):
 		cupones = Cupon.objects.exclude(users__username=usuario).filter(status='Activo')

@@ -60,8 +60,16 @@
               </div>
 
               <div class="form-group">
+                {{ form.fecha_inicio.errors }}
+                <label class="col-sm-2 col-sm-2 control-label">Fecha de inicio de la vigencia:</label>
+                <div class="col-sm-10">
+                  {{ form.fecha_inicio }}                              
+                </div>
+              </div>
+
+              <div class="form-group">
                 {{ form.vigencia.errors }}
-                <label class="col-sm-2 col-sm-2 control-label">Vigencia:</label>
+                <label class="col-sm-2 col-sm-2 control-label">Fecha de termino de la vigencia:</label>
                 <div class="col-sm-10">
                   {{ form.vigencia }}                              
                 </div>
@@ -94,6 +102,9 @@
     </div>  
     <script>
       $(document).ready(function (){
+        $('.fecha').datepicker({
+          format: "dd/mm/yyyy"
+        });
         $('.input-group-btn .btn-default[type="submit"]').hide();
       });
     </script>

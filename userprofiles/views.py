@@ -508,6 +508,7 @@ class AfiliadoCuponesAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
 	serializer_class = AfiliadoCuponesSerializer
 
+# TODO: Validar solo las promociones que estan activas
 class AfiliadoPromocionesAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
 	serializer_class = AfiliadoPromocionesSerializer

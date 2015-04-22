@@ -6,6 +6,7 @@ class Cupon(models.Model):
 	titulo = models.CharField(max_length=40)
 	users = models.ManyToManyField(User, through='UsuariosCupones')
 	fecha_creacion = models.DateField(auto_now=True)
+	fecha_inicio = models.DateField()
 	vigencia = models.DateField()
 	descripcion = models.TextField()
 	status = models.CharField(max_length=10, default='Activo')

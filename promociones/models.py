@@ -6,6 +6,7 @@ class Promocion(models.Model):
 	titulo = models.CharField(max_length=60)
 	users = models.ManyToManyField(User, through='UsuariosPromociones')
 	fecha_creacion = models.DateField(auto_now=True)
+	fecha_inicio = models.DateField()
 	vigencia = models.DateField()
 	descripcion = models.TextField()
 	status = models.CharField(max_length=10, default='Activo')

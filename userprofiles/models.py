@@ -26,6 +26,9 @@ class Afiliado(models.Model):
 class Giro(models.Model):
 	giro = models.CharField('Giro o actividad de la empresa', max_length=100)
 
+	def __unicode__(self):
+		return self.giro
+
 class Promotor(models.Model):
 	user = models.OneToOneField(User, related_name='perfil_promotor')
 

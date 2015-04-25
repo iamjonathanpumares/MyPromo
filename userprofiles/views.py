@@ -16,7 +16,7 @@ from promociones.models import Promocion
 from .decorators import redirect_home
 from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm, UsuarioFinalForm, UserUpdateForm, PromotorUpdateForm
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import Afiliado, Local, UsuarioFinal, Promotor
+from .models import Afiliado, Local, UsuarioFinal, Promotor, Giro
 from .tasks import importarCSV, convertirCSV
 
 # Imports para enviar correo
@@ -189,26 +189,47 @@ def UsuarioFinalUpdateView(request, pk): # Vista que hereda de UpdateView para a
 @permission_required('userprofiles.add_afiliado', login_url='/login/')
 @login_required(login_url='/login/')
 def AfiliadoView(request):
+	giros = Giro.objects.all()
+	valida_giro = ''
 	if request.method == 'POST': # Verifica si la peticion hecha por el usuario es POST
-		form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserAfiliadoForm y le pasamos los datos del formulario
-		form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario PerfilAfiliadoForm y le pasamos los datos junto con los archivo subidos
-		if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
-			usuario = form_user.save() # Se crea el usuario
-			afiliado = form_afiliado.save(commit=False) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
-			afiliado.codigoValidacion = User.objects.make_random_password(length=100)
-			afiliado.user = usuario
-			afiliado.save()
+		if 'submit-agregar-giro' in request.POST:
+			giro = request.POST['txt-giro']
+			if giro.strip() == '':
+				mensaje = { "status": "False", "msj": "Escriba un giro"}
+				return HttpResponse(json.dumps(mensaje))
+				#return redirect('/lista-afiliados/')
+			else:
+				giro = Giro.objects.create(giro=giro)
+				mensaje = { "status": "True", "msj": "Giro agregado con éxito", "nombre_giro": giro.giro }
+				return HttpResponse(json.dumps(mensaje))
+		elif 'submit-guardar-salir' in request.POST or 'submit-guardar-locales' in request.POST:
+			
+			form_user = UserAfiliadoForm(request.POST) # Se crea una instancia del formulario UserAfiliadoForm y le pasamos los datos del formulario
+			form_afiliado = PerfilAfiliadoForm(request.POST, request.FILES) # Se crea una instancia del formulario PerfilAfiliadoForm y le pasamos los datos junto con los archivo subidos
+			if form_user.is_valid() and form_afiliado.is_valid(): # Verificamos si los formularios pasaron todas sus validaciones
+				if request.POST['select-giro'] != '':
+					usuario = form_user.save() # Se crea el usuario
+					afiliado = form_afiliado.save(commit=False) # Se manda a llamar a un metodo declarado en el formulario para que guarda al afiliado
+					afiliado.codigoValidacion = User.objects.make_random_password(length=100)
+					afiliado.giro = request.POST['select-giro']
+					afiliado.user = usuario
+					afiliado.save()
 
+					if 'submit-guardar-salir' in request.POST:
+						messages.info(request, 'Afiliado %s agregado' % form_afiliado.cleaned_data['nombreEmpresa'])
+						return redirect('/lista-afiliados/')
+					elif 'submit-guardar-locales' in request.POST:
+						return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + str(usuario.id) + '/')
 
-			if 'submit-guardar-salir' in request.POST:
-				messages.info(request, 'Afiliado %s agregado' % form_afiliado.cleaned_data['nombreEmpresa'])
-				return redirect('/lista-afiliados/')
-			elif 'submit-guardar-locales' in request.POST:
-				return redirect('/agregar-locales/' + form_user.cleaned_data['username'] + '/' + str(usuario.id) + '/')
+				else:
+					valida_giro = 'Escoja un giro o agregue uno'
+
+				
+			
 	else:
 		form_user = UserAfiliadoForm()
 		form_afiliado = PerfilAfiliadoForm()
-	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado }, context_instance=RequestContext(request))
+	return render_to_response('afiliados_agregar.html', { 'form_user': form_user, 'form_afiliado': form_afiliado, 'giros': giros, 'valida_giro': valida_giro }, context_instance=RequestContext(request))
 
 # Afiliados - Agregar - Guardar y agregar locales -------------------------------------------------------------------
 @permission_required('userprofiles.add_local', login_url='/login/')

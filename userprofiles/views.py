@@ -292,14 +292,33 @@ class StatusUpdateView(UpdateView): # Vista que hereda de UpdateView para actual
 def AfiliadoUpdateView(request, usuario, id): # Vista que hereda de UpdateView para actualizar un objeto ya creado
 	user_afiliado = get_object_or_404(User, username=usuario)
 	afiliado = get_object_or_404(Afiliado, id=id)
+	giros = Giro.objects.all()
+	valida_giro = ''
 	if request.method == 'POST':
-		form_user = UserAfiliadoUpdateForm(request.POST, instance=user_afiliado)
-		form_afiliado = PerfilAfiliadoUpdateForm(request.POST, request.FILES, instance=afiliado)
-		if form_user.is_valid() and form_afiliado.is_valid():
-			form_user.save()
-			form_afiliado.save()
-			messages.info(request, 'Afiliado %s modificado' % afiliado) # Creamos un mensaje de exito para mostrarlo en la otra vista
-			return redirect('/lista-afiliados/')
+		if 'submit-agregar-giro' in request.POST:
+			giro = request.POST['txt-giro']
+			if giro.strip() == '':
+				mensaje = { "status": "False", "msj": "Escriba un giro"}
+				return HttpResponse(json.dumps(mensaje))
+				#return redirect('/lista-afiliados/')
+			else:
+				giro = Giro.objects.create(giro=giro)
+				mensaje = { "status": "True", "msj": "Giro agregado con éxito", "nombre_giro": giro.giro }
+				return HttpResponse(json.dumps(mensaje))
+
+		elif 'submit-guardar-salir' in request.POST:
+			form_user = UserAfiliadoUpdateForm(request.POST, instance=user_afiliado)
+			form_afiliado = PerfilAfiliadoUpdateForm(request.POST, request.FILES, instance=afiliado)
+			if form_user.is_valid() and form_afiliado.is_valid():
+				if request.POST['select-giro'] != '':
+					form_user.save()
+					afiliado_instance_form = form_afiliado.save()
+					afiliado_instance_form.giro = request.POST['select-giro']
+					afiliado_instance_form.save()
+					messages.info(request, 'Afiliado %s modificado' % afiliado) # Creamos un mensaje de exito para mostrarlo en la otra vista
+					return redirect('/lista-afiliados/')
+				else:
+					valida_giro = 'Escoja un giro o agregue uno'
 
 	else:
 		if afiliado.facebook != '':
@@ -310,7 +329,7 @@ def AfiliadoUpdateView(request, usuario, id): # Vista que hereda de UpdateView p
 			afiliado.twitter = datos[1]
 		form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
 		form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
-	return render(request, 'modificar_afiliado.html', { 'form_user': form_user, 'form_afiliado': form_afiliado })
+	return render(request, 'modificar_afiliado.html', { 'form_user': form_user, 'form_afiliado': form_afiliado, 'afiliado': afiliado, 'giros': giros, 'valida_giro': valida_giro })
 
 # Afiliados - Modificar - Locales --------------------------------------------------------------------------------------
 @permission_required('userprofiles.add_local', login_url='/login/')
@@ -394,26 +413,45 @@ class UsuarioPromotorListView(ListView):
 def AdministrarPerfilAfiliadoView(request, usuario):
 	user_afiliado = get_object_or_404(User, username=request.user.username)
 	afiliado = get_object_or_404(Afiliado, id=request.user.perfil_afiliado.id)
+	giros = Giro.objects.all()
+	valida_giro = ''
 	if request.method == 'POST':
-		user_username = user_afiliado.username
-		form_user = UserAfiliadoUpdateForm(request.POST, instance=user_afiliado)
-		form_afiliado = PerfilAfiliadoUpdateForm(request.POST, request.FILES, instance=afiliado)
-		if form_user.is_valid() and form_afiliado.is_valid():
-			user = form_user.save()
-			form_afiliado.save()
-			if user_username == user.username:
-				messages.info(request, 'Perfil actualizado') # Creamos un mensaje de exito para mostrarlo en la otra vista
-				if afiliado.facebook != '':
-					datos = afiliado.facebook.split('.com/')
-					afiliado.facebook = datos[1]
-				if afiliado.twitter != '':
-					datos = afiliado.twitter.split('.com/')
-					afiliado.twitter = datos[1]
-				form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
-				form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
+		if 'submit-agregar-giro' in request.POST:
+			giro = request.POST['txt-giro']
+			if giro.strip() == '':
+				mensaje = { "status": "False", "msj": "Escriba un giro"}
+				return HttpResponse(json.dumps(mensaje))
+				#return redirect('/lista-afiliados/')
 			else:
-				messages.info(request, 'Perfil actualizado. Vuelva a iniciar sesión con su nuevo username') # Creamos un mensaje de exito para mostrarlo en la otra vista
-				return redirect('/logout/')
+				giro = Giro.objects.create(giro=giro)
+				mensaje = { "status": "True", "msj": "Giro agregado con éxito", "nombre_giro": giro.giro }
+				return HttpResponse(json.dumps(mensaje))
+
+		elif 'submit-actualizar' in request.POST:
+			user_username = user_afiliado.username
+			form_user = UserAfiliadoUpdateForm(request.POST, instance=user_afiliado)
+			form_afiliado = PerfilAfiliadoUpdateForm(request.POST, request.FILES, instance=afiliado)
+			if form_user.is_valid() and form_afiliado.is_valid():
+				if request.POST['select-giro'] != '':
+					user = form_user.save()
+					afiliado_instance_form = form_afiliado.save()
+					afiliado_instance_form.giro = request.POST['select-giro']
+					afiliado_instance_form.save()
+					if user_username == user.username:
+						messages.info(request, 'Perfil actualizado') # Creamos un mensaje de exito para mostrarlo en la otra vista
+						if afiliado.facebook != '':
+							datos = afiliado.facebook.split('.com/')
+							afiliado.facebook = datos[1]
+						if afiliado.twitter != '':
+							datos = afiliado.twitter.split('.com/')
+							afiliado.twitter = datos[1]
+						form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
+						form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
+					else:
+						messages.info(request, 'Perfil actualizado. Vuelva a iniciar sesión con su nuevo username') # Creamos un mensaje de exito para mostrarlo en la otra vista
+						return redirect('/logout/')
+				else:
+					valida_giro = 'Escoja un giro o agregue uno'
 	else:
 		if afiliado.facebook != '':
 			datos = afiliado.facebook.split('.com/')
@@ -423,7 +461,7 @@ def AdministrarPerfilAfiliadoView(request, usuario):
 			afiliado.twitter = datos[1]
 		form_user = UserAfiliadoUpdateForm(instance=user_afiliado)
 		form_afiliado = PerfilAfiliadoUpdateForm(instance=afiliado)
-	return render(request, 'modificar_perfil.html', { 'form_user': form_user, 'form_afiliado': form_afiliado })
+	return render(request, 'modificar_perfil.html', { 'form_user': form_user, 'form_afiliado': form_afiliado, 'giros': giros })
 
 @permission_required('userprofiles.delete_local', login_url='/login/')
 @login_required(login_url='/login/')
@@ -515,7 +553,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
-from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, AfiliadoCuponesPromocionesSerializer, AfiliadoCartelSerializer, LocalSerializer, UserSerializer
+from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, AfiliadoCuponesPromocionesSerializer, AfiliadoCartelSerializer, LocalSerializer, UserSerializer, UsuarioFinalSerializer
 
 class AfiliadoAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
@@ -624,6 +662,17 @@ class CorreoUsuarioFinalAPIView(APIView):
 		usuario = self.get_object(username)
 		serializer = UserSerializer(usuario)
 		return Response(serializer.data)
+
+@api_view(['GET'])
+def RatingUsuarioFinalAPIView(request, usuario):
+	usuario_final_queryset = UsuarioFinal.objects.filter(user__username=usuario)
+	serializer = UsuarioFinalSerializer(usuario_final_queryset, many=True)
+	#serializer.get_cupones_active(afiliados_queryset, usuario)
+
+	#cupones_queryset = Cupon.objects.filter(status='Activo')
+	#cupones_serializer = CuponSerializer(cupones_queryset, many=True)
+	#serializer.cupones = cupones_serializer
+	return Response(serializer.data)
 
 """class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

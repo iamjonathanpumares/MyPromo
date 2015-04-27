@@ -5,17 +5,20 @@ from cupones.models import Cupon
 from cupones.serializers import CuponSerializer
 from promociones.serializers import PromocionSerializer
 
-class UsuarioFinalSerializer(serializers.ModelSerializer):
-	class Meta:
-		model = UsuarioFinal
-		fields = ('id', 'full_name')
-
 class RatingSerializer(serializers.ModelSerializer):
 	#usuario_final = UsuarioFinalSerializer()
 
 	class Meta:
 		model = Rating
-		fields = ('id', 'usuario_final', 'puntuacion')
+		fields = ('id', 'afiliado', 'puntuacion',)
+
+
+class UsuarioFinalSerializer(serializers.ModelSerializer):
+	rating_set = RatingSerializer(many=True, read_only=True)
+	class Meta:
+		model = UsuarioFinal
+		fields = ('id', 'full_name', 'rating_set')
+
 
 class AfiliadoSerializer(serializers.ModelSerializer):
 	rating_set = RatingSerializer(many=True, read_only=True)

@@ -155,10 +155,7 @@ class PerfilAfiliadoForm(forms.ModelForm):
 class PerfilAfiliadoUpdateForm(PerfilAfiliadoForm):
 	class Meta:
 		model = Afiliado
-		fields = fields = ['nombreEmpresa', 'representante', 'descripcion', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'logo', 'giro', 'cartel']
-
-	def save(self, commit=True, *args, **kwargs):
-		super(PerfilAfiliadoForm, self).save()
+		fields = fields = ['nombreEmpresa', 'representante', 'descripcion', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'logo', 'cartel']
 
 class UsuarioCSVForm(forms.Form):
 	archivoCSV = forms.FileField(widget=forms.ClearableFileInput(attrs={ 'class': 'file'}))

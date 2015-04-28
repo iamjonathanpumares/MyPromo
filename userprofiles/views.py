@@ -546,6 +546,7 @@ def enviar_correo(request):
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
 from cupones.serializers import CuponSerializer
+from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework import viewsets, generics
 from rest_framework.decorators import api_view
@@ -553,7 +554,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_framework.views import APIView
-from .serializers import AfiliadoSerializer, AfiliadoCuponesSerializer, AfiliadoPromocionesSerializer, AfiliadoCuponesPromocionesSerializer, AfiliadoCartelSerializer, LocalSerializer, UserSerializer, UsuarioFinalSerializer
+from .serializers import *
 
 class AfiliadoAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)
@@ -673,6 +674,48 @@ def RatingUsuarioFinalAPIView(request, usuario):
 	#cupones_serializer = CuponSerializer(cupones_queryset, many=True)
 	#serializer.cupones = cupones_serializer
 	return Response(serializer.data)
+
+@api_view(['POST'])
+def RatingCreateAPIView(request):
+	if request.method == 'POST':
+		# Capturo los datos mandados por JSON
+		username = request.data['username']
+		id_afiliado = request.data['id_afiliado']
+		puntuacion = request.data['puntuacion']
+
+		# Intento buscar al usuario final y al afiliado objects
+		try:
+			usuario_final = UsuarioFinal.objects.get(user__username=username)
+			afiliado = Afiliado.objects.get(pk=id_afiliado)
+		except (UsuarioFinal.DoesNotExist, Afiliado.DoesNotExist):
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		# Se crea un nuevo rating y se retorna un mensaje de creado
+		rating = Rating.objects.create(usuario_final=usuario_final, afiliado=afiliado, puntuacion=puntuacion)
+		return Response({ 'mensaje': 'Rating creado' }, status=status.HTTP_201_CREATED)
+
+@api_view(['POST'])
+def RatingUpdateAPIView(request):
+	if request.method == 'POST':
+		# Capturo los datos mandados por JSON
+		id_rating = request.data['id_rating']
+		puntuacion = request.data['puntuacion']
+
+		# Intento buscar al rating object
+		try:
+			rating = Rating.objects.get(pk=id_rating)
+		except Rating.DoesNotExist:
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		# Se modifica al rating buscado
+		rating.puntuacion = puntuacion
+		rating.save()
+		return Response({ 'mensaje': 'Rating modificado' }, status=status.HTTP_201_CREATED)
+
+class GiroListAPIView(generics.ListAPIView):
+	queryset = Giro.objects.all()
+	serializer_class = GiroSerializer
+
 
 """class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

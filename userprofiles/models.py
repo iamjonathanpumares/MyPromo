@@ -19,6 +19,7 @@ class Afiliado(models.Model):
 	logo = ResizedImageField(max_width=500, max_height=500, upload_to='userprofiles/logos', verbose_name='Logo')
 	giro = models.CharField(max_length=100, verbose_name='Giro')
 	cartel = models.ImageField(upload_to='userprofiles/carteles', verbose_name='Cartel')
+	visitas = models.IntegerField('Visualizaciones del afiliado', default=0)
 
 	def __unicode__(self):
 		return self.nombreEmpresa

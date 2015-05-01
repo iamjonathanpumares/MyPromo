@@ -47,7 +47,7 @@ class AfiliadoSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Afiliado
-		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'codigoValidacion', 'logo', 'descripcion', 'giro', 'rating_set')
+		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'codigoValidacion', 'logo', 'descripcion', 'giro', 'visitas', 'rating_set',)
 
 class AfiliadoCuponesSerializer(serializers.ModelSerializer):
 	cupones = CuponSerializer(many=True, read_only=True) 
@@ -62,7 +62,7 @@ class AfiliadoPromocionesSerializer(serializers.ModelSerializer):
 
 	class Meta:
 		model = Afiliado
-		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'codigoValidacion', 'logo', 'descripcion', 'giro', 'promociones', 'rating_set')
+		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'codigoValidacion', 'logo', 'descripcion', 'giro', 'visitas', 'promociones', 'rating_set')
 
 #class AfiliadoCuponesPromocionesSerializer(serializers.ModelSerializer):
 	#cupones_active = serializers.SerializerMethodField()

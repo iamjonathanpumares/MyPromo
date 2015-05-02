@@ -716,6 +716,23 @@ class GiroListAPIView(generics.ListAPIView):
 	queryset = Giro.objects.all()
 	serializer_class = GiroSerializer
 
+@api_view(['POST'])
+def VisitaAddAPIView(request):
+	if request.method == 'POST':
+		# Capturo los datos mandados por JSON
+		id_afiliado = request.data['id_afiliado']
+
+		# Intento buscar al usuario final y al afiliado objects
+		try:
+			afiliado = Afiliado.objects.get(pk=id_afiliado)
+		except (UsuarioFinal.DoesNotExist, Afiliado.DoesNotExist):
+			return Response(status=status.HTTP_404_NOT_FOUND)
+
+		# Se crea un nuevo rating y se retorna un mensaje de creado
+		afiliado.visitas = afiliado.visitas + 1
+		afiliado.save()
+		return Response({ 'mensaje': 'Visita aumentada' }, status=status.HTTP_201_CREATED)
+
 
 """class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

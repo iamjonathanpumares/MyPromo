@@ -332,11 +332,28 @@ def AfiliadoUpdateView(request, usuario, id): # Vista que hereda de UpdateView p
 	return render(request, 'modificar_afiliado.html', { 'form_user': form_user, 'form_afiliado': form_afiliado, 'afiliado': afiliado, 'giros': giros, 'valida_giro': valida_giro })
 
 # Afiliados - Modificar - Locales --------------------------------------------------------------------------------------
+@permission_required('userprofiles.delete_local', login_url='/login/')
+@login_required(login_url='/login/')
+def LocalListDeleteView(request, usuario, id):
+	afiliado = get_object_or_404(Afiliado, user__username=usuario, id=id)
+	locales = afiliado.locales.all()
+	if request.method == 'POST':
+		if 'local_id' in request.POST:
+			try:
+				id_local = request.POST['local_id']
+				local = Local.objects.get(pk=id_local)
+				mensaje = { "status": "True", "local_id": local.id }
+				local.delete()
+				return HttpResponse(json.dumps(mensaje))
+			except:
+				mensaje = { "status": "False" }
+				return HttpResponse(json.dumps(mensaje))
+	return render_to_response('lista_locales.html', { 'afiliado': afiliado, 'locales': locales }, context_instance=RequestContext(request))
+
 @permission_required('userprofiles.add_local', login_url='/login/')
 @login_required(login_url='/login/')
 def LocalUpdateView(request, usuario, id):
 	afiliado = get_object_or_404(Afiliado, user__username=usuario, id=id)
-	locales = afiliado.locales.all()
 	if request.method == 'POST':
 		json_locales = request.read()
 		locales = json.loads(json_locales)
@@ -348,8 +365,8 @@ def LocalUpdateView(request, usuario, id):
 				local_afiliado.save()
 				i += 1
 			messages.info(request, 'Locales agregados correctamente') # Creamos un mensaje de exito para mostrarlo en la otra vista
-			return HttpResponse('/lista-afiliados/')
-	return render_to_response('modificar_locales.html', { 'locales': locales }, context_instance=RequestContext(request))
+			return HttpResponse('/lista-locales/%s/%s/' % (afiliado.user.username, afiliado.id))
+	return render_to_response('modificar_locales.html', context_instance=RequestContext(request))
 
 # Administrar - Usuarios promotor (Lista de usuarios) ----------------------------------------------------------------------------------
 def PromotorView(request):

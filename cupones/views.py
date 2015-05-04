@@ -110,6 +110,7 @@ def agregar_cupon_afiliado(request, usuario):
 
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
+from django.db.models import Count
 from rest_framework import viewsets, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -164,5 +165,12 @@ def UsuariosCuponesAgregar(request):
 				UsuariosCupones.objects.create(usuario=usuario, cupon_usuario=cupon)
 				respuesta['estado'] = "True"
 				return Response(respuesta)
+
+@api_view(['GET'])
+def CuponPopularAPIView(request):
+	if request.method == 'GET':
+		cupon_popular = Cupon.objects.annotate(Count('users')).order_by('-users__count', '-usuarioscupones__fecha')[:1]
+		serializer = CuponSerializer(cupon_popular, many=True)
+		return Response(serializer.data)
 
 

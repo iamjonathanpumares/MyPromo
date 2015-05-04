@@ -19,7 +19,7 @@ class Promocion(models.Model):
 class UsuariosPromociones(models.Model):
 	usuario = models.ForeignKey(User)
 	promocion = models.ForeignKey(Promocion)
-	fecha = models.DateField(auto_now=True)
+	fecha = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
 		return "%s - %s" % (self.usuario.username, self.promocion.titulo)

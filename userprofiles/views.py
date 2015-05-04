@@ -45,7 +45,7 @@ def logout_view(request):
 @redirect_home
 def home(request):
 	promocion_popular = Promocion.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
-	cupon_popular = Cupon.objects.annotate(Count('users')).order_by('users__count').reverse()[:1]
+	cupon_popular = Cupon.objects.annotate(Count('users')).order_by('-users__count', '-usuarioscupones__fecha')[:1]
 	cupones_totales = Cupon.objects.all().count()
 	promociones_totales = Promocion.objects.count()
 	num_afiliados = Afiliado.objects.all().count()

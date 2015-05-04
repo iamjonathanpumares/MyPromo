@@ -13,5 +13,8 @@ class CuponAdmin(admin.ModelAdmin):
 	list_filter = ('status', 'vigencia',)
 	date_hierarchy = 'vigencia'
 
+class UsuariosCuponesAdmin(admin.ModelAdmin):
+	list_display = ('usuario', 'cupon_usuario', 'fecha',)
+
 admin.site.register(Cupon, CuponAdmin)
-admin.site.register(UsuariosCupones)
+admin.site.register(UsuariosCupones, UsuariosCuponesAdmin)

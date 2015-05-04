@@ -9,8 +9,8 @@ from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
 #from rest_framework import routers
 from userprofiles.views import AfiliadoAPIView, AfiliadoDetailAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCuponesPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView, UsuariosCuponesAfiliados, ScanCardListView, RatingUsuarioFinalAPIView, RatingCreateAPIView, RatingUpdateAPIView, GiroListAPIView, VisitaAddAPIView
-from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles, CuponDetailAPIView
-from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView
+from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles, CuponDetailAPIView, CuponPopularAPIView
+from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView, PromocionPopularAPIView
 from rest_framework.urlpatterns import format_suffix_patterns
 
 #router = routers.DefaultRouter()
@@ -32,6 +32,7 @@ urlpatterns = patterns('',
     url(r'^api/afiliados-carteles/$', AfiliadoCartelAPIView.as_view()),
     url(r'^api/locales/(?P<local_afiliado>[0-9]+)/$', LocalAfiliadoAPIView.as_view()),
     url(r'^api/cupones/$', CuponAPIView.as_view()),
+    url(r'^api/cupon-popular/$', CuponPopularAPIView),
     url(r'^api/cupones/(?P<cupon_afiliado>[0-9]+)/$', CuponAfiliadoAPIView.as_view()),
     url(r'^api/cupones-detail/(?P<pk>[0-9]+)/$', CuponDetailAPIView.as_view(), name='cupon_detail_api'),
     url(r'^api/cupones-disponibles/(?P<usuario>[0-9]+)/$', UsuariosCuponesDisponibles.as_view()),
@@ -39,6 +40,7 @@ urlpatterns = patterns('',
     url(r'^api/usuarios-cupones/$', 'cupones.views.UsuariosCuponesAgregar'),
     url(r'^api/usuarios-promociones/$', 'promociones.views.UsuariosPromocionesAgregar'),
     url(r'^api/promociones/$', PromocionAPIView.as_view()),
+    url(r'^api/promocion-popular/$', PromocionPopularAPIView),
     url(r'^api/promociones/(?P<promocion_afiliado>[0-9]+)/$', PromocionAfiliadoAPIView.as_view()),
     url(r'^api/correos/(?P<username>[\w\-]+)/$', CorreoUsuarioFinalAPIView.as_view()),
     url(r'^api/rating/(?P<usuario>[0-9]+)/$', RatingUsuarioFinalAPIView),

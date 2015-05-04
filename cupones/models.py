@@ -19,7 +19,7 @@ class Cupon(models.Model):
 class UsuariosCupones(models.Model):
 	usuario = models.ForeignKey(User)
 	cupon_usuario = models.ForeignKey(Cupon)
-	fecha = models.DateField(auto_now=True)
+	fecha = models.DateTimeField(auto_now=True)
 
 	def __unicode__(self):
 		return "%s - %s" % (self.usuario.username, self.cupon_usuario.titulo)

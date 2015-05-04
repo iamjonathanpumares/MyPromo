@@ -105,6 +105,7 @@ def agregar_promocion_afiliado(request, usuario):
 
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
+from django.db.models import Count
 from rest_framework import viewsets, generics
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -148,3 +149,10 @@ def UsuariosPromocionesAgregar(request):
 				UsuariosPromociones.objects.create(usuario=usuario, promocion=promocion)
 				respuesta['estado'] = "True"
 				return Response(respuesta)
+
+@api_view(['GET'])
+def PromocionPopularAPIView(request):
+	if request.method == 'GET':
+		promocion_popular = Promocion.objects.annotate(Count('users')).order_by('-users__count', '-usuariospromociones__fecha')[:1]
+		serializer = PromocionSerializer(promocion_popular, many=True)
+		return Response(serializer.data)

@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from cupones.models import Cupon
 from cupones.serializers import CuponSerializer
 from promociones.serializers import PromocionSerializer
+from promociones.models import Promocion
 
 class GiroSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -63,6 +64,7 @@ class AfiliadoPromocionesSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Afiliado
 		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'codigoValidacion', 'logo', 'descripcion', 'giro', 'visitas', 'promociones', 'rating_set')
+
 
 #class AfiliadoCuponesPromocionesSerializer(serializers.ModelSerializer):
 	#cupones_active = serializers.SerializerMethodField()

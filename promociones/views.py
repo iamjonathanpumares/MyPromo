@@ -42,8 +42,7 @@ def agregar_promocion(request, afiliado):
 			user_afiliado.save()
 			if 'guardar-agregar' in request.POST:
 				messages.info(request, 'Promoción agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
-				form = PromocionForm()
-				return render(request, 'agregar_promocion.html', { 'form': form })
+				return redirect('/promociones/agregar/%s/' % afiliado.user.username)
 			elif 'guardar-salir' in request.POST:
 				messages.info(request, 'Promoción agregada') # Creamos un mensaje de exito para mostrarlo en la otra vista
 				return redirect('/promociones/lista/%s' % afiliado.user.username)

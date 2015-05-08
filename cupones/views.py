@@ -43,8 +43,7 @@ def agregar_cupon(request, afiliado):
 			user_afiliado.save()
 			if 'guardar-agregar' in request.POST:
 				messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
-				form = CuponForm()
-				return render(request, 'agregar_cupon.html', { 'form': form })
+				return redirect('/cupones/agregar/%s/' % afiliado.user.username)
 			elif 'guardar-salir' in request.POST:
 				messages.info(request, 'Cupon agregado') # Creamos un mensaje de exito para mostrarlo en la otra vista
 				return redirect('/cupones/lista/%s' % afiliado.user.username)

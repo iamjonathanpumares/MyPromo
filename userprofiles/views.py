@@ -750,6 +750,22 @@ def VisitaAddAPIView(request):
 		afiliado.save()
 		return Response({ 'mensaje': 'Visita aumentada' }, status=status.HTTP_201_CREATED)
 
+@api_view(['GET'])
+def ConteoGeneralAPIView(request):
+	# Consultamos el total de afiliados, cupones y promociones activos
+	afiliados_queryset = Afiliado.objects.filter(user__is_active=True).count()
+	cupones_queryset = Cupon.objects.filter(status='Activo').count()
+	promociones_queryset = Promocion.objects.filter(status='Activo').count()
+
+	# Guardamos los querysets en un diccionario
+	conteo_general = { 'numero_afiliados': afiliados_queryset, 'numero_cupones': cupones_queryset, 'numero_promociones': promociones_queryset }
+
+	# Le pasamos el diccionario a nuestra clase Serializer
+	serializer = ConteoGeneralSerializer(conteo_general)
+	
+	# Mostramos los datos
+	return Response(serializer.data)
+
 
 """class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

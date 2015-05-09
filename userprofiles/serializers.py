@@ -101,6 +101,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'username', 'email')
 
+class ConteoGeneralSerializer(serializers.Serializer):
+	numero_afiliados = serializers.IntegerField()
+	numero_cupones = serializers.IntegerField()
+	numero_promociones = serializers.IntegerField()
+
 """class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Group

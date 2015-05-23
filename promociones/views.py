@@ -152,6 +152,6 @@ def UsuariosPromocionesAgregar(request):
 @api_view(['GET'])
 def PromocionPopularAPIView(request):
 	if request.method == 'GET':
-		promocion_popular = Promocion.objects.annotate(Count('users')).order_by('-users__count', '-usuariospromociones__fecha')[:1]
+		promocion_popular = Promocion.objects.filter(status='Activo').annotate(Count('users')).order_by('-users__count', '-usuariospromociones__fecha')[:1]
 		serializer = PromocionSerializer(promocion_popular, many=True)
 		return Response(serializer.data)

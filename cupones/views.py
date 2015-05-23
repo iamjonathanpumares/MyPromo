@@ -168,7 +168,7 @@ def UsuariosCuponesAgregar(request):
 @api_view(['GET'])
 def CuponPopularAPIView(request):
 	if request.method == 'GET':
-		cupon_popular = Cupon.objects.annotate(Count('users')).order_by('-users__count', '-usuarioscupones__fecha')[:1]
+		cupon_popular = Cupon.objects.filter(status='Activo').annotate(Count('users')).order_by('-users__count', '-usuarioscupones__fecha')[:1]
 		serializer = CuponSerializer(cupon_popular, many=True)
 		return Response(serializer.data)
 

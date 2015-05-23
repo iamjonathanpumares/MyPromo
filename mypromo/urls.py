@@ -3,12 +3,11 @@ from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
-from userprofiles.views import UsuarioPromotorListView, UsuarioFinalListView, AfiliadoListView, LoginUserPromotorView, LocalView, StatusUpdateView, UsuarioFinalUpdateView, ScanCardView
+from userprofiles.views import *
 from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
 
 #from rest_framework import routers
-from userprofiles.views import AfiliadoAPIView, AfiliadoDetailAPIView, AfiliadoCuponesAPIView, AfiliadoPromocionesAPIView, AfiliadoCuponesPromocionesAPIView, AfiliadoCartelAPIView, LocalAfiliadoAPIView, CorreoUsuarioFinalAPIView, UsuariosCuponesAfiliados, ScanCardListView, RatingUsuarioFinalAPIView, RatingCreateAPIView, RatingUpdateAPIView, GiroListAPIView, VisitaAddAPIView, ConteoGeneralAPIView
 from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles, CuponDetailAPIView, CuponPopularAPIView
 from promociones.views import PromocionAPIView, PromocionAfiliadoAPIView, PromocionPopularAPIView
 from rest_framework.urlpatterns import format_suffix_patterns

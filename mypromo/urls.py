@@ -88,7 +88,7 @@ urlpatterns = patterns('',
 
     url(r'^(?P<usuario>[\w\-]+)/$', 'userprofiles.views.home_afiliado', name='home_afiliado'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/cupones/$', 'cupones.views.AfiliadoCuponView', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
-    url(r'^(?P<usuario>[\w\-]+)/cupones/agregar/$', 'cupones.views.agregar_cupon_afiliado', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
+    url(r'^(?P<afiliado>[\w\-]+)/cupones/agregar/$', 'cupones.views.agregar_cupon', { 'tipo_usuario': 'afiliado', 'plantilla': 'afiliado_agregar_cupon.html' }), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/cupones/(?P<pk>[\w\-]+)/modificar/$', 'cupones.views.AfiliadoCuponView', name='afiliado_cupones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/promociones/$', 'promociones.views.AfiliadoPromocionView', name='afiliado_promociones'), # URL del home de MyPromo para afiliados
     url(r'^(?P<usuario>[\w\-]+)/promociones/agregar/$', 'promociones.views.agregar_promocion_afiliado', name='afiliado_cupones'), # URL del home de MyPromo para afiliados

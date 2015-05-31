@@ -22,3 +22,18 @@ def redirect_home(home):
 				return home(request)
 
 	return wrapper
+
+def is_afiliado_or_404(funcion):
+	@login_required(login_url='/login/')
+	def wrapper(request, *args, **kwargs):
+		tipo_usuario = kwargs.get('tipo_usuario', None)
+		afiliado = kwargs.get('afiliado', None)
+		if tipo_usuario == 'afiliado':
+			if request.user.username == afiliado:
+				return funcion(request, *args, **kwargs)
+			else:
+				raise Http404
+		return funcion(request, *args, **kwargs)
+
+
+	return wrapper

@@ -7,6 +7,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import UpdateView, BaseUpdateView
 from userprofiles.mixins import LoginRequiredMixin
 from userprofiles.models import Afiliado
+from userprofiles.decorators import is_afiliado_or_404
 from .models import Cupon, UsuariosCupones
 from .forms import CuponForm, CuponUpdateForm
 import json
@@ -15,7 +16,14 @@ class AfiliadoCuponListView(LoginRequiredMixin, ListView): # Vista que hereda de
 	model = Afiliado # Especificamos el modelo para traernos todos los objetos y mostrar la lista
 	template_name = 'cupones_afiliados.html' # Template que sera renderizado para mostrar la lista de afiliados
 
-def CuponView(request, afiliado): # Vista de funcion donde se guardara un nuevo cupon y se mostrara la lista de cupones del afiliado
+""" 
+	-------------------------------------------------------------
+	Vista que desplega la lista de cupones de cada afiliado con la opción de eliminar
+	el cupón
+	-------------------------------------------------------------
+"""
+@is_afiliado_or_404
+def CuponView(request, afiliado, tipo_usuario, plantilla): # Vista de funcion donde se guardara un nuevo cupon y se mostrara la lista de cupones del afiliado
 	cupon_afiliado = get_object_or_404(Afiliado, user__username=afiliado) # Usamos el shortcut get_object_or_404 para traernos el username del afiliado
 	cupones = Cupon.objects.filter(cupon_afiliado__user__username=afiliado) # Una consulta que retorna todos los cupones de dicho afiliado que se tomo en el parametro afiliado
 	if request.method == 'POST': # Se comprueba si el metodo es POST
@@ -31,21 +39,19 @@ def CuponView(request, afiliado): # Vista de funcion donde se guardara un nuevo 
 				return HttpResponse(json.dumps(mensaje))
 	else:
 		form = CuponForm()
-	return render(request, 'cupones.html', { 'cupon_afiliado': cupon_afiliado, 'cupones': cupones })
+	return render(request, plantilla, { 'cupon_afiliado': cupon_afiliado, 'cupones': cupones })
 
+@is_afiliado_or_404
 def agregar_cupon(request, afiliado, tipo_usuario, plantilla):
+	afiliado = get_object_or_404(Afiliado, user__username=afiliado)
+
 	# Comprueba si el usuario es de tipo afiliado
 	if tipo_usuario == 'afiliado':
-		if request.user.username == afiliado:
-			afiliado = get_object_or_404(Afiliado, user__username=request.user.username)
-			url_redirect_agregar = '/%s/cupones/agregar/' % request.user.username
-			url_redirect_salir = '/%s/cupones/' % request.user.username
-		else:
-			raise Http404
+		url_redirect_agregar = '/%s/cupones/agregar/' % request.user.username
+		url_redirect_salir = '/%s/cupones/' % request.user.username
 
 	# Comprueba si el usuario es de tipo promotor
 	if tipo_usuario == 'promotor':
-		afiliado = get_object_or_404(Afiliado, user__username=afiliado)
 		url_redirect_agregar = '/cupones/agregar/%s/' % afiliado.user.username
 		url_redirect_salir = '/cupones/lista/%s/' % afiliado.user.username
 		
@@ -76,29 +82,6 @@ class CuponUpdateView(UpdateView): # Vista que hereda de UpdateView para actuali
 		request = self.request # Asignamos a una variable local el self.request
 		messages.info(request, 'Cupon modificado') # Mandamos un mensaje de informacion especificando que se ha modificado el cupon
 		return super(BaseUpdateView, self).get(request) # Mandamos a llamar al padre de get para que renderize de vuelta el formulario
-
-# Comienzan los módulos del afiliado --------------------------------------------------------------------------------------
-
-def AfiliadoCuponView(request, usuario):
-	if request.user.username == usuario:
-		cupon_afiliado = get_object_or_404(Afiliado, user__username=usuario) # Usamos el shortcut get_object_or_404 para traernos el username del afiliado
-		cupones = Cupon.objects.filter(cupon_afiliado__user__username=usuario)
-		if request.method == 'POST': # Se comprueba si el metodo es POST
-			if 'cupon_id' in request.POST:
-				try:
-					id_cupon = request.POST['cupon_id']
-					cupon = Cupon.objects.get(pk=id_cupon)
-					mensaje = { "status": "True", "cupon_id": cupon.id }
-					cupon.delete()
-					return HttpResponse(json.dumps(mensaje))
-				except:
-					mensaje = { "status": "False" }
-					return HttpResponse(json.dumps(mensaje))
-		else:
-			form = CuponForm()
-		return render(request, 'afiliado_cupones.html', { 'cupones': cupones })
-	else:
-		raise Http404
 
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 

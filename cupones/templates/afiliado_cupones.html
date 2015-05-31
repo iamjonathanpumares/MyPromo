@@ -54,7 +54,7 @@
 
 {% block menu_cupones %}
 <li class="sub-menu">
-    <a class="active" href="/{{ user.username }}/cupones/" >
+    <a class="active" href="/{{ cupon_afiliado.user.username }}/cupones/" >
         <i class="fa fa-tag"></i>
         <span>Cupones</span>
     </a>
@@ -100,7 +100,7 @@
       <div class="form-panel">
         <table class="table table-striped table-advance table-hover" id="tabla">
           <h4><i class="fa fa-angle-right"></i> Tabla de cupones</h4>
-          <a class="btn btn-primary btn-agregar" href="/{{ user.username }}/cupones/agregar/">Agregar cupón</a>
+          <a class="btn btn-primary btn-agregar" href="/{{ cupon_afiliado.user.username }}/cupones/agregar/">Agregar cupón</a>
           <div class="col-md-4">
             <div class="input-group">
               <input type="text" class="form-control" placeholder="Buscar...">

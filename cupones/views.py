@@ -16,6 +16,19 @@ class AfiliadoCuponListView(LoginRequiredMixin, ListView): # Vista que hereda de
 	model = Afiliado # Especificamos el modelo para traernos todos los objetos y mostrar la lista
 	template_name = 'cupones_afiliados.html' # Template que sera renderizado para mostrar la lista de afiliados
 
+	def get_queryset(self):
+		try:
+		    name = self.request.GET.get('q', '')
+		except:
+		    name = ''
+		if (name != ''):
+		    object_list = Afiliado.objects.filter(nombreEmpresa__icontains=name)
+		    self.paginate_by = None
+		else:
+		    object_list = Afiliado.objects.all().order_by('nombreEmpresa')
+		    self.paginate_by = 15
+		return object_list
+
 """ 
 	-------------------------------------------------------------
 	Vista que desplega la lista de cupones de cada afiliado con la opción de eliminar

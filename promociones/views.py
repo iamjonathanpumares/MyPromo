@@ -14,6 +14,19 @@ class AfiliadoPromocionListView(ListView):
 	model = Afiliado
 	template_name = 'promociones_afiliados.html'
 
+	def get_queryset(self):
+		try:
+		    name = self.request.GET.get('q', '')
+		except:
+		    name = ''
+		if (name != ''):
+		    object_list = Afiliado.objects.filter(nombreEmpresa__icontains=name)
+		    self.paginate_by = None
+		else:
+		    object_list = Afiliado.objects.all().order_by('nombreEmpresa')
+		    self.paginate_by = 15
+		return object_list
+
 def PromocionView(request, afiliado):
 	promocion_afiliado = get_object_or_404(Afiliado, user__username=afiliado)
 	promociones = Promocion.objects.filter(promocion_afiliado__user__username=afiliado)

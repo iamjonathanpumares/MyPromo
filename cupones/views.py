@@ -41,6 +41,11 @@ def CuponView(request, afiliado, tipo_usuario, plantilla): # Vista de funcion do
 		form = CuponForm()
 	return render(request, plantilla, { 'cupon_afiliado': cupon_afiliado, 'cupones': cupones })
 
+""" 
+	-------------------------------------------------------------
+	Vista para agregar un cupón, ya sea un usuario promotor o afiliado
+	-------------------------------------------------------------
+"""
 @is_afiliado_or_404
 def agregar_cupon(request, afiliado, tipo_usuario, plantilla):
 	afiliado = get_object_or_404(Afiliado, user__username=afiliado)

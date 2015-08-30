@@ -254,7 +254,7 @@ def LocalView(request, usuario, id_usuario):
 
 # Afiliados - Modificar ---------------------------------------------------------------------------------------------
 class AfiliadoListView(LoginRequiredMixin, ListView):
-	queryset = Afiliado.objects.all()
+	model = Afiliado
 	template_name = 'lista_empresas.html'
 
 	def get_queryset(self):

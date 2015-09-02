@@ -729,7 +729,14 @@ def RatingUpdateAPIView(request):
 		rating.save()
 		return Response({ 'mensaje': 'Rating modificado' }, status=status.HTTP_201_CREATED)
 
-class GiroListAPIView(generics.ListAPIView):
+""" -------------------------------------------------------------------------------
+	model Giro
+--------------------------------------------------------------------------------"""
+class GiroListAPIView(generics.ListCreateAPIView):
+	queryset = Giro.objects.all()
+	serializer_class = GiroSerializer
+
+class GiroDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 	queryset = Giro.objects.all()
 	serializer_class = GiroSerializer
 

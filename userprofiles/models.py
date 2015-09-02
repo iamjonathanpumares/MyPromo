@@ -6,6 +6,7 @@ from django_resized import ResizedImageField
 
 class Afiliado(models.Model):
 	user = models.OneToOneField(User, related_name='perfil_afiliado')
+	giros = models.ManyToManyField('Giro', related_name='afiliados')
 	nombreEmpresa = models.CharField(max_length=255, verbose_name='Empresa')
 	representante = models.CharField(max_length=200, verbose_name='Representante')
 	descripcion = models.TextField()
@@ -17,7 +18,6 @@ class Afiliado(models.Model):
 	web = models.URLField('Web', blank=True)
 	codigoValidacion = models.CharField(max_length=100, verbose_name='Codigo validacion')
 	logo = ResizedImageField(max_width=500, max_height=500, upload_to='userprofiles/logos', verbose_name='Logo')
-	giro = models.CharField(max_length=100, verbose_name='Giro')
 	cartel = models.ImageField(upload_to='userprofiles/carteles', verbose_name='Cartel')
 	visitas = models.IntegerField('Visualizaciones del afiliado', default=0)
 

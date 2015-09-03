@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'password_reset',
     'djcelery',
+    'corsheaders',
 )
 
 REST_FRAMEWORK = {
@@ -55,6 +56,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -91,6 +93,9 @@ DATABASES = {
         'ATOMIC_REQUESTS': True,
     }
 }
+
+# Configuration CORS Headers
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/

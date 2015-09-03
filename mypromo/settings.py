@@ -88,11 +88,17 @@ WSGI_APPLICATION = 'mypromo.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'ATOMIC_REQUESTS': True,
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'documentation',
+        'USER': 'jepumares',
+        'password': 'documentation_postgresql',
+        'HOST': 'localhost'
     }
 }
+
+# Parse database configuration from $DATABASE_URL
+import dj_database_url
+DATABASES['default'] =  dj_database_url.config()
 
 # Configuration CORS Headers
 CORS_ORIGIN_ALLOW_ALL = True
@@ -118,7 +124,11 @@ MEDIA_URL = '/media/'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
+STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 STATICFILES_FINDERS = ('django.contrib.staticfiles.finders.FileSystemFinder',
  'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )

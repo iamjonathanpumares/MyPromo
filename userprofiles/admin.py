@@ -4,9 +4,6 @@ from django.contrib import admin
 
 from .models import *
 
-class LocalAdmin(admin.ModelAdmin):
-	list_filter = ('local_afiliado',)
-
 """class AfiliadoInline(admin.StackedInline):
 	model = Afiliado
 	can_delete = False
@@ -18,7 +15,6 @@ class UserAdmin(UserAdmin):
 admin.site.unregister(User)"""
 admin.site.register(Afiliado)
 admin.site.register(Giro)
-admin.site.register(Promotor)
-admin.site.register(UsuarioFinal)
-admin.site.register(Local, LocalAdmin)
-admin.site.register(Rating)
+# admin.site.register(Promotor)
+# admin.site.register(UsuarioFinal)
+# admin.site.register(Rating)

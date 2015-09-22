@@ -1,10 +1,18 @@
+# -*- encoding: utf-8 -*-
 from rest_framework import serializers
-from .models import Afiliado, Local, Rating, UsuarioFinal, Giro
+
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
 from cupones.models import Cupon
 from cupones.serializers import CuponSerializer
 from promociones.serializers import PromocionSerializer
 from promociones.models import Promocion
+from locales.models import Local
+
+from .models import Afiliado, Rating, UsuarioFinal, Giro
+
+UserModel = get_user_model()
 
 class GiroSerializer(serializers.ModelSerializer):
 	class Meta:
@@ -105,6 +113,30 @@ class ConteoGeneralSerializer(serializers.Serializer):
 	numero_afiliados = serializers.IntegerField()
 	numero_cupones = serializers.IntegerField()
 	numero_promociones = serializers.IntegerField()
+
+class SignupSerializer(serializers.Serializer):
+	username = serializers.CharField()
+	password = serializers.CharField(min_length=8)
+	confirm_password = serializers.CharField(min_length=8)
+	email = serializers.EmailField()
+
+	def validate_username(self, value):
+		no_users = UserModel.objects.filter(username=value).count()
+		if no_users != 0:
+			raise serializers.ValidationError('Ya existe ese nombre de usuario registradop')
+		return value
+
+	def validate_email(self, value):
+		no_users = UserModel.objects.filter(email=value).count()
+		if no_users != 0:
+			raise serializers.ValidationError('Ya existe un usuario registrado con ese email')
+		return value
+
+
+	def validate(self, data):
+		if data['password'] != data['confirm_password']:
+			raise serializers.ValidationError('Las contraseñas no coinciden')
+		return data
 
 """class GroupSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

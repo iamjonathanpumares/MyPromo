@@ -22,6 +22,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'mypromo.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^api/iniciar-sesion/$', 'userprofiles.views.iniciar_sesion'),
+    url(r'^api/signup/$', SignupAPIView),
     url(r'^api/cambiar-clave/$', 'userprofiles.views.cambiar_clave'),
     url(r'^api/afiliados/$', AfiliadoAPIView.as_view()),
     url(r'^api/afiliados/(?P<pk>[0-9]+)/$', AfiliadoDetailAPIView.as_view()),
@@ -59,6 +60,7 @@ urlpatterns = patterns('',
 
 
     url(r'^$', RedirectView.as_view(url='/home/'), name='redirect_home'), # URL raiz que te redirecciona al Home si estas logueado
+    url(r'^signup/$', SignupView, name='signup'), # URL para entrar al Login de MyPromo
     url(r'^login/$', LoginUserPromotorView.as_view(), name='login'), # URL para entrar al Login de MyPromo
     url(r'^logout/$', 'userprofiles.views.logout_view', name='logout'), # URL para desloguearse de MyPromo
     url(r'^enviar-correo/$', 'userprofiles.views.enviar_correo', name='enviar_correo'), # URL del home de MyPromo para afiliados

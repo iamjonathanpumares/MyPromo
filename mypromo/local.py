@@ -1,9 +1,7 @@
 """
 Django settings for mypromo project.
-
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
-
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.7/ref/settings/
 """
@@ -11,28 +9,24 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 from __future__ import absolute_import
 import os
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
-# Honor the 'X-Forwarded-Proto' header for request.is_secure()
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'k+at_(cnuwar=vkpj724auc6c3jea+gpr&@f(7z0zi#%p08l+9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-TEMPLATE_DEBUG = False
+TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 
 # Application definition
-
 DJANGO_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -107,17 +101,11 @@ WSGI_APPLICATION = 'mypromo.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'progogi',
-        'USER': 'jepumares',
-        'password': 'progogi_postgresql',
-        'HOST': 'localhost'
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ATOMIC_REQUESTS': True,
     }
 }
-
-# Parse database configuration from $DATABASE_URL
-import dj_database_url
-DATABASES['default'] =  dj_database_url.config()
 
 # Configuration CORS Headers
 CORS_ORIGIN_ALLOW_ALL = True
@@ -135,19 +123,15 @@ USE_L10N = True
 
 USE_TZ = True
 
-#MEDIA_ROOT = '/Users/jonathan/www/mypromo.com/media'
+MEDIA_ROOT = '/Users/jonathan/www/mypromo.com/media'
 
-#MEDIA_URL = '/media/'
+MEDIA_URL = '/media/'
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
-STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
 STATICFILES_FINDERS = ('django.contrib.staticfiles.finders.FileSystemFinder',
  'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )

@@ -14,9 +14,9 @@ from django.views.generic import ListView, FormView, UpdateView, TemplateView, D
 from django.views.generic.edit import BaseUpdateView
 from promociones.models import Promocion
 from .decorators import redirect_home
-from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, LocalForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm, UsuarioFinalForm, UserUpdateForm, PromotorUpdateForm
+from .forms import LoginForm, UserAfiliadoForm, UserAfiliadoUpdateForm, PerfilAfiliadoForm, PerfilAfiliadoUpdateForm, UsuarioCSVForm, RegistrationUsuarioPromotorForm, RegistrationUsuarioFinalForm, StatusUpdateForm, UsuarioFinalForm, UserUpdateForm, PromotorUpdateForm
 from .mixins import LoginRequiredMixin, PermissionRequiredMixin
-from .models import Afiliado, Local, UsuarioFinal, Promotor, Giro
+from .models import Afiliado, UsuarioFinal, Promotor, Giro
 from .tasks import importarCSV, convertirCSV
 
 # Imports para enviar correo
@@ -24,6 +24,17 @@ from django.core.mail.message import EmailMultiAlternatives
 from django.http.response import HttpResponseRedirect
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
+
+# Signup ----------------------------------------------------------------------------------------------------
+def SignupView(request):
+	if request.method == 'POST':
+		form = SignupForm(request.POST)
+		if form.is_valid():
+			usuario = form.save()
+			return redirect('/login/')
+	else:
+		form = SignupForm()
+	return render(request, 'userprofiles/signup.html', { 'form': form })
 
 # Login ----------------------------------------------------------------------------------------------------
 class LoginUserPromotorView(FormView):
@@ -562,16 +573,44 @@ def enviar_correo(request):
 
 # Django REST Framework -----------------------------------------------------------------------------------------------------------------
 
-from cupones.serializers import CuponSerializer
+from django.contrib.auth import get_user_model
+
 from rest_framework import status
 from rest_framework.reverse import reverse
 from rest_framework import viewsets, generics
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
+
+from cupones.serializers import CuponSerializer
 from .serializers import *
+
+@api_view(['POST'])
+@permission_classes((AllowAny,))
+def SignupAPIView(request):
+	if request.method == 'POST':
+		serializer = SignupSerializer(data=request.data)
+		if serializer.is_valid():
+			username = serializer.data['username']
+			password = serializer.data['password']
+			email = serializer.data['email']
+
+			UserModel = get_user_model()
+			user = UserModel()
+			user.username = username
+			user.set_password(password)
+			user.email = email
+			user.is_active = False
+			user.save()
+
+			token = Token.objects.create(user=user)
+			return Response({ 'token': token.key })
+		return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class AfiliadoAPIView(generics.ListAPIView):
 	queryset = Afiliado.objects.filter(user__is_active=True)

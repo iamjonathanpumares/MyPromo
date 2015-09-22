@@ -3,22 +3,23 @@ from django.db import models
 from django.contrib.auth.models import User, Group
 from django_resized import ResizedImageField
 
+from paquetes.models import Paquete
+
 
 class Afiliado(models.Model):
 	user = models.OneToOneField(User, related_name='perfil_afiliado')
+	paquete = models.ForeignKey(Paquete, related_name='afiliados')
 	giros = models.ManyToManyField('Giro', related_name='afiliados')
 	nombreEmpresa = models.CharField(max_length=255, verbose_name='Empresa')
 	representante = models.CharField(max_length=200, verbose_name='Representante')
 	descripcion = models.TextField()
-	direccion = models.CharField(max_length=255, verbose_name='Direccion')
-	telefono = models.CharField(max_length=15, verbose_name='Telefono')
 	email = models.EmailField(max_length=100, verbose_name='Email')
 	facebook = models.URLField(verbose_name='Facebook', blank=True)
 	twitter = models.URLField(verbose_name='Twitter', blank=True)
 	web = models.URLField('Web', blank=True)
 	codigoValidacion = models.CharField(max_length=100, verbose_name='Codigo validacion')
-	logo = ResizedImageField(max_width=500, max_height=500, upload_to='userprofiles/logos', verbose_name='Logo')
-	cartel = models.ImageField(upload_to='userprofiles/carteles', verbose_name='Cartel')
+	logo = ResizedImageField(max_width=500, max_height=500, upload_to='userprofiles/logos', verbose_name='Logo', blank=True, null=True)
+	cartel = models.ImageField(upload_to='userprofiles/carteles', verbose_name='Cartel', blank=True, null=True)
 	visitas = models.IntegerField('Visualizaciones del afiliado', default=0)
 
 	def __unicode__(self):
@@ -29,6 +30,13 @@ class Giro(models.Model):
 
 	def __unicode__(self):
 		return self.giro
+
+class Pago(models.Model):
+	afiliado = models.ForeignKey(Afiliado, related_name='pagos')
+	fecha_pago = models.DateTimeField('Fecha de pago', auto_now_add=True)
+	meses = models.PositiveIntegerField('Meses de pago', default=1)
+	status = models.BooleanField('Status del pago', default=True)
+	cantidad_pagada = models.FloatField('Cantidad pagada')
 
 class Promotor(models.Model):
 	user = models.OneToOneField(User, related_name='perfil_promotor')
@@ -43,15 +51,6 @@ class UsuarioFinal(models.Model):
 
 	def __unicode__(self):
 		return self.user.username
-
-class Local(models.Model):
-	latitud = models.FloatField()
-	longitud = models.FloatField()
-	direccion = models.CharField(max_length=80)
-	local_afiliado = models.ForeignKey(Afiliado, related_name='locales')
-
-	def __unicode__(self):
-		return self.local_afiliado.user.username + " - " + self.direccion
 
 class Rating(models.Model):
 	usuario_final = models.ForeignKey(UsuarioFinal)

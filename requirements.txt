@@ -4,7 +4,7 @@ backports.ssl-match-hostname==3.4.0.2
 billiard==3.3.0.19
 celery==3.1.17
 certifi==14.5.14
-Django==1.7.4
+Django==1.8.4
 django-async-messages==0.3.1
 django-celery==3.1.16
 django-cors-headers==1.1.0

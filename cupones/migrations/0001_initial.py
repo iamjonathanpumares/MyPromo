@@ -19,32 +19,26 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('titulo', models.CharField(max_length=40)),
                 ('fecha_creacion', models.DateField(auto_now=True)),
+                ('fecha_inicio', models.DateField()),
                 ('vigencia', models.DateField()),
                 ('descripcion', models.TextField()),
-                ('status', models.CharField(max_length=10)),
-                ('imagen', models.ImageField(upload_to=b'cupones/imagenes')),
+                ('status', models.CharField(default=b'Activo', max_length=10)),
+                ('imagen', models.ImageField(upload_to=b'cupones/imagenes', blank=True)),
                 ('cupon_afiliado', models.ForeignKey(related_name='cupones', to='userprofiles.Afiliado')),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='UsuariosCupones',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('fecha', models.DateField(auto_now=True)),
+                ('fecha', models.DateTimeField(auto_now=True)),
                 ('cupon_usuario', models.ForeignKey(to='cupones.Cupon')),
                 ('usuario', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
-            options={
-            },
-            bases=(models.Model,),
         ),
         migrations.AddField(
             model_name='cupon',
             name='users',
             field=models.ManyToManyField(to=settings.AUTH_USER_MODEL, through='cupones.UsuariosCupones'),
-            preserve_default=True,
         ),
     ]

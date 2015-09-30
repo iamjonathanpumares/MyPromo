@@ -604,7 +604,7 @@ def SignupAPIView(request):
 			user.username = username
 			user.set_password(password)
 			user.email = email
-			user.is_active = False
+			user.is_active = True
 			user.save()
 
 			token = Token.objects.create(user=user)

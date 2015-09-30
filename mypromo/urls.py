@@ -3,6 +3,8 @@ from django.conf.urls.static import static
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
+from rest_framework.authtoken.views import ObtainAuthToken
+
 from userprofiles.views import *
 from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
@@ -22,6 +24,7 @@ urlpatterns = patterns('',
     # url(r'^$', 'mypromo.views.home', name='home'),
     # url(r'^blog/', include('blog.urls')),
     url(r'^api/iniciar-sesion/$', 'userprofiles.views.iniciar_sesion'),
+    url(r'^api/auth-token/$', ObtainAuthToken.as_view()),
     url(r'^api/signup/$', SignupAPIView),
     url(r'^api/cambiar-clave/$', 'userprofiles.views.cambiar_clave'),
     url(r'^api/afiliados/$', AfiliadoAPIView.as_view()),

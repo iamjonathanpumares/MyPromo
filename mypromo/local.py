@@ -107,6 +107,12 @@ DATABASES = {
     }
 }
 
+# AUTHENTICATION BACKENDS
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'userprofiles.backends.EmailBackend',
+)
+
 # Configuration CORS Headers
 CORS_ORIGIN_ALLOW_ALL = True
 

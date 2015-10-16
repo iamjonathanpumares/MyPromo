@@ -8,3 +8,6 @@ class Paquete(models.Model):
 	max_promo = models.PositiveSmallIntegerField('Máximo de promociones por afiliado')
 	max_cupones = models.PositiveSmallIntegerField('Máximo de cupones por afiliado')
 	have_fidelidad = models.BooleanField('Tiene fidelidad')
+
+	def __unicode__(self):
+		return self.nombre_paquete

@@ -8,6 +8,7 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from userprofiles.views import *
 from cupones.views import AfiliadoCuponListView, CuponUpdateView
 from promociones.views import AfiliadoPromocionListView, PromocionUpdateView
+from paquetes.views import *
 
 #from rest_framework import routers
 from cupones.views import CuponAPIView, CuponAfiliadoAPIView, UsuariosCuponesDisponibles, CuponDetailAPIView, CuponPopularAPIView
@@ -51,6 +52,8 @@ urlpatterns = patterns('',
     url(r'^api/rating-update/$', RatingUpdateAPIView),
     url(r'^api/giros/$', GiroListAPIView.as_view()),
     url(r'^api/giros/(?P<pk>[0-9]+)/$', GiroDetailAPIView.as_view()),
+
+    url(r'^api/paquetes/$', PaqueteListAPIView.as_view()),
     url(r'^api/visitas-add/$', VisitaAddAPIView),
     url(r'^api/conteo-general/$', ConteoGeneralAPIView),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

@@ -31,6 +31,11 @@ class UserRatingSerializer(serializers.ModelSerializer):
         model = User
         fields = ('username',)
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'email',)
+
 class UsuarioFinalRatingSerializer(serializers.ModelSerializer):
 	user = UserRatingSerializer()
 	class Meta:
@@ -52,11 +57,11 @@ class UsuarioFinalSerializer(serializers.ModelSerializer):
 
 
 class AfiliadoSerializer(serializers.ModelSerializer):
-	rating_set = RatingUsuarioFinalSerializer(many=True, read_only=True)
+	user = UserSerializer(read_only=True)
 
 	class Meta:
 		model = Afiliado
-		fields = ('id', 'nombreEmpresa', 'direccion', 'telefono', 'email', 'facebook', 'twitter', 'web', 'codigoValidacion', 'logo', 'descripcion', 'giro', 'visitas', 'rating_set',)
+		fields = ('id', 'user', 'nombreEmpresa', 'representante', 'descripcion', 'email', 'facebook', 'twitter', 'web', 'codigoValidacion', 'logo',)
 
 class AfiliadoCuponesSerializer(serializers.ModelSerializer):
 	cupones = CuponSerializer(many=True, read_only=True) 
@@ -103,11 +108,6 @@ class LocalSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Local
 		fields = ('id', 'latitud', 'longitud', 'direccion', 'local_afiliado')
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ('id', 'username', 'email')
 
 class ConteoGeneralSerializer(serializers.Serializer):
 	numero_afiliados = serializers.IntegerField()
